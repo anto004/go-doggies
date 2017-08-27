@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Go_Doggies</string>
     <string name="action_settings">Settings</string>
+    //login
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="login_button">Login</string>
 </resources>

@@ -1,16 +1,22 @@
 package app.go_doggies.com.go_doggies;
 
 import android.os.Bundle;
-import android.widget.TextView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    private final String LOG_TAG = this.getClass().getName();
+    HashMap<String, String> map;
+    EditText username;
+    EditText password;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -24,14 +30,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        Button loginButton = (Button) findViewById(R.id.login_button);
+        login(loginButton);
 
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -65,4 +65,20 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
+    public void login(View button) {
+        username =(EditText) findViewById(R.id.email_text);
+        password = (EditText) findViewById(R.id.password_text);
+        map = new HashMap<>();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                map.put("username", username.toString());
+                map.put("password", password.toString());
+                Login login = new Login();
+                login.execute(map);
+            }
+        });
+
+    }
 }
