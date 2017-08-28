@@ -8,26 +8,52 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
 
 /**
  * Created by anto004 on 8/25/17.
  */
 
-public class Login extends AsyncTask<HashMap<String, String>, Void, String>{
+public class Login extends AsyncTask<String, Void, String>{
     private static final String LOG_TAG = Login.class.getName();
 
     @Override
-    protected String doInBackground(HashMap<String, String>...params) {
+    protected String doInBackground(String...params) {
         HttpURLConnection urlConnection = null;
         String authString = "";
         BufferedReader reader = null;
         try {
-            byte[] postData = params.toString().getBytes("UTF-8");
-            URLEncoder encoder = new URLEncoder(params);
+//            final String username = "test@go-doggies.com";
+//            final String password = "2016";
+            String username = params[0];
+            String password = params[1];
+            StringBuilder urlParameter = new StringBuilder();
+//            urlParameter.append(URLEncoder.encode("username", "UTF-8"));
+//            urlParameter.append('=');
+//            urlParameter.append(URLEncoder.encode(username, "UTF-8"));
+//            urlParameter.append("&");
+//            urlParameter.append(URLEncoder.encode("password", "UTF-8"));
+//            urlParameter.append('=');
+//            urlParameter.append(URLEncoder.encode(password, "UTF-8"));
+
+            urlParameter.append("user_name");
+            urlParameter.append('=');
+            urlParameter.append(username);
+            urlParameter.append("&");
+            urlParameter.append("user_psw");
+            urlParameter.append('=');
+            urlParameter.append(password);
+
+            byte[] postData = urlParameter.toString().getBytes("UTF-8");
             String urlString = "https://go-doggies.com/login/user_login";
             URL url = new URL(urlString);
+            Log.v(LOG_TAG, "URL is: "+url);
+
+            // Using Java.net.Authenticator
+//            Authenticator.setDefault (new Authenticator() {
+//                protected PasswordAuthentication getPasswordAuthentication() {
+//                    return new PasswordAuthentication ("test@go_doggies.com", "2016".toCharArray());
+//                }
+//            });
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
@@ -38,12 +64,13 @@ public class Login extends AsyncTask<HashMap<String, String>, Void, String>{
 //                urlConnection.setRequestProperty("Content-Length", Integer.toString(postData.length));
             urlConnection.getOutputStream().write(postData);
 
-
+            // Using Java.net.urlConnection
+//            String basicAuth = "Basic " + new String(Base64.encode(username+":"+password, Base64.NO_WRAP));
+//            urlConnection.setRequestProperty("Authorization", basicAuth);
+            
             int responseCode = urlConnection.getResponseCode();
             Log.v(LOG_TAG, "Response Code: "+responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK) {
-                Log.v(LOG_TAG, "HttpURLConnection: HTTP_OK" + responseCode);
-
                 String line;
                 StringBuffer stringBuffer = new StringBuffer();
                 reader = new BufferedReader(new InputStreamReader(
@@ -54,10 +81,6 @@ public class Login extends AsyncTask<HashMap<String, String>, Void, String>{
                 }
                 authString = stringBuffer.toString();
                 Log.v(LOG_TAG, "authString: "+authString);
-            }
-            else{
-                Log.v(LOG_TAG, "False - HTTP_OK");
-
             }
 
         } catch (Exception e) {

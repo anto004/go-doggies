@@ -8,11 +8,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private final String LOG_TAG = this.getClass().getName();
     HashMap<String, String> map;
     EditText username;
@@ -31,11 +30,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Button loginButton = (Button) findViewById(R.id.login_button);
-        login(loginButton);
+        loginButton.setOnClickListener(this);
 
         // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+//        TextView tv = (TextView) findViewById(R.id.sample_text);
+//        tv.setText(stringFromJNI());
     }
 
     @Override
@@ -64,21 +63,37 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+//    public native String stringFromJNI();
+//
+//    }
 
-    public void login(View button) {
-        username =(EditText) findViewById(R.id.email_text);
+    @Override
+    public void onClick(View view) {
+        username = (EditText) findViewById(R.id.email_text);
         password = (EditText) findViewById(R.id.password_text);
-        map = new HashMap<>();
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                map.put("username", username.toString());
-                map.put("password", password.toString());
-                Login login = new Login();
-                login.execute(map);
-            }
-        });
 
+        String[] authString = {username.getText().toString(), password.getText().toString()};
+        Login login = new Login();
+        login.execute(authString);
+
+        // Using AsyncHttpClient for authentication
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        //client.setBasicAuth("test@go_doggies.com", "2016");
+//        client.setBasicAuth("test@go_doggies.com", "2016",
+//                new AuthScope("go-doggies.com/login/user_login", 80, AuthScope.ANY_REALM));
+//        client.get("https://go-doggies.com/login/user_login",
+//                new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                Log.v(LOG_TAG,"Response: "+responseBody);
+//            }
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
+//                    error)
+//            {
+//                Log.v(LOG_TAG,"Failed server connect: "+statusCode + " "+ headers
+//                + " "+ responseBody);
+//            }
+//        });
     }
 }
