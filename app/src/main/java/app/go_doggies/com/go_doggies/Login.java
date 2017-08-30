@@ -67,7 +67,7 @@ public class Login extends AsyncTask<String, Void, String>{
             // Using Java.net.urlConnection
 //            String basicAuth = "Basic " + new String(Base64.encode(username+":"+password, Base64.NO_WRAP));
 //            urlConnection.setRequestProperty("Authorization", basicAuth);
-            
+
             int responseCode = urlConnection.getResponseCode();
             Log.v(LOG_TAG, "Response Code: "+responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK) {
@@ -101,5 +101,11 @@ public class Login extends AsyncTask<String, Void, String>{
             }
         }
         return authString;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+
     }
 }
