@@ -1,5 +1,6 @@
 package app.go_doggies.com.go_doggies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button loginButton = (Button) findViewById(R.id.login_button);
         loginButton.setOnClickListener(this);
+
+        Button testButton = (Button)findViewById(R.id.test_button);
+        testButton.setOnClickListener(this);
 
         // Example of a call to a native method
 //        TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -69,14 +73,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        username = (EditText) findViewById(R.id.email_text);
-        password = (EditText) findViewById(R.id.password_text);
+        switch(view.getId()) {
+            case R.id.login_button:
+            username = (EditText) findViewById(R.id.email_text);
+            password = (EditText) findViewById(R.id.password_text);
 
-        String[] authString = {username.getText().toString(), password.getText().toString()};
-        Login login = new Login();
-        login.execute(authString);
+            String[] authString = {username.getText().toString(), password.getText().toString()};
+            Login login = new Login();
+            login.execute(authString);
+            break;
 
-        // Using AsyncHttpClient for authentication
+
+            // Using AsyncHttpClient for authentication
 //        AsyncHttpClient client = new AsyncHttpClient();
 //        //client.setBasicAuth("test@go_doggies.com", "2016");
 //        client.setBasicAuth("test@go_doggies.com", "2016",
@@ -95,5 +103,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                + " "+ responseBody);
 //            }
 //        });
+
+            case R.id.test_button:
+                Intent serviceIntent = new Intent(MainActivity.this, GroomerServices.class);
+                startActivity(serviceIntent);
+        }
     }
 }

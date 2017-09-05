@@ -14,5 +14,6 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //process json
         //setText to each view
+        setContentView(R.layout.dashboard);
     }
 }
