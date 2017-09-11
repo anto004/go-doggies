@@ -24,22 +24,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import app.go_doggies.com.go_doggies.model.DataItem;
+
 /**
  * Created by anto004 on 8/31/17.
  */
 
 public class GroomerServices extends AppCompatActivity {
-    private static final String LOG_TAG = "Go_Doggies";
+    public static final String LOG_TAG = "Go_Doggies";
     ArrayAdapter<String> groomerServicesAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.groomer_services);
+        setContentView(R.layout.groomer_services); // contains the listView
 
         String [] fakeData = {
-                "nail-trim: 100",
-                "nail-grind: 90",
-                "ear-cleaning: 100"
+                "No data to display",
+                " ",
+                " "
         };
         List<String> servicesList = new ArrayList<>(Arrays.asList(fakeData));
         groomerServicesAdapter = new ArrayAdapter<String>(
@@ -134,6 +136,11 @@ public class GroomerServices extends AppCompatActivity {
             }
             if(groomerServicesJsonStr != null){
                 try {
+                    JSONHelper.exportJson(groomerServicesJsonStr);
+                    List<DataItem> dataItemsFromJson = JSONHelper.importJson();
+                    if(dataItemsFromJson != null) {
+                        
+                    }
                     return getReadableServicesData(groomerServicesJsonStr);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -192,4 +199,5 @@ public class GroomerServices extends AppCompatActivity {
 
         return results;
     }
+
 }

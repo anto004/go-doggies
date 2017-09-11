@@ -1,7 +1,12 @@
 package app.go_doggies.com.go_doggies;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -9,11 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private final String LOG_TAG = this.getClass().getName();
+    private static final int REQUEST_PERMISSION_WRITE = 1;
+
     HashMap<String, String> map;
     EditText username;
     EditText password;
@@ -29,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        checkPermissions();
 
         Button loginButton = (Button) findViewById(R.id.login_button);
         loginButton.setOnClickListener(this);
@@ -108,5 +118,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent serviceIntent = new Intent(MainActivity.this, GroomerServices.class);
                 startActivity(serviceIntent);
         }
+    }
+
+
+    public boolean isExternalStorageWritable(){
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    public boolean isExternalStorageReadable(){
+        String state = Environment.getExternalStorageState();
+        return (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
+    }
+    //entry request permissions
+    private boolean checkPermissions() {
+
+        if (!isExternalStorageReadable() || !isExternalStorageWritable()) {
+            Toast.makeText(this, "This app only works on devices with usable external storage",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_WRITE);
+            return false;
+        }
+        return true;
     }
 }
