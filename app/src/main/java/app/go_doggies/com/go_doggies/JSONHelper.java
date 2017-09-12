@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.model.DataItem;
@@ -100,14 +102,20 @@ public class JSONHelper {
     }
     //convert jsonStr to DataItem objects
 
-    public static List<DataItem> jsonToDataItem(String jsonString){
-        Gson gson = new Gson();
-        DataItems dataItems = gson.fromJson(jsonString, DataItems.class);
-        if(dataItems != null) {
-            for (DataItem dI : dataItems.getDataItems())
-                Log.v(LOG_TAG, " dataItem Object" + dI);
+    public static List<DataItem> jsonToDataItem(String jsonString) throws JSONException {
+        Gson gson = new GsonBuilder().create();
+//        JsonParser parser = new JsonParser();
+//        JsonElement obj = (JsonElement)parser.parse(jsonString);
+//        if(obj.isJsonArray())
+//            Log.v(LOG_TAG,"JSONArray"+obj.toString());
+        List<DataItem> dataItemList = new ArrayList<>();
+        // since jsonStr is not a JSONArray
+        DataItem dataItem = gson.fromJson(jsonString, DataItem.class);
+        dataItemList.add(dataItem);
+        if(dataItem != null) {
+            Log.v(LOG_TAG, "JSON String To Data Item: "+dataItem.toString());
         }
-        return null;
+        return dataItemList;
 
     }
 

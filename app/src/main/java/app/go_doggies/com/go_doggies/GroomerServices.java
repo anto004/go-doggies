@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class GroomerServices extends AppCompatActivity {
         List<String> servicesList = new ArrayList<>(Arrays.asList(fakeData));
         groomerServicesAdapter = new ArrayAdapter<String>(
                 this,
-                R.layout.groomer_services_item_layout,
+                R.layout.groomer_services_list_item,
                 R.id.groomer_services_item_textView,
                 servicesList
         );
@@ -136,12 +135,10 @@ public class GroomerServices extends AppCompatActivity {
             }
             if(groomerServicesJsonStr != null){
                 try {
-                    JSONHelper.exportJson(groomerServicesJsonStr);
-                    List<DataItem> dataItemsFromJson = JSONHelper.importJson();
-                    if(dataItemsFromJson != null) {
-                        
-                    }
-                    return getReadableServicesData(groomerServicesJsonStr);
+//                    JSONHelper.exportJson(groomerServicesJsonStr);
+//                    List<DataItem> dataItemsFromJson = JSONHelper.importJson();
+                    List<DataItem> dataItems = JSONHelper.jsonToDataItem(groomerServicesJsonStr);
+                    return getReadableServicesData(dataItems);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -160,42 +157,26 @@ public class GroomerServices extends AppCompatActivity {
 
 
 
-    public static List<String> getReadableServicesData(String groomerServicesJSONStr)
+    public static List<String> getReadableServicesData(List<DataItem> dataItems)
             throws JSONException {
-        JSONObject jsonObj = new JSONObject(groomerServicesJSONStr);
-        List<String> results = new ArrayList<>();
-        int groomerId = jsonObj.getInt("groomer_id");
-        int nailTrim = jsonObj.getInt("nail_trim");
-        int nailGrind = jsonObj.getInt("nail_grind");
-        int teethBrushing = jsonObj.getInt("teeth_brushing");
-        int earCleaning = jsonObj.getInt("ear_cleaning");
-        int pawTrim = jsonObj.getInt("paw_trim");
-        int sanitaryTrim = jsonObj.getInt("sanitary_trim");
-        int fleaShampoo = jsonObj.getInt("flea_shampoo");
-        int deodorShampoo = jsonObj.getInt("deodor_shampoo");
-        int desheddingConditioner = jsonObj.getInt("deshedding_conditioner");
-        int brushOut = jsonObj.getInt("brush_out");
-        int specialShampoo = jsonObj.getInt("special_shampoo");
-        int desheddingShampoo = jsonObj.getInt("deshedding_shampoo");
-        int conditioner = jsonObj.getInt("conditioner");
-        int deMatt = jsonObj.getInt("de_matt");
-        int specialHandling = jsonObj.getInt("special_handling");
 
-        results.add("Nail Trim  $"+nailTrim);
-        results.add("Nail Grind $"+nailGrind);
-        results.add("Teeth Brushing $"+teethBrushing);
-        results.add("Ear Cleaning $"+earCleaning);
-        results.add("Paw Trim $"+pawTrim);
-        results.add("Sanitary Trim $"+sanitaryTrim);
-        results.add("Flea Shampoo $"+fleaShampoo);
-        results.add("Deodorant Shampoo $"+deodorShampoo);
-        results.add("De-Shedding Conditioner $"+desheddingConditioner);
-        results.add("Brush Out $"+brushOut);
-        results.add("Special Shampoo $"+specialShampoo);
-        results.add("DeShedding Shampoo $"+desheddingShampoo);
-        results.add("Condtitioner $"+conditioner);
-        results.add("De Matt $"+deMatt);
-        results.add("Special Handling $"+specialHandling);
+        List<String> results = new ArrayList<>();
+        DataItem item = dataItems.get(0);
+        results.add("Nail Trim  $"+item.getNailTrim());
+        results.add("Nail Grind $"+item.getNailGrind());
+        results.add("Teeth Brushing $"+item.getTeethBrushing());
+        results.add("Ear Cleaning $"+item.getEarCleaning());
+        results.add("Paw Trim $"+item.getPawTrim());
+        results.add("Sanitary Trim $"+item.getSanitaryTrim());
+        results.add("Flea Shampoo $"+item.getFleaShampoo());
+        results.add("Deodorant Shampoo $"+item.getDeodorShampoo());
+        results.add("De-Shedding Conditioner $"+item.getDesheddingConditioner());
+        results.add("Brush Out $"+item.getBrushOut());
+        results.add("Special Shampoo $"+item.getSpecialShampoo());
+        results.add("DeShedding Shampoo $"+item.getDesheddingShampoo());
+        results.add("Condtitioner $"+item.getConditioner());
+        results.add("De Matt $"+item.getDeMatt());
+        results.add("Special Handling $"+item.getSpecialHandling());
 
         return results;
     }
