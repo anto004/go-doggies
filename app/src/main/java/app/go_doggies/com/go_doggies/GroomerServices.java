@@ -45,6 +45,10 @@ public class GroomerServices extends AppCompatActivity {
         mDataSource = new DataSource(this);
         mDataSource.open();
         mDataSource.seedDatabase(mDataItems);
+        List<DataItem> databaseDataItems = mDataSource.getAllItemsFromDatabase();
+        for(DataItem item: databaseDataItems){
+            Log.v(LOG_TAG, "DataItem from database: "+item.toString());
+        }
 
         String [] fakeData = {
                 "No data to display",

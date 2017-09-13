@@ -2,12 +2,14 @@ package app.go_doggies.com.go_doggies.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.model.DataItem;
@@ -64,6 +66,27 @@ public class DataSource {
         return DatabaseUtils.queryNumEntries(mDatabase, ItemsTable.TABLE_ITEMS);
     }
 
-    
+    public List<DataItem> getAllItemsFromDatabase(){
+        List<DataItem> dataItems = new ArrayList<>();
+        //Remember to close it
+        Cursor cursor = mDatabase.query(ItemsTable.TABLE_ITEMS, ItemsTable.ALL_COLUMNS, null, null,
+                                            null, null, null);
+        while(cursor.moveToNext()){
+            DataItem item = new DataItem();
+            item.setGroomerId(cursor.getString(
+                    cursor.getColumnIndex(ItemsTable.COLUMN_ID)));
+
+            item.setNailTrim(cursor.getString(
+                    cursor.getColumnIndex(ItemsTable.COLUMN_NAIL_TRIM)));
+
+            item.setNailGrind(cursor.getString(
+                    cursor.getColumnIndex(ItemsTable.COLUMN_NAIL_GRIND)));
+
+            dataItems.add(item);
+        }
+        cursor.close(); // very very important
+
+        return dataItems;
+    }
 }
 
