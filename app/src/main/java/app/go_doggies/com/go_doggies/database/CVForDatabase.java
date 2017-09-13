@@ -20,6 +20,10 @@ public class CVForDatabase {
         cv.put(ItemsTable.COLUMN_ID, mDataItem.getGroomerId());
         cv.put(ItemsTable.COLUMN_NAIL_TRIM, mDataItem.getNailTrim());
         cv.put(ItemsTable.COLUMN_NAIL_GRIND, mDataItem.getNailGrind());
+        cv.put(ItemsTable.COLUMN_EAR_CLEANING, mDataItem.getEarCleaning());
+        cv.put(ItemsTable.COLUMN_PAW_TRIM, mDataItem.getPawTrim());
+        cv.put(ItemsTable.COLUMN_SANITARY_TRIM, mDataItem.getSanitaryTrim());
+        cv.put(ItemsTable.COLUMN_FLEA_SHAMPOO, mDataItem.getFleaShampoo());
         return cv;
     }
 }

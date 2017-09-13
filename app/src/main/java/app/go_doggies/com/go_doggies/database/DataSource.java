@@ -81,6 +81,14 @@ public class DataSource {
 
             item.setNailGrind(cursor.getString(
                     cursor.getColumnIndex(ItemsTable.COLUMN_NAIL_GRIND)));
+            item.setEarCleaning(cursor.getString(
+                    cursor.getColumnIndex(ItemsTable.COLUMN_EAR_CLEANING)));
+            item.setPawTrim(cursor.getString(
+                    cursor.getColumnIndex(ItemsTable.COLUMN_PAW_TRIM)));
+            item.setSanitaryTrim(cursor.getString(
+                    cursor.getColumnIndex(ItemsTable.COLUMN_SANITARY_TRIM)));
+            item.setFleaShampoo(cursor.getString(
+                    cursor.getColumnIndex(ItemsTable.COLUMN_FLEA_SHAMPOO)));
 
             dataItems.add(item);
         }

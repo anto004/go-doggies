@@ -45,16 +45,10 @@ public class GroomerServices extends AppCompatActivity {
         mDataSource = new DataSource(this);
         mDataSource.open();
         mDataSource.seedDatabase(mDataItems);
-        List<DataItem> databaseDataItems = mDataSource.getAllItemsFromDatabase();
-        for(DataItem item: databaseDataItems){
-            Log.v(LOG_TAG, "DataItem from database: "+item.toString());
-        }
 
         String [] fakeData = {
                 "No data to display",
-                " ",
-                " "
-        };
+                " "};
         List<String> servicesList = new ArrayList<>(Arrays.asList(fakeData));
         groomerServicesAdapter = new ArrayAdapter<String>(
                 this,
@@ -100,8 +94,6 @@ public class GroomerServices extends AppCompatActivity {
             String groomerServicesJsonStr = null;
 
             try {
-
-
 //                "groomer_id=94";
                 StringBuilder urlParameter = new StringBuilder();
                 urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
@@ -116,12 +108,10 @@ public class GroomerServices extends AppCompatActivity {
                 urlConnection.setDoOutput(true);
                 urlConnection.getOutputStream().write(postData);
 
-                Log.v(LOG_TAG, "URL is: "+url +
-                        "urlParameter: "+urlParameter.toString());
-
+                Log.v(LOG_TAG, "URL is: "+ url +
+                        " URLlParameter: "+ urlParameter.toString());
 
                 int responseCode = urlConnection.getResponseCode();
-                Log.v(LOG_TAG, "Response Code: "+responseCode);
                 if(responseCode == HttpURLConnection.HTTP_OK) {
                     Log.v(LOG_TAG, "HttpURLConnection: HTTP_OK" + responseCode);
 
@@ -137,8 +127,7 @@ public class GroomerServices extends AppCompatActivity {
                     Log.v(LOG_TAG, "groomerServicesJSONString: "+groomerServicesJsonStr);
                 }
                 else{
-                    Log.v(LOG_TAG, "False - HTTP_OK");
-
+                    Log.v(LOG_TAG, "HTTP NO CONTENT");
                 }
 
             } catch (Exception e) {
@@ -177,13 +166,23 @@ public class GroomerServices extends AppCompatActivity {
                 groomerServicesAdapter.clear();
                 groomerServicesAdapter.addAll(results);
             }
+            else{
+                List<DataItem> databaseDataItems = mDataSource.getAllItemsFromDatabase();
+                for(DataItem item: databaseDataItems){
+                    Log.v(LOG_TAG, "DataItem from database: "+item.toString());
+                }
+
+                List<String> databaseResultsStr = getReadableServicesData(databaseDataItems);
+
+                groomerServicesAdapter.clear();
+                groomerServicesAdapter.addAll(databaseResultsStr);
+            }
         }
     }
 
 
 
-    public static List<String> getReadableServicesData(List<DataItem> dataItems)
-            throws JSONException {
+    public static List<String> getReadableServicesData(List<DataItem> dataItems){
 
         List<String> results = new ArrayList<>();
         DataItem item = dataItems.get(0);
