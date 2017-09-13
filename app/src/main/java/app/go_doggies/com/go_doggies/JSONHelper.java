@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -108,6 +107,11 @@ public class JSONHelper {
 //        JsonElement obj = (JsonElement)parser.parse(jsonString);
 //        if(obj.isJsonArray())
 //            Log.v(LOG_TAG,"JSONArray"+obj.toString());
+
+        // Returns Map<Key, Value>
+//        Type type = new TypeToken<Map<String, String>>(){}.getType();
+//        Map<String, String> dataItemMap = gson.fromJson(jsonString, type);
+
         List<DataItem> dataItemList = new ArrayList<>();
         // since jsonStr is not a JSONArray
         DataItem dataItem = gson.fromJson(jsonString, DataItem.class);
@@ -116,7 +120,6 @@ public class JSONHelper {
             Log.v(LOG_TAG, "JSON String To Data Item: "+dataItem.toString());
         }
         return dataItemList;
-
     }
 
     static class DataItems{
@@ -139,46 +142,6 @@ public class JSONHelper {
             }
             return result.toString();
         }
-    }
-
-    public static DataItem doggieFromJson(JSONObject jsonObj)
-                                                throws JSONException {
-        DataItem dataItem = new DataItem();
-        int groomerId = jsonObj.getInt("groomer_id");
-
-        String nailTrim = jsonObj.getString("nail_trim");
-        String nailGrind = jsonObj.getString("nail_grind");
-        String teethBrushing = jsonObj.getString("teeth_brushing");
-        String earCleaning = jsonObj.getString("ear_cleaning");
-        String pawTrim = jsonObj.getString("paw_trim");
-        String sanitaryTrim = jsonObj.getString("sanitary_trim");
-        String fleaShampoo = jsonObj.getString("flea_shampoo");
-        String deodorShampoo = jsonObj.getString("deodor_shampoo");
-        String desheddingConditioner = jsonObj.getString("deshedding_conditioner");
-        String brushOut = jsonObj.getString("brush_out");
-        String specialShampoo = jsonObj.getString("special_shampoo");
-        String desheddingShampoo = jsonObj.getString("deshedding_shampoo");
-        String conditioner = jsonObj.getString("conditioner");
-        String deMatt = jsonObj.getString("de_matt");
-        String specialHandling = jsonObj.getString("special_handling");
-
-        dataItem.setNailTrim(nailTrim);
-        dataItem.setNailGrind(nailGrind);
-        dataItem.setTeethBrushing(teethBrushing);
-        dataItem.setEarCleaning(earCleaning);
-        dataItem.setPawTrim(pawTrim);
-        dataItem.setSanitaryTrim(sanitaryTrim);
-        dataItem.setFleaShampoo(fleaShampoo);
-        dataItem.setDeodorShampoo(deodorShampoo);
-        dataItem.setDesheddingConditioner(desheddingConditioner);
-        dataItem.setBrushOut(brushOut);
-        dataItem.setSpecialShampoo(specialShampoo);
-        dataItem.setDesheddingShampoo(desheddingShampoo);
-        dataItem.setConditioner(conditioner);
-        dataItem.setDeMatt(deMatt);
-        dataItem.setSpecialHandling(specialHandling);
-
-        return dataItem;
     }
 
 }

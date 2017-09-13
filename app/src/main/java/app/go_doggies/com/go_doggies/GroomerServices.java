@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import app.go_doggies.com.go_doggies.database.DataSource;
 import app.go_doggies.com.go_doggies.model.DataItem;
+import app.go_doggies.com.go_doggies.sample.SampleDataProvider;
 
 /**
  * Created by anto004 on 8/31/17.
@@ -32,10 +34,17 @@ import app.go_doggies.com.go_doggies.model.DataItem;
 public class GroomerServices extends AppCompatActivity {
     public static final String LOG_TAG = "Go_Doggies";
     ArrayAdapter<String> groomerServicesAdapter;
+    DataSource mDataSource;
+    List<DataItem> mDataItems = SampleDataProvider.dataItemList;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.groomer_services); // contains the listView
+
+        mDataSource = new DataSource(this);
+        mDataSource.open();
+        mDataSource.seedDatabase(mDataItems);
 
         String [] fakeData = {
                 "No data to display",
@@ -60,6 +69,18 @@ public class GroomerServices extends AppCompatActivity {
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
         return super.onCreateView(parent, name, context, attrs);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDataSource.close(); // close the database when the activity is on background
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDataSource.open(); // open the database connection when the activity is back to foreground
     }
 
     public class BackgroundTask extends AsyncTask<String, Void, List<String>> {
