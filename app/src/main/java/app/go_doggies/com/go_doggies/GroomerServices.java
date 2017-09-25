@@ -1,6 +1,9 @@
 package app.go_doggies.com.go_doggies;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,19 +14,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.json.JSONException;
-
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import app.go_doggies.com.go_doggies.database.DataSource;
+import app.go_doggies.com.go_doggies.database.DoggieContract;
 import app.go_doggies.com.go_doggies.model.DataItem;
 import app.go_doggies.com.go_doggies.sample.SampleDataProvider;
 
@@ -41,9 +40,8 @@ public class GroomerServices extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.groomer_services); // contains the listView
-
+        //mDataSource.open();
         mDataSource = new DataSource(this);
-        mDataSource.open();
         mDataSource.seedDatabase(mDataItems);
 
         String [] fakeData = {
@@ -93,71 +91,93 @@ public class GroomerServices extends AppCompatActivity {
             // Will contain the raw JSON response as a string.
             String groomerServicesJsonStr = null;
 
-            try {
-//                "groomer_id=94";
-                StringBuilder urlParameter = new StringBuilder();
-                urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
-                urlParameter.append('=');
-                urlParameter.append(URLEncoder.encode(String.valueOf(94), "UTF-8"));
+//            try {
+////                "groomer_id=94";
+//                StringBuilder urlParameter = new StringBuilder();
+//                urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
+//                urlParameter.append('=');
+//                urlParameter.append(URLEncoder.encode(String.valueOf(94), "UTF-8"));
+//
+//                byte[] postData = urlParameter.toString().getBytes("UTF-8");
+//                String urlString = "https://go-doggies.com/Groomer_dashboard/get_groomer_service_rates";
+//                URL url = new URL(urlString);
+//
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                urlConnection.setDoOutput(true);
+//                urlConnection.getOutputStream().write(postData);
+//
+//                Log.v(LOG_TAG, "URL is: "+ url +
+//                        " URLlParameter: "+ urlParameter.toString());
+//
+//                int responseCode = urlConnection.getResponseCode();
+//                if(responseCode == HttpURLConnection.HTTP_OK) {
+//                    Log.v(LOG_TAG, "HttpURLConnection: HTTP_OK" + responseCode);
+//
+//                    String line;
+//                    StringBuffer stringBuffer = new StringBuffer();
+//                    reader = new BufferedReader(new InputStreamReader(
+//                            urlConnection.getInputStream()
+//                    ));
+//                    while((line = reader.readLine()) != null){
+//                        stringBuffer.append(line +"\n");
+//                    }
+//                    groomerServicesJsonStr= stringBuffer.toString();
+//                    Log.v(LOG_TAG, "groomerServicesJSONString: "+groomerServicesJsonStr);
+//                }
+//                else{
+//                    Log.v(LOG_TAG, "HTTP NO CONTENT");
+//                }
+//
+//            } catch (Exception e) {
+//                Log.e(LOG_TAG, "Error ", e);
+//                // If the code didn't successfully get the weather data, there's no point in attemping
+//                // to parse it.
+//                return null;
+//            } finally{
+//                if (urlConnection != null) {
+//                    urlConnection.disconnect();
+//                }
+//                if (reader != null) {
+//                    try {
+//                        reader.close();
+//                    } catch (final IOException e) {
+//                        Log.e(LOG_TAG, "Error closing stream", e);
+//                    }
+//                }
+//            }
+//            if(groomerServicesJsonStr != null){
+//                try {
+////                    JSONHelper.exportJson(groomerServicesJsonStr);
+////                    List<DataItem> dataItemsFromJson = JSONHelper.importJson();
+//                    List<DataItem> dataItems = JSONHelper.jsonToDataItem(groomerServicesJsonStr);
+//                    return getReadableServicesData(dataItems);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            return null;
 
-                byte[] postData = urlParameter.toString().getBytes("UTF-8");
-                String urlString = "https://go-doggies.com/Groomer_dashboard/get_groomer_service_rates";
-                URL url = new URL(urlString);
 
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.getOutputStream().write(postData);
 
-                Log.v(LOG_TAG, "URL is: "+ url +
-                        " URLlParameter: "+ urlParameter.toString());
-
-                int responseCode = urlConnection.getResponseCode();
-                if(responseCode == HttpURLConnection.HTTP_OK) {
-                    Log.v(LOG_TAG, "HttpURLConnection: HTTP_OK" + responseCode);
-
-                    String line;
-                    StringBuffer stringBuffer = new StringBuffer();
-                    reader = new BufferedReader(new InputStreamReader(
-                            urlConnection.getInputStream()
-                    ));
-                    while((line = reader.readLine()) != null){
-                        stringBuffer.append(line +"\n");
-                    }
-                    groomerServicesJsonStr= stringBuffer.toString();
-                    Log.v(LOG_TAG, "groomerServicesJSONString: "+groomerServicesJsonStr);
-                }
-                else{
-                    Log.v(LOG_TAG, "HTTP NO CONTENT");
-                }
-
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
-                return null;
-            } finally{
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
+            Cursor cursor = getContentResolver().query(
+                    DoggieContract.TableItems.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            Vector<ContentValues> cVVectorFromDatabase = new Vector<ContentValues>(cursor.getCount());
+            if ( cursor.moveToFirst() ) {
+                do {
+                    ContentValues cv = new ContentValues();
+                    DatabaseUtils.cursorRowToContentValues(cursor, cv);
+                    cVVectorFromDatabase.add(cv);
+                } while (cursor.moveToNext());
             }
-            if(groomerServicesJsonStr != null){
-                try {
-//                    JSONHelper.exportJson(groomerServicesJsonStr);
-//                    List<DataItem> dataItemsFromJson = JSONHelper.importJson();
-                    List<DataItem> dataItems = JSONHelper.jsonToDataItem(groomerServicesJsonStr);
-                    return getReadableServicesData(dataItems);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
+            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVectorFromDatabase.size() + " Inserted");
+
+            cursor.close();
+           return convertContentValuesToUXFormat(cVVectorFromDatabase);
         }
 
         @Override
@@ -166,21 +186,31 @@ public class GroomerServices extends AppCompatActivity {
                 groomerServicesAdapter.clear();
                 groomerServicesAdapter.addAll(results);
             }
-            else{
-                List<DataItem> databaseDataItems = mDataSource.getAllItemsFromDatabase();
-                for(DataItem item: databaseDataItems){
-                    Log.v(LOG_TAG, "DataItem from database: "+item.toString());
-                }
-
-                List<String> databaseResultsStr = getReadableServicesData(databaseDataItems);
-
-                groomerServicesAdapter.clear();
-                groomerServicesAdapter.addAll(databaseResultsStr);
-            }
         }
     }
 
-
+    private List<String> convertContentValuesToUXFormat(Vector<ContentValues> cvv) {
+        List<String> results = new ArrayList<>();
+        for(int i = 0; i < cvv.size(); i++){
+            ContentValues value = cvv.elementAt(i);
+            results.add("Nail Trim  $"+ value.getAsString(DoggieContract.TableItems.COLUMN_NAIL_TRIM));
+            results.add("Nail Grind $"+ value.getAsString(DoggieContract.TableItems.COLUMN_NAIL_GRIND));
+            results.add("Teeth Brushing $"+ null);
+            results.add("Ear Cleaning $"+ value.getAsString(DoggieContract.TableItems.COLUMN_EAR_CLEANING));
+            results.add("Paw Trim $"+ value.getAsString(DoggieContract.TableItems.COLUMN_PAW_TRIM));
+            results.add("Sanitary Trim $"+ value.getAsString(DoggieContract.TableItems.COLUMN_SANITARY_TRIM));
+            results.add("Flea Shampoo $"+ value.getAsString(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO));
+            results.add("Deodorant Shampoo $"+ null);
+            results.add("De-Shedding Conditioner $"+ null);
+            results.add("Brush Out $"+ null);
+            results.add("Special Shampoo $"+ null);
+            results.add("DeShedding Shampoo $"+ null);
+            results.add("Condtitioner $"+ null);
+            results.add("De Matt $"+ null);
+            results.add("Special Handling $"+ null);
+        }
+        return results;
+    }
 
     public static List<String> getReadableServicesData(List<DataItem> dataItems){
 

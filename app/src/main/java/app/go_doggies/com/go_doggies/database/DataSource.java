@@ -25,7 +25,7 @@ public class DataSource {
 
     public DataSource(Context context){
         this.mContext = context;
-        this.mDBHelper = new DBHelper(context);
+        this.mDBHelper = new DoggieDbHelper(context);
         this.mDatabase = mDBHelper.getWritableDatabase();
     }
 
@@ -40,7 +40,7 @@ public class DataSource {
     public DataItem createItem(DataItem item){
         CVForDatabase cv = new CVForDatabase(item);
         ContentValues cVValues = cv.getCVValues();
-        mDatabase.insert(ItemsTable.TABLE_ITEMS, null, cVValues);
+        mDatabase.insert(DoggieContract.TableItems.TABLE_NAME, null, cVValues);
         return item;
     }
 
@@ -63,38 +63,46 @@ public class DataSource {
     }
 
     public long getItemsCount(){
-        return DatabaseUtils.queryNumEntries(mDatabase, ItemsTable.TABLE_ITEMS);
+        return DatabaseUtils.queryNumEntries(mDatabase, DoggieContract.TableItems.TABLE_NAME);
     }
 
     public List<DataItem> getAllItemsFromDatabase(){
         List<DataItem> dataItems = new ArrayList<>();
         //Remember to close it
-        Cursor cursor = mDatabase.query(ItemsTable.TABLE_ITEMS, ItemsTable.ALL_COLUMNS, null, null,
+        Cursor cursor = mDatabase.query(DoggieContract.TableItems.TABLE_NAME, null, null, null,
                                             null, null, null);
         while(cursor.moveToNext()){
             DataItem item = new DataItem();
             item.setGroomerId(cursor.getString(
-                    cursor.getColumnIndex(ItemsTable.COLUMN_ID)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_ID)));
 
             item.setNailTrim(cursor.getString(
-                    cursor.getColumnIndex(ItemsTable.COLUMN_NAIL_TRIM)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_TRIM)));
 
             item.setNailGrind(cursor.getString(
-                    cursor.getColumnIndex(ItemsTable.COLUMN_NAIL_GRIND)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_GRIND)));
             item.setEarCleaning(cursor.getString(
-                    cursor.getColumnIndex(ItemsTable.COLUMN_EAR_CLEANING)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_EAR_CLEANING)));
             item.setPawTrim(cursor.getString(
-                    cursor.getColumnIndex(ItemsTable.COLUMN_PAW_TRIM)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_PAW_TRIM)));
             item.setSanitaryTrim(cursor.getString(
-                    cursor.getColumnIndex(ItemsTable.COLUMN_SANITARY_TRIM)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_SANITARY_TRIM)));
             item.setFleaShampoo(cursor.getString(
-                    cursor.getColumnIndex(ItemsTable.COLUMN_FLEA_SHAMPOO)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO)));
 
             dataItems.add(item);
         }
         cursor.close(); // very very important
 
         return dataItems;
+    }
+    // for content provider test
+    public Cursor getAllItems(){
+        //Remember to close it
+        Cursor cursor = mDatabase.query(DoggieContract.TableItems.TABLE_NAME, null, null, null,
+                null, null, null);
+
+        return cursor;
     }
 }
 

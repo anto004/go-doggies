@@ -17,13 +17,13 @@ public class CVForDatabase {
 
     public ContentValues getCVValues(){
         ContentValues cv = new ContentValues();
-        cv.put(ItemsTable.COLUMN_ID, mDataItem.getGroomerId());
-        cv.put(ItemsTable.COLUMN_NAIL_TRIM, mDataItem.getNailTrim());
-        cv.put(ItemsTable.COLUMN_NAIL_GRIND, mDataItem.getNailGrind());
-        cv.put(ItemsTable.COLUMN_EAR_CLEANING, mDataItem.getEarCleaning());
-        cv.put(ItemsTable.COLUMN_PAW_TRIM, mDataItem.getPawTrim());
-        cv.put(ItemsTable.COLUMN_SANITARY_TRIM, mDataItem.getSanitaryTrim());
-        cv.put(ItemsTable.COLUMN_FLEA_SHAMPOO, mDataItem.getFleaShampoo());
+        cv.put(DoggieContract.TableItems.COLUMN_ID, mDataItem.getGroomerId());
+        cv.put(DoggieContract.TableItems.COLUMN_NAIL_TRIM, mDataItem.getNailTrim());
+        cv.put(DoggieContract.TableItems.COLUMN_NAIL_GRIND, mDataItem.getNailGrind());
+        cv.put(DoggieContract.TableItems.COLUMN_EAR_CLEANING, mDataItem.getEarCleaning());
+        cv.put(DoggieContract.TableItems.COLUMN_PAW_TRIM, mDataItem.getPawTrim());
+        cv.put(DoggieContract.TableItems.COLUMN_SANITARY_TRIM, mDataItem.getSanitaryTrim());
+        cv.put(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO, mDataItem.getFleaShampoo());
         return cv;
     }
 }

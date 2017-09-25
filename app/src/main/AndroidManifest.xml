@@ -25,6 +25,9 @@
             android:name=".GroomerServices"
             android:label="@string/app_name">
         </activity>
+        <provider
+            android:authorities="app.go_doggies.com.go_doggies"
+            android:name=".database.DoggieProvider"/>
     </application>
 
 </manifest>
