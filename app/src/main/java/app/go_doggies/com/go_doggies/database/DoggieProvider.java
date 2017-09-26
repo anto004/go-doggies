@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -84,7 +85,7 @@ public class DoggieProvider extends ContentProvider {
                         contentValues
                 );
                 if(rowId >= 0) {
-                    Log.v(LOG_TAG, "INSERTED _ID: "+rowId+ " into TABLE: "+ DoggieContract.TableItems.TABLE_NAME);
+                    Log.v(LOG_TAG, "INSERTED at _ID: "+rowId+ " into TABLE: "+ DoggieContract.TableItems.TABLE_NAME);
                     returnUri = DoggieContract.TableItems.buildItemsrUri(rowId);
                 }
                 else
@@ -141,5 +142,40 @@ public class DoggieProvider extends ContentProvider {
         if(rowsUpdated != 0)
             getContext().getContentResolver().notifyChange(uri, null);
         return rowsUpdated;
+    }
+
+    public int bulkInsert(Uri uri, ContentValues[] contentValues){
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int count = 0;
+        long rowId = -1;
+        switch(sURIMatcher.match(uri)){
+            case ITEMS:
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : contentValues) {
+                        rowId = db.insert(
+                                DoggieContract.TableItems.TABLE_NAME,
+                                null,
+                                value
+                        );
+                        if(rowId != -1) {
+                            Log.v(LOG_TAG, "INSERTED at _ID: "+rowId+ " into TABLE: "+ DoggieContract.TableItems.TABLE_NAME);
+                            count++;
+                        }
+                        else
+                            throw new android.database.SQLException("Failed to Insert at Uri: "+uri);
+                    }
+                    db.setTransactionSuccessful();
+                }
+                finally{
+                    db.endTransaction();
+                }
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown Uri: "+uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
     }
 }

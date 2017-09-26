@@ -20,14 +20,50 @@ import app.go_doggies.com.go_doggies.database.DoggieProvider;
  */
 
 public class TestProvider extends AndroidTestCase {
+    // add the delete test cases first
     public static final String LOG_TAG = "Database";
 
-    // Since we want each test to start with a clean slate, run deleteAllRecords
-    // in setUp (called by the test runner before each test).
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        deleteAllRecords();
+    public void testDeleteRecords() {
+        testInsertReadProvider();
+
+        // Register a content observer for our location delete.
+        TestUtilities.TestContentObserver locationObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(DoggieContract.TableItems.CONTENT_URI, true, locationObserver);
+
+        deleteAllRecordsFromProvider();
+
+        mContext.getContentResolver().unregisterContentObserver(locationObserver);
+    }
+
+    public void deleteAllRecordsFromProvider() {
+        mContext.getContentResolver().delete(
+                DoggieContract.TableItems.CONTENT_URI,
+                null,
+                null
+        );
+
+        Cursor cursor = mContext.getContentResolver().query(
+                DoggieContract.TableItems.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals("Error: Records not deleted from Items table during delete", 0, cursor.getCount());
+        cursor.close();
+    }
+
+    /*
+       This helper function deletes all records from both database tables using the database
+       functions only.  This is designed to be used to reset the state of the database until the
+       delete functionality is available in the ContentProvider.
+     */
+    public void deleteAllRecordsFromDB() {
+        DoggieDbHelper dbHelper = new DoggieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(DoggieContract.TableItems.TABLE_NAME, null, null);
+        db.close();
     }
 
     /*
@@ -36,6 +72,14 @@ public class TestProvider extends AndroidTestCase {
     */
     public void deleteAllRecords() {
         deleteAllRecordsFromDB();
+    }
+
+    // Since we want each test to start with a clean slate, run deleteAllRecords
+    // in setUp (called by the test runner before each test).
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        deleteAllRecords();
     }
 
     public void testProviderRegistry() {
@@ -186,47 +230,47 @@ public class TestProvider extends AndroidTestCase {
         updatedCursor.close();
     }
 
-    public void testDeleteRecords() {
-        testInsertReadProvider();
 
-        // Register a content observer for our location delete.
-        TestUtilities.TestContentObserver locationObserver = TestUtilities.getTestContentObserver();
-        mContext.getContentResolver().registerContentObserver(DoggieContract.TableItems.CONTENT_URI, true, locationObserver);
+    public void testBulkInsert() {
 
-        deleteAllRecordsFromProvider();
+        // Now we can bulkInsert some items.  In fact, we only implement BulkInsert for item
+        // entries.  With ContentProviders, you really only have to implement the features you
+        // use, after all.
+        ContentValues[] bulkInsertContentValues = TestUtilities.createBulkItemInsert();
 
-        mContext.getContentResolver().unregisterContentObserver(locationObserver);
-    }
+        // Register a content observer for our bulk insert.
+        TestUtilities.TestContentObserver observer = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(DoggieContract.TableItems.CONTENT_URI, true, observer);
 
-    public void deleteAllRecordsFromProvider() {
-        mContext.getContentResolver().delete(
-                DoggieContract.TableItems.CONTENT_URI,
-                null,
-                null
-        );
+        int insertCount = mContext.getContentResolver().bulkInsert(DoggieContract.TableItems.CONTENT_URI, bulkInsertContentValues);
 
+        // Students:  If this fails, it means that you most-likely are not calling the
+        // getContext().getContentResolver().notifyChange(uri, null); in your BulkInsert
+        // ContentProvider method.
+        observer.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(observer);
+
+        assertEquals(insertCount, TestUtilities.BULK_INSERT_NUMBER);
+
+        // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
                 DoggieContract.TableItems.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                DoggieContract.TableItems._ID + " ASC"  // sort order == by DATE ASCENDING
         );
-        assertEquals("Error: Records not deleted from Items table during delete", 0, cursor.getCount());
+
+        // we should have as many records in the database as we've inserted
+        assertEquals(cursor.getCount(), TestUtilities.BULK_INSERT_NUMBER);
+
+        // and let's make sure they match the ones we created
+        cursor.moveToFirst();
+        for ( int i = 0; i < TestUtilities.BULK_INSERT_NUMBER; i++, cursor.moveToNext() ) {
+            TestUtilities.validateCurrentRecord("testBulkInsert.  Error validating ItemEntry " + i,
+                    cursor, bulkInsertContentValues[i]);
+        }
         cursor.close();
-    }
-
-    /*
-       This helper function deletes all records from both database tables using the database
-       functions only.  This is designed to be used to reset the state of the database until the
-       delete functionality is available in the ContentProvider.
-     */
-    public void deleteAllRecordsFromDB() {
-        DoggieDbHelper dbHelper = new DoggieDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        db.delete(DoggieContract.TableItems.TABLE_NAME, null, null);
-        db.close();
     }
 
 }

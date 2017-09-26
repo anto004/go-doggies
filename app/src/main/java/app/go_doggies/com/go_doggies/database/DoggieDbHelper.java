@@ -25,6 +25,7 @@ public class DoggieDbHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + DoggieContract.TableItems.TABLE_NAME +
                         "(" +
                         DoggieContract.TableItems._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        DoggieContract.TableItems.COLUMN_ID + " TEXT," +
                         DoggieContract.TableItems.COLUMN_NAIL_TRIM + " TEXT," +
                         DoggieContract.TableItems.COLUMN_NAIL_GRIND + " TEXT," +
                         DoggieContract.TableItems.COLUMN_EAR_CLEANING + " TEXT," +

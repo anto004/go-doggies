@@ -50,6 +50,20 @@ public class TestUtilities extends AndroidTestCase {
 
         return cv;
     }
+    static final int BULK_INSERT_NUMBER = 10;
+    static ContentValues[] createBulkItemInsert(){
+        ContentValues[] cv = new ContentValues[BULK_INSERT_NUMBER];
+        for(int i = 0; i < BULK_INSERT_NUMBER; i++){
+            cv[i] = new ContentValues();
+            cv[i].put(DoggieContract.TableItems.COLUMN_NAIL_TRIM, String.valueOf(10 + (i/2)));
+            cv[i].put(DoggieContract.TableItems.COLUMN_NAIL_GRIND,String.valueOf(14 + (i/2)));
+            cv[i].put(DoggieContract.TableItems.COLUMN_EAR_CLEANING, String.valueOf(15 + (i/2)));
+            cv[i].put(DoggieContract.TableItems.COLUMN_PAW_TRIM, String.valueOf(12 + (i/2)));
+            cv[i].put(DoggieContract.TableItems.COLUMN_SANITARY_TRIM, String.valueOf(20 + (i/2)));
+            cv[i].put(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO, String.valueOf(12 + (i/2)));
+        }
+        return cv;
+    }
 
     static long insertItemValues(Context context){
         SQLiteDatabase database = new DoggieDbHelper(context).getWritableDatabase();
