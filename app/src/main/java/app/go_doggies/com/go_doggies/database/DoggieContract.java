@@ -18,6 +18,7 @@ public class DoggieContract {
 
 
     public static class TableItems implements BaseColumns{
+        // BaseColumns will provide _ID column
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_ITEMS).build();
 
