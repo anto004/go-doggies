@@ -74,7 +74,7 @@ public class DataSource {
         while(cursor.moveToNext()){
             DataItem item = new DataItem();
             item.setGroomerId(cursor.getString(
-                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_ID)));
+                    cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_GROOMER_ID)));
 
             item.setNailTrim(cursor.getString(
                     cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_TRIM)));

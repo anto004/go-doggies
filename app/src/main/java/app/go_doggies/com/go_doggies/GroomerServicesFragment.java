@@ -14,7 +14,6 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.go_doggies.com.go_doggies.database.DataSource;
 import app.go_doggies.com.go_doggies.model.DataItem;
 import app.go_doggies.com.go_doggies.sample.SampleDataProvider;
 
@@ -22,7 +21,6 @@ public class GroomerServicesFragment extends Fragment {
 
     //private GroomerServicesAdapter mGroomerServicesAdapter;
     private Context mContext;
-    private DataSource mDataSource;
     private ArrayAdapter<String> mGroomerServicesAdapter;
     List<DataItem> mDataItems = SampleDataProvider.dataItemList;
 
@@ -41,9 +39,6 @@ public class GroomerServicesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.groomer_services, container, false);
-
-        mDataSource = new DataSource(getActivity());
-        mDataSource.seedDatabase(mDataItems);
 
         List<String> servicesList = new ArrayList<>();
 

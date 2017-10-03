@@ -17,7 +17,7 @@ public class CVForDatabase {
 
     public ContentValues getCVValues(){
         ContentValues cv = new ContentValues();
-        cv.put(DoggieContract.TableItems.COLUMN_ID, mDataItem.getGroomerId());
+        cv.put(DoggieContract.TableItems.COLUMN_GROOMER_ID, mDataItem.getGroomerId());
         cv.put(DoggieContract.TableItems.COLUMN_NAIL_TRIM, mDataItem.getNailTrim());
         cv.put(DoggieContract.TableItems.COLUMN_NAIL_GRIND, mDataItem.getNailGrind());
         cv.put(DoggieContract.TableItems.COLUMN_EAR_CLEANING, mDataItem.getEarCleaning());

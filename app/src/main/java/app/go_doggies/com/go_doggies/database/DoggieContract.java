@@ -36,7 +36,7 @@ public class DoggieContract {
         }
 
         public static final String TABLE_NAME = "items";
-        public static final String COLUMN_ID = "groomerId";
+        public static final String COLUMN_GROOMER_ID = "groomerId";
         public static final String COLUMN_NAIL_TRIM = "nailTrim";
         public static final String COLUMN_NAIL_GRIND = "nailGrind";
         public static final String COLUMN_EAR_CLEANING = "earCleaning";
