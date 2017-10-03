@@ -8,7 +8,6 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -29,19 +28,17 @@ import app.go_doggies.com.go_doggies.database.DoggieContract;
  * Created by anto004 on 10/2/17.
  */
 
-public class FetchData extends AsyncTask<String, Void, List<String>> {
+public class FetchData extends AsyncTask<Void, Void, Void> {
     private static final String LOG_TAG = "Go_doggies";
 
     private Context mContext;
-    private ArrayAdapter<String> mGroomerServicesAdapter;
 
-    FetchData(Context context, ArrayAdapter<String> adapter) {
+    FetchData(Context context) {
         mContext = context;
-        mGroomerServicesAdapter = adapter;
     }
 
     @Override
-    protected List<String> doInBackground(String... params) {
+    protected Void doInBackground(Void... voids) {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -105,7 +102,7 @@ public class FetchData extends AsyncTask<String, Void, List<String>> {
             }
             if(groomerServicesJsonStr != null) {
                 try {
-                    return getReadableDataFromJSON(groomerServicesJsonStr);
+                    getReadableDataFromJSON(groomerServicesJsonStr);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -115,13 +112,6 @@ public class FetchData extends AsyncTask<String, Void, List<String>> {
 
     }
 
-    @Override
-    protected void onPostExecute(List<String> results) {
-        if(results != null){
-            mGroomerServicesAdapter.clear();
-            mGroomerServicesAdapter.addAll(results);
-        }
-    }
 
     public List<String> getReadableDataFromJSON(String groomerServicesJSONStr)
                                         throws JSONException{
@@ -190,7 +180,7 @@ public class FetchData extends AsyncTask<String, Void, List<String>> {
         Log.d(LOG_TAG, "Fetch BackgroundTask Complete. " + cVVectorFromDatabase.size() + " ROWS FETCHED");
 
         cursor.close();
-        return Utility.convertContentValuesToUXFormat(cVVectorFromDatabase);
+        return Utility.convertVectorContentValuesToUXFormat(cVVectorFromDatabase);
     }
 
     public void insertIntoDatabase(ContentValues values){
@@ -203,5 +193,4 @@ public class FetchData extends AsyncTask<String, Void, List<String>> {
         Toast.makeText(mContext, "Inserted 1 Data Item", Toast.LENGTH_SHORT).show();
         Log.v(LOG_TAG, "INSERTED NEW DATA AT ROW: "+ rowId);
     }
-
 }

@@ -43,4 +43,6 @@ public class GroomerServices extends AppCompatActivity {
         //mDataSource.open(); // open the database connection when the activity is back to foreground
     }
 
+
+
 }
