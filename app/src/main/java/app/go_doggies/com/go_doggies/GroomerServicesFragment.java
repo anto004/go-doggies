@@ -11,14 +11,18 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
 
 public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private GroomerServicesAdapter mGroomerServicesAdapter;
+    private ArrayAdapter<String> mGroomerServicesAdapter;
     private static final int LOADER_INT = 0;
 
     public GroomerServicesFragment() {
@@ -37,8 +41,14 @@ public class GroomerServicesFragment extends Fragment
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.groomer_services, container, false);
 
-        // initialize the cursor parameter to null, swap it after loader is finished
-        mGroomerServicesAdapter = new GroomerServicesAdapter(getActivity(), null, 0);
+        List<String> servicesList = new ArrayList<>();
+
+        mGroomerServicesAdapter = new ArrayAdapter<String>(
+                getActivity(),
+                R.layout.groomer_services_list_item,
+                R.id.groomer_services_item_textView,
+                servicesList
+        );
 
         ListView listView = (ListView)rootView.findViewById(R.id.groomer_services_listView);
         //ListView set to Adapter, next inflate the layout of the TextView, next bind the TextView
@@ -67,6 +77,14 @@ public class GroomerServicesFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         //Query the database
+        Cursor cursor = getActivity().getContentResolver().query(
+                DoggieContract.TableItems.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
         return new CursorLoader(
                 getActivity(),
                 DoggieContract.TableItems.CONTENT_URI,
@@ -79,11 +97,16 @@ public class GroomerServicesFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mGroomerServicesAdapter.swapCursor(cursor);
+        List<String> services = Utility.convertCursorToUXFormat(cursor);
+        if(services != null) {
+            mGroomerServicesAdapter.clear();
+            mGroomerServicesAdapter.addAll(services);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mGroomerServicesAdapter.swapCursor(null);
+        mGroomerServicesAdapter.clear();
     }
+
 }
