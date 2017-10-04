@@ -2,6 +2,7 @@ package app.go_doggies.com.go_doggies;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,8 @@ public class Utility {
     static final String CONDITIONER = "Conditioner: ";
     static final String DE_MATT = "De Matt: ";
     static final String SPECIAL_HANDLING = "Special Handling: ";
+
+
     public static List<String> convertVectorContentValuesToUXFormat(Vector<ContentValues> cvv) {
         List<String> results = new ArrayList<>();
         for (int i = 0; i < cvv.size(); i++) {
@@ -51,6 +54,17 @@ public class Utility {
             results.add(SPECIAL_HANDLING + null);
         }
         return results;
+    }
+
+    public static void convertCursorToContentValues(Cursor cursor){
+        Vector<ContentValues> cVVectorFromDatabase = new Vector<ContentValues>(cursor.getCount());
+        if (cursor.moveToFirst()) {
+            do {
+                ContentValues cv = new ContentValues();
+                DatabaseUtils.cursorRowToContentValues(cursor, cv);
+                cVVectorFromDatabase.add(cv);
+            } while (cursor.moveToNext());
+        }
     }
 
     public static List<String> convertCursorToUXFormat(Cursor cursor){

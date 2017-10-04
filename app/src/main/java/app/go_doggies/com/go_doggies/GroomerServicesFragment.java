@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import app.go_doggies.com.go_doggies.database.DoggieContract;
 public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = "Go-doggies";
     private ArrayAdapter<String> mGroomerServicesAdapter;
     private static final int LOADER_INT = 0;
 
@@ -32,7 +34,6 @@ public class GroomerServicesFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -70,20 +71,13 @@ public class GroomerServicesFragment extends Fragment
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
+        getLoaderManager().initLoader(LOADER_INT, null, this);
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_INT, savedInstanceState, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        //Query the database
-        Cursor cursor = getActivity().getContentResolver().query(
-                DoggieContract.TableItems.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
 
         return new CursorLoader(
                 getActivity(),
@@ -97,15 +91,21 @@ public class GroomerServicesFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mGroomerServicesAdapter.notifyDataSetChanged();
         List<String> services = Utility.convertCursorToUXFormat(cursor);
+
         if(services != null) {
-            mGroomerServicesAdapter.clear();
             mGroomerServicesAdapter.addAll(services);
+        }
+        else {
+            Log.v(LOG_TAG, "SERVICES is NULL");
+            //getLoaderManager().restartLoader(LOADER_INT, null, this);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.v(LOG_TAG, "ON LOAD RESET CALLELD");
         mGroomerServicesAdapter.clear();
     }
 

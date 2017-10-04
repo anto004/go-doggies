@@ -24,6 +24,7 @@ public class GroomerServices extends AppCompatActivity {
                     .add(R.id.groomer_service_container, new GroomerServicesFragment())
                     .commit();
         }
+
     }
 
     @Override

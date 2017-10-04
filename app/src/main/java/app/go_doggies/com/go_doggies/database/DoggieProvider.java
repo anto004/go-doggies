@@ -56,9 +56,10 @@ public class DoggieProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
+
         switch(sURIMatcher.match(uri)){
             case ITEMS:
-                return mOpenHelper.getReadableDatabase().query(
+                Cursor cursor = mOpenHelper.getReadableDatabase().query(
                         DoggieContract.TableItems.TABLE_NAME,
                         projection,
                         selection,
@@ -67,6 +68,9 @@ public class DoggieProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                // loaders wont update changes if this is not set
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                return cursor;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: "+uri);
         }
@@ -94,7 +98,7 @@ public class DoggieProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown Uri: "+uri);
         }
-        // notifyChange on the passed uri
+        // notifyChange on the passed uri not the returned uri
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }

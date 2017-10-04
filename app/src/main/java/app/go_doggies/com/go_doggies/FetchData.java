@@ -4,11 +4,9 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,8 +17,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Vector;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
 
@@ -113,7 +109,7 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
     }
 
 
-    public List<String> getReadableDataFromJSON(String groomerServicesJSONStr)
+    public void getReadableDataFromJSON(String groomerServicesJSONStr)
                                         throws JSONException{
 
         //Table Items information
@@ -169,28 +165,18 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
                     null
             );
         }
-        Vector<ContentValues> cVVectorFromDatabase = new Vector<ContentValues>(cursor.getCount());
-        if (cursor.moveToFirst()) {
-            do {
-                ContentValues cv = new ContentValues();
-                DatabaseUtils.cursorRowToContentValues(cursor, cv);
-                cVVectorFromDatabase.add(cv);
-            } while (cursor.moveToNext());
-        }
-        Log.d(LOG_TAG, "Fetch BackgroundTask Complete. " + cVVectorFromDatabase.size() + " ROWS FETCHED");
+        Log.d(LOG_TAG, "Fetch BackgroundTask Complete. " + cursor.getCount() + " ROWS FETCHED");
 
         cursor.close();
-        return Utility.convertVectorContentValuesToUXFormat(cVVectorFromDatabase);
     }
 
-    public void insertIntoDatabase(ContentValues values){
+    private void insertIntoDatabase(ContentValues values){
         //insert into Database
         Uri returnUri = mContext.getContentResolver().insert(
                 DoggieContract.TableItems.CONTENT_URI,
                 values
         );
         long rowId = ContentUris.parseId(returnUri);
-        Toast.makeText(mContext, "Inserted 1 Data Item", Toast.LENGTH_SHORT).show();
         Log.v(LOG_TAG, "INSERTED NEW DATA AT ROW: "+ rowId);
     }
 }
