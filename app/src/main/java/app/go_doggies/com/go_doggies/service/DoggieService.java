@@ -1,8 +1,10 @@
 package app.go_doggies.com.go_doggies.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -176,5 +178,14 @@ public class DoggieService extends IntentService {
         );
         long rowId = ContentUris.parseId(returnUri);
         Log.v(LOG_TAG, "INSERTED NEW DATA AT ROW: "+ rowId);
+    }
+
+    public static class AlarmReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent serviceIntent = new Intent(context, DoggieService.class);
+            context.startService(serviceIntent);
+        }
     }
 }

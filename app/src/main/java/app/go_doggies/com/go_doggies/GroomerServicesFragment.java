@@ -1,8 +1,11 @@
 package app.go_doggies.com.go_doggies;
 
 
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -67,8 +70,16 @@ public class GroomerServicesFragment extends Fragment
     }
 
     public void updateData(){
-        Intent serviceIntent = new Intent(getActivity(), DoggieService.class);
-        getActivity().startService(serviceIntent);
+
+        AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(getActivity(), DoggieService.AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + (60 * 1000),
+                pendingIntent);
+
     }
 
     @Override

@@ -32,6 +32,9 @@
             android:exported="false"/>
         <service
             android:name=".service.DoggieService"/>
+        <receiver
+            android:name=".service.DoggieService$AlarmReceiver"
+            android:exported="true"/>
     </application>
 
 </manifest>
