@@ -96,13 +96,5 @@ public class DataSource {
 
         return dataItems;
     }
-    // for content provider test
-    public Cursor getAllItems(){
-        //Remember to close it
-        Cursor cursor = mDatabase.query(DoggieContract.TableItems.TABLE_NAME, null, null, null,
-                null, null, null);
-
-        return cursor;
-    }
 }
 

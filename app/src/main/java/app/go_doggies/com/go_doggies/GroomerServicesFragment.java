@@ -4,6 +4,7 @@ package app.go_doggies.com.go_doggies;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
+import app.go_doggies.com.go_doggies.service.DoggieService;
 
 public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -65,8 +67,8 @@ public class GroomerServicesFragment extends Fragment
     }
 
     public void updateData(){
-        FetchData fetchData = new FetchData(getActivity());
-        fetchData.execute();
+        Intent serviceIntent = new Intent(getActivity(), DoggieService.class);
+        getActivity().startService(serviceIntent);
     }
 
     @Override
@@ -91,21 +93,18 @@ public class GroomerServicesFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        Log.v(LOG_TAG, "onLoad Finished Called");
         mGroomerServicesAdapter.notifyDataSetChanged();
         List<String> services = Utility.convertCursorToUXFormat(cursor);
 
         if(services != null) {
             mGroomerServicesAdapter.addAll(services);
         }
-        else {
-            Log.v(LOG_TAG, "SERVICES is NULL");
-            //getLoaderManager().restartLoader(LOADER_INT, null, this);
-        }
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.v(LOG_TAG, "ON LOAD RESET CALLELD");
         mGroomerServicesAdapter.clear();
     }
 

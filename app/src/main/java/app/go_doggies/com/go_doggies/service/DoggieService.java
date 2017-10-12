@@ -1,11 +1,12 @@
-package app.go_doggies.com.go_doggies;
+package app.go_doggies.com.go_doggies.service;
 
+import android.app.IntentService;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -21,20 +22,22 @@ import java.net.URLEncoder;
 import app.go_doggies.com.go_doggies.database.DoggieContract;
 
 /**
- * Created by anto004 on 10/2/17.
+ * Created by anto004 on 10/12/17.
  */
 
-public class FetchData extends AsyncTask<Void, Void, Void> {
-    private static final String LOG_TAG = "Go_doggies";
+public class DoggieService extends IntentService {
+    public static final String LOG_TAG = DoggieService.class.getSimpleName();
 
-    private Context mContext;
-
-    FetchData(Context context) {
-        mContext = context;
+    public DoggieService(){
+        super("DoggieService");
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected void onHandleIntent(@Nullable Intent intent) {
+        /*
+         * Logs might not show inside Service
+         */
+
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -43,74 +46,67 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
         // Will contain the raw JSON response as a string.
         String groomerServicesJsonStr = null;
 
-            try {
+        try {
 //                "groomer_id=94";
-                StringBuilder urlParameter = new StringBuilder();
-                urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
-                urlParameter.append('=');
-                urlParameter.append(URLEncoder.encode(String.valueOf(94), "UTF-8"));
+            StringBuilder urlParameter = new StringBuilder();
+            urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
+            urlParameter.append('=');
+            urlParameter.append(URLEncoder.encode(String.valueOf(94), "UTF-8"));
 
-                byte[] postData = urlParameter.toString().getBytes("UTF-8");
-                String urlString = "https://go-doggies.com/Groomer_dashboard/get_groomer_service_rates";
-                URL url = new URL(urlString);
+            byte[] postData = urlParameter.toString().getBytes("UTF-8");
+            String urlString = "https://go-doggies.com/Groomer_dashboard/get_groomer_service_rates";
+            URL url = new URL(urlString);
 
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.getOutputStream().write(postData);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoOutput(true);
+            urlConnection.getOutputStream().write(postData);
 
-                Log.v(LOG_TAG, "URL is: "+ url +
-                        " URLlParameter: "+ urlParameter.toString());
+            Log.v(LOG_TAG, "URL is: "+ url +
+                    " URLlParameter: "+ urlParameter.toString());
 
-                int responseCode = urlConnection.getResponseCode();
-                if(responseCode == HttpURLConnection.HTTP_OK) {
+            int responseCode = urlConnection.getResponseCode();
+            if(responseCode == HttpURLConnection.HTTP_OK) {
 
-                    String line;
-                    StringBuffer stringBuffer = new StringBuffer();
-                    reader = new BufferedReader(new InputStreamReader(
-                            urlConnection.getInputStream()
-                    ));
-                    while((line = reader.readLine()) != null){
-                        stringBuffer.append(line +"\n");
-                    }
-                    groomerServicesJsonStr= stringBuffer.toString();
-                    Log.v(LOG_TAG, "groomerServicesJSONString: "+groomerServicesJsonStr);
+                String line;
+                StringBuffer stringBuffer = new StringBuffer();
+                reader = new BufferedReader(new InputStreamReader(
+                        urlConnection.getInputStream()
+                ));
+                while((line = reader.readLine()) != null){
+                    stringBuffer.append(line +"\n");
                 }
-                else{
-                    Log.v(LOG_TAG, "HTTP NO CONTENT");
-                }
-
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
-                return null;
-            } finally{
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
+                groomerServicesJsonStr= stringBuffer.toString();
+                Log.v(LOG_TAG, "groomerServicesJSONString: "+groomerServicesJsonStr);
             }
-            if(groomerServicesJsonStr != null) {
+
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error ", e);
+            // If the code didn't successfully get the weather data, there's no point in attemping
+            // to parse it.
+            return ;
+        } finally{
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
                 try {
-                    getReadableDataFromJSON(groomerServicesJsonStr);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
-
-            return null;
-
+        }
+        if(groomerServicesJsonStr != null) {
+            try {
+                getReadableDataFromJSON(groomerServicesJsonStr);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-
     public void getReadableDataFromJSON(String groomerServicesJSONStr)
-                                        throws JSONException{
+            throws JSONException{
 
         //Table Items information
         final String GROOMER_ID = "groomer_id";
@@ -148,16 +144,18 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
         values.put(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO, fleaShampoo);
 
         // Query from Database
-        Cursor cursor = mContext.getContentResolver().query(
+        Cursor cursor = getApplicationContext().getContentResolver().query(
                 DoggieContract.TableItems.CONTENT_URI,
                 null,
                 null,
                 null,
                 null
         );
+        //If no data present in database then insert
         if(!cursor.moveToFirst()){
             insertIntoDatabase(values);
-            cursor = mContext.getContentResolver().query(
+            //Testing purpose
+            cursor = this.getContentResolver().query(
                     DoggieContract.TableItems.CONTENT_URI,
                     null,
                     null,
@@ -172,7 +170,7 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
 
     private void insertIntoDatabase(ContentValues values){
         //insert into Database
-        Uri returnUri = mContext.getContentResolver().insert(
+        Uri returnUri = this.getContentResolver().insert(
                 DoggieContract.TableItems.CONTENT_URI,
                 values
         );
