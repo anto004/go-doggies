@@ -1,13 +1,9 @@
 package app.go_doggies.com.go_doggies;
 
 
-import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -23,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
-import app.go_doggies.com.go_doggies.service.DoggieService;
 
 public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -71,14 +66,7 @@ public class GroomerServicesFragment extends Fragment
 
     public void updateData(){
 
-        AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(getActivity(), DoggieService.AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + (60 * 1000),
-                pendingIntent);
 
     }
 
