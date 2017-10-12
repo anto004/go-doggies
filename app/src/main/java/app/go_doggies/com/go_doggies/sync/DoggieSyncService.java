@@ -18,9 +18,9 @@ public class DoggieSyncService extends Service {
 
     @Override
     public void onCreate() {
-        Log.v(LOG_TAG, "onCreate DoggieSyncService called");
+        Log.d(LOG_TAG, "onCreate DoggieSyncService called");
         synchronized (sSyncAdapterLock){
-            if(sSyncAdapterLock == null){
+            if(mSyncAdapter == null){
                 mSyncAdapter = new DoggieSyncAdapter(getApplicationContext(), true);
             }
         }

@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+
+import app.go_doggies.com.go_doggies.sync.DoggieSyncAdapter;
 
 /**
  * Created by anto004 on 8/31/17.
@@ -24,6 +27,8 @@ public class GroomerServices extends AppCompatActivity {
                     .add(R.id.groomer_service_container, new GroomerServicesFragment())
                     .commit();
         }
+        Log.v(LOG_TAG, "GroomerServices onCreate called");
+        DoggieSyncAdapter.syncImmediately(this);
 
     }
 

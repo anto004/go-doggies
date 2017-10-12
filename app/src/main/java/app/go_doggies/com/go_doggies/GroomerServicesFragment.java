@@ -66,8 +66,6 @@ public class GroomerServicesFragment extends Fragment
 
     public void updateData(){
 
-
-
     }
 
     @Override
