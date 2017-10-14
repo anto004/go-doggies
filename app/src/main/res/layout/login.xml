@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="170dp"
         android:background="@color/color_app_green"
-        android:text="@string/login_button"
+        android:text="@string/login_button_label"
         android:textColor="@android:color/white"
         android:onClick="login"/>
 
