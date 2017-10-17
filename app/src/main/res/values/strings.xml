@@ -14,10 +14,6 @@
 
     <!-- Authentication -->
     <string name="accountName">Go_Doggies</string>
-    <string name="authtoken_type_read_only">Read Only</string>
-    <string name="authtoken_type_read_only_label">Read only Access To A Go_Doggie Account</string>
-    <string name="authtoken_type_full_access">Full Access</string>
-    <string name="authtoken_type_full_access_label">Full Access To A Go_Doggie Account</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
