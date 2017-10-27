@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Vector;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
+import app.go_doggies.com.go_doggies.model.PriceItem;
 
 /**
  * Created by anto004 on 10/2/17.
@@ -67,26 +68,27 @@ public class Utility {
         }
     }
 
-    public static List<String> convertCursorToUXFormat(Cursor cursor){
+    public static List<PriceItem> convertCursorToUXFormat(Cursor cursor){
         if(!cursor.moveToFirst())
             return null;
-        List<String> results = new ArrayList<>();
-
-        results.add(NAIL_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_TRIM)));
-        results.add(NAIL_GRIND + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_GRIND)));
-        results.add(TEETH_BRUSHING + null);
-        results.add(EAR_CLEANING + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_EAR_CLEANING)));
-        results.add(PAW_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_PAW_TRIM)));
-        results.add(SANITARY_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_SANITARY_TRIM)));
-        results.add(FLEA_SHAMPOO + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO)));
-        results.add(DEODORANT_SHAMPOO + null);
-        results.add(DE_SHEDDING_SHAMPOO + null);
-        results.add(BRUSH_OUT + null);
-        results.add(SPECIAL_SHAMPOO + null);
-        results.add(DE_SHEDDING_CONDITIONER + null);
-        results.add(CONDITIONER + null);
-        results.add(DE_MATT + null);
-        results.add(SPECIAL_HANDLING + null);
+        List<PriceItem> results = new ArrayList<>();
+        for(int i = 0; i < 15; i++) {
+            results.add(new PriceItem(NAIL_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_TRIM))));
+            results.add(new PriceItem(NAIL_GRIND + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_GRIND))));
+            results.add(new PriceItem(TEETH_BRUSHING + null));
+//        results.add(EAR_CLEANING + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_EAR_CLEANING)));
+//        results.add(PAW_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_PAW_TRIM)));
+//        results.add(SANITARY_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_SANITARY_TRIM)));
+//        results.add(FLEA_SHAMPOO + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO)));
+//        results.add(DEODORANT_SHAMPOO + null);
+//        results.add(DE_SHEDDING_SHAMPOO + null);
+//        results.add(BRUSH_OUT + null);
+//        results.add(SPECIAL_SHAMPOO + null);
+//        results.add(DE_SHEDDING_CONDITIONER + null);
+//        results.add(CONDITIONER + null);
+//        results.add(DE_MATT + null);
+//        results.add(SPECIAL_HANDLING + null);
+        }
 
         return results;
     }
