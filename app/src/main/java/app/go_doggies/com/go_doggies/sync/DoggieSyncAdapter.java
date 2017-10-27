@@ -41,12 +41,23 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
+        // LOG DOESN'T DISPLAY in Service, use No Filters
         Log.d(LOG_TAG, "onPerformSync called");
 
-                /*
-         * Logs might not show inside Service
-         */
+        //Log all the extras
+        StringBuilder sb = new StringBuilder();
+        if(bundle != null){
+            for(String key: bundle.keySet())
+                sb.append(key).append("[").append(bundle.get(key)).append("] ");
+        }
+        Log.v(LOG_TAG, "Extras: "+sb.toString());
 
+        //fetchDataFromServer();
+
+
+    }
+
+    public void fetchDataFromServer(){
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;

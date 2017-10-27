@@ -12,10 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
@@ -24,7 +22,7 @@ public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = "Go-doggies";
-    private ArrayAdapter<String> mGroomerServicesAdapter;
+    private EditTextAdapter mGroomerServicesAdapter;
     private static final int LOADER_INT = 0;
 
     public GroomerServicesFragment() {
@@ -42,14 +40,16 @@ public class GroomerServicesFragment extends Fragment
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.groomer_services, container, false);
 
-        List<String> servicesList = new ArrayList<>();
+//        List<String> servicesList = new ArrayList<>();
+//
+//        mGroomerServicesAdapter = new ArrayAdapter<String>(
+//                getActivity(),
+//                R.layout.groomer_services_list_item,
+//                R.id.groomer_services_item_textView,
+//                servicesList
+//        );
 
-        mGroomerServicesAdapter = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.groomer_services_list_item,
-                R.id.groomer_services_item_textView,
-                servicesList
-        );
+        mGroomerServicesAdapter = new EditTextAdapter(getContext(), R.layout.groomer_services_list_item);
 
         ListView listView = (ListView)rootView.findViewById(R.id.groomer_services_listView);
         //ListView set to Adapter, next inflate the layout of the TextView, next bind the TextView

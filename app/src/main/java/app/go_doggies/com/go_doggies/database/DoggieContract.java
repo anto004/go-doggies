@@ -30,11 +30,6 @@ public class DoggieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ITEMS;
 
-        //id would be the row number
-        public static Uri buildItemsrUri(long id){
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
-
         public static final String TABLE_NAME = "items";
         public static final String COLUMN_GROOMER_ID = "groomerId";
         public static final String COLUMN_NAIL_TRIM = "nailTrim";
@@ -43,7 +38,10 @@ public class DoggieContract {
         public static final String COLUMN_PAW_TRIM = "pawTrim";
         public static final String COLUMN_SANITARY_TRIM = "sanitaryTrim";
         public static final String COLUMN_FLEA_SHAMPOO = "fleaShampoo";
+
+        //id would be the row number
+        public static Uri buildItemsrUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
-
-
 }

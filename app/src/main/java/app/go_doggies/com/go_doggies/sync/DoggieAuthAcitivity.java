@@ -21,7 +21,7 @@ import app.go_doggies.com.go_doggies.R;
 public class DoggieAuthAcitivity extends AccountAuthenticatorActivity {
     /* Authenticator sends response to AuthenticatorAcitivity and
     *  AuthenticatorActivity sends results back to Authenticator
-    *  by setting AccountAuthenticatorResult on finish
+    *  by setting setAccountAuthenticatorResult on finish
     */
     public static final String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public static final String ARG_AUTH_TYPE = "AUTH_TYPE";
