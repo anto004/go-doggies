@@ -1,21 +1,27 @@
 package app.go_doggies.com.go_doggies;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.net.Uri;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
-import app.go_doggies.com.go_doggies.model.PriceItem;
+import app.go_doggies.com.go_doggies.model.ServiceItem;
+
 
 /**
  * Created by anto004 on 10/2/17.
  */
 
 public class Utility {
+    static final String LOG_TAG = "DoggieUtility";
     static final String NAIL_TRIM = "Nail Trim: ";
     static final String NAIL_GRIND = "Nail Grind: ";
     static final String TEETH_BRUSHING = "Teeth Brushing: ";
@@ -68,29 +74,38 @@ public class Utility {
         }
     }
 
-    public static List<PriceItem> convertCursorToUXFormat(Cursor cursor){
+    public static List<ServiceItem> convertCursorToUXFormat(Cursor cursor){
         if(!cursor.moveToFirst())
             return null;
-        List<PriceItem> results = new ArrayList<>();
-        for(int i = 0; i < 15; i++) {
-            results.add(new PriceItem(NAIL_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_TRIM))));
-            results.add(new PriceItem(NAIL_GRIND + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_GRIND))));
-            results.add(new PriceItem(TEETH_BRUSHING + null));
-//        results.add(EAR_CLEANING + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_EAR_CLEANING)));
-//        results.add(PAW_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_PAW_TRIM)));
-//        results.add(SANITARY_TRIM + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_SANITARY_TRIM)));
-//        results.add(FLEA_SHAMPOO + cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO)));
-//        results.add(DEODORANT_SHAMPOO + null);
-//        results.add(DE_SHEDDING_SHAMPOO + null);
-//        results.add(BRUSH_OUT + null);
-//        results.add(SPECIAL_SHAMPOO + null);
-//        results.add(DE_SHEDDING_CONDITIONER + null);
-//        results.add(CONDITIONER + null);
-//        results.add(DE_MATT + null);
-//        results.add(SPECIAL_HANDLING + null);
-        }
+        List<ServiceItem> results = new ArrayList<>();
+        results.add(new ServiceItem(NAIL_TRIM, cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_TRIM))));
+        results.add(new ServiceItem(NAIL_GRIND, cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_NAIL_GRIND))));
+        results.add(new ServiceItem(TEETH_BRUSHING, null));
+        results.add(new ServiceItem(EAR_CLEANING, cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_EAR_CLEANING))));
+        results.add(new ServiceItem(PAW_TRIM, cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_PAW_TRIM))));
+        results.add(new ServiceItem(SANITARY_TRIM, cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_SANITARY_TRIM))));
+        results.add(new ServiceItem(FLEA_SHAMPOO, cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems.COLUMN_FLEA_SHAMPOO))));
+        results.add(new ServiceItem(DEODORANT_SHAMPOO, null));
+        results.add(new ServiceItem(DE_SHEDDING_SHAMPOO, null));
+        results.add(new ServiceItem(BRUSH_OUT, null));
+        results.add(new ServiceItem(SPECIAL_SHAMPOO, null));
+        results.add(new ServiceItem(DE_SHEDDING_CONDITIONER, null));
+        results.add(new ServiceItem(CONDITIONER, null));
+        results.add(new ServiceItem(DE_MATT, null));
+        results.add(new ServiceItem(SPECIAL_HANDLING, null));
+
 
         return results;
+    }
+
+    public static void insertIntoDatabase(ContentValues values, Context context){
+        //insert into Database
+        Uri returnUri = context.getContentResolver().insert(
+                DoggieContract.TableItems.CONTENT_URI,
+                values
+        );
+        long rowId = ContentUris.parseId(returnUri);
+        Log.v(LOG_TAG, "Inserted New Data at Row: "+ rowId);
     }
 
 }

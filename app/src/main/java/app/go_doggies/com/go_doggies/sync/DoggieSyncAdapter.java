@@ -5,12 +5,10 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -25,6 +23,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import app.go_doggies.com.go_doggies.R;
+import app.go_doggies.com.go_doggies.Utility;
 import app.go_doggies.com.go_doggies.database.DoggieContract;
 
 /**
@@ -173,7 +172,7 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
         );
         //If no data present in database then insert
         if(!cursor.moveToFirst()){
-            insertIntoDatabase(values);
+            Utility.insertIntoDatabase(values, getContext());
             //Testing purpose
             cursor = getContext().getContentResolver().query(
                     DoggieContract.TableItems.CONTENT_URI,
@@ -188,15 +187,7 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
         cursor.close();
     }
 
-    private void insertIntoDatabase(ContentValues values){
-        //insert into Database
-        Uri returnUri = getContext().getContentResolver().insert(
-                DoggieContract.TableItems.CONTENT_URI,
-                values
-        );
-        long rowId = ContentUris.parseId(returnUri);
-        Log.v(LOG_TAG, "Inserted New Data at Row: "+ rowId);
-    }
+
 
     public static void syncImmediately(Context context){
         Account account = getSyncAccount(context);

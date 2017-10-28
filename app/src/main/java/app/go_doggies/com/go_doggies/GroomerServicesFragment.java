@@ -17,7 +17,7 @@ import android.widget.ListView;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
-import app.go_doggies.com.go_doggies.model.PriceItem;
+import app.go_doggies.com.go_doggies.model.ServiceItem;
 
 public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -93,7 +93,7 @@ public class GroomerServicesFragment extends Fragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.v(LOG_TAG, "onLoad Finished Called");
         mGroomerServicesAdapter.notifyDataSetChanged();
-        List<PriceItem> services = Utility.convertCursorToUXFormat(cursor);
+        List<ServiceItem> services = Utility.convertCursorToUXFormat(cursor);
 
         if(services != null) {
             mGroomerServicesAdapter.addAll(services);

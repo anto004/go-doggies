@@ -1,5 +1,6 @@
 package app.go_doggies.com.go_doggies;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -14,14 +15,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
+import java.util.List;
+
 import app.go_doggies.com.go_doggies.database.DoggieContract;
-import app.go_doggies.com.go_doggies.model.PriceItem;
+import app.go_doggies.com.go_doggies.model.ServiceItem;
 
 /**
  * Created by anto004 on 10/26/17.
  */
 
-public class EditTextAdapter extends ArrayAdapter<PriceItem> {
+public class EditTextAdapter extends ArrayAdapter<ServiceItem> {
     public static final String LOG_TAG = "DoggieEditTextAdapter";
     private LayoutInflater mInflater;
     private Context mContext;
@@ -51,7 +54,8 @@ public class EditTextAdapter extends ArrayAdapter<PriceItem> {
             viewHolder.editText.removeTextChangedListener(viewHolder.textWatcher);
         }
 
-        final PriceItem item = getItem(position);
+        final ServiceItem item = getItem(position);
+
         viewHolder.textWatcher = new TextWatcher() {
             String previousPrice;
             boolean ignore = false;
@@ -63,7 +67,6 @@ public class EditTextAdapter extends ArrayAdapter<PriceItem> {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
 //                Log.v(LOG_TAG, "OnText Changed");
             }
 
@@ -72,8 +75,8 @@ public class EditTextAdapter extends ArrayAdapter<PriceItem> {
                 if(ignore)
                     return;
                 ignore = true;
-//                Log.v(LOG_TAG, "AfterText Changed: previous price: "+ previousPrice + " new price: "+price[0]);
                 item.setPrice(editable.toString());
+//                Log.v(LOG_TAG, "AfterText Changed: previous price: "+ previousPrice + " new price: "+item.getPrice());
                 ignore = false;
 //                Log.v(LOG_TAG, "AfterText Changed: previous price: "+ previousPrice + " new price: "+price[0]);
             }
@@ -82,6 +85,20 @@ public class EditTextAdapter extends ArrayAdapter<PriceItem> {
         viewHolder.editText.setText(item.getPrice());
         Log.v(LOG_TAG, " price: "+item.getPrice());
 
+        viewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                InsertNewPrice insertNewPrice = new InsertNewPrice();
+                if(!hasFocus) {
+                    Log.v(LOG_TAG, "Exit onFocusChangeListener called ");
+//                    insertNewPrice.execute(item);
+                }
+                if(hasFocus) {
+                    Log.v(LOG_TAG, "Entering onFocusChangeListener called");
+//                    insertNewPrice.execute(item);
+                }
+            }
+        });
         return view;
     }
 
@@ -91,10 +108,12 @@ public class EditTextAdapter extends ArrayAdapter<PriceItem> {
         private TextWatcher textWatcher;
     }
 
-    class InsertNewPrice extends AsyncTask<String, Void, Void>{
+    class InsertNewPrice extends AsyncTask<ServiceItem, Void, Void>{
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Void doInBackground(ServiceItem... serviceItems) {
+            ServiceItem item = serviceItems[0];
+            Log.v(LOG_TAG, "new service price inserting: "+item.toString());
             // remember to close cursor
             Cursor cursor = mContext.getContentResolver().query(
                     DoggieContract.TableItems.CONTENT_URI,
@@ -103,9 +122,24 @@ public class EditTextAdapter extends ArrayAdapter<PriceItem> {
                     null,
                     null
             );
-            while(cursor != null && cursor.moveToNext()){
+            if(!cursor.moveToFirst())
+                return null;
+            List<ServiceItem> databaseServiceItems = Utility.convertCursorToUXFormat(cursor);
 
+            ContentValues cv = new ContentValues();
+            for(ServiceItem serviceItem: databaseServiceItems){
+
+                String databaseServiceName = serviceItem.getName();
+
+                cv.put(databaseServiceName, serviceItem.getPrice());
+
+                if(databaseServiceName.equals(serviceItem.getName())){
+                    cv.remove(databaseServiceName);
+                    cv.put(databaseServiceName, serviceItem.getPrice());
+                }
             }
+
+            Utility.insertIntoDatabase(cv, mContext);
             cursor.close();
             return null;
         }
