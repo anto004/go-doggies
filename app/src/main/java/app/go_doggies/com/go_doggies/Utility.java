@@ -94,7 +94,6 @@ public class Utility {
         results.add(new ServiceItem(DE_MATT, null));
         results.add(new ServiceItem(SPECIAL_HANDLING, null));
 
-
         return results;
     }
 

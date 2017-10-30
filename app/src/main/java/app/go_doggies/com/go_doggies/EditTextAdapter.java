@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -43,25 +44,24 @@ public class EditTextAdapter extends ArrayAdapter<ServiceItem> {
             view = mInflater.inflate(R.layout.groomer_services_list_item,
                     parent, false);
             ViewHolder viewHolder = new ViewHolder();
+            ViewHolder.textView = (TextView) view.findViewById(R.id.groomer_services_item_textView);
             viewHolder.editText = (EditText) view.findViewById(R.id.groomer_services_item_editTextView);
             //Saving data in the view itself
             view.setTag(viewHolder);
         }
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-
         if(viewHolder.textWatcher != null){
             viewHolder.editText.removeTextChangedListener(viewHolder.textWatcher);
         }
 
         final ServiceItem item = getItem(position);
+        final String previousPrice = item.getPrice();
 
         viewHolder.textWatcher = new TextWatcher() {
-            String previousPrice;
             boolean ignore = false;
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                previousPrice = charSequence.toString();
 //                Log.v(LOG_TAG, "BeforeText Changed");
             }
 
@@ -82,36 +82,40 @@ public class EditTextAdapter extends ArrayAdapter<ServiceItem> {
             }
         };
         viewHolder.editText.addTextChangedListener(viewHolder.textWatcher);
+        viewHolder.textView.setText(item.getName());
         viewHolder.editText.setText(item.getPrice());
         Log.v(LOG_TAG, " price: "+item.getPrice());
 
+        //The loader from GroomerServicesFragment Activity will monitor changes to the Table
         viewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                InsertNewPrice insertNewPrice = new InsertNewPrice();
                 if(!hasFocus) {
-                    Log.v(LOG_TAG, "Exit onFocusChangeListener called ");
+                    if(!item.getPrice().equals(previousPrice)) {
+                        Log.v(LOG_TAG, "new price:"+item.getPrice()+" previous price:"+previousPrice);
+                        UpdatePrice updatePrice = new UpdatePrice();
+                        updatePrice.execute(item);
 //                    insertNewPrice.execute(item);
-                }
-                if(hasFocus) {
-                    Log.v(LOG_TAG, "Entering onFocusChangeListener called");
-//                    insertNewPrice.execute(item);
+                    }
                 }
             }
         });
+
         return view;
     }
 
 
     private static class ViewHolder{
+        private static TextView textView;
         private EditText editText;
         private TextWatcher textWatcher;
     }
 
-    class InsertNewPrice extends AsyncTask<ServiceItem, Void, Void>{
+    class UpdatePrice extends AsyncTask<ServiceItem, Void, Void>{
 
         @Override
         protected Void doInBackground(ServiceItem... serviceItems) {
+            Log.v(LOG_TAG, "UpdatePrice doInBackground called");
             ServiceItem item = serviceItems[0];
             Log.v(LOG_TAG, "new service price inserting: "+item.toString());
             // remember to close cursor
@@ -138,11 +142,13 @@ public class EditTextAdapter extends ArrayAdapter<ServiceItem> {
                     cv.put(databaseServiceName, serviceItem.getPrice());
                 }
             }
+            Log.v(LOG_TAG, "Content Values: "+ cv.toString());
 
             Utility.insertIntoDatabase(cv, mContext);
             cursor.close();
             return null;
         }
+
     }
 }
 

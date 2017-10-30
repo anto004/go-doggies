@@ -30,6 +30,6 @@ public class ServiceItem {
     }
 
     public String toString(){
-        return "name: " + name + " price: " + price;
+        return name + price;
     }
 }
