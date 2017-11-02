@@ -5,6 +5,8 @@ package app.go_doggies.com.go_doggies.model;
  */
 
 public class ServiceItem {
+    private String id;
+    private String groomerId;
     private String name;
     private String price;
 

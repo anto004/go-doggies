@@ -22,7 +22,8 @@
             android:layout_weight="1"
             android:background="@android:color/holo_green_light"
             android:ems="10"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:inputType="text"/>
     </LinearLayout>
 
 </RelativeLayout>

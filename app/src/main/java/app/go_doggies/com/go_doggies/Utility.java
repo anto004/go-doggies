@@ -22,21 +22,22 @@ import app.go_doggies.com.go_doggies.model.ServiceItem;
 
 public class Utility {
     static final String LOG_TAG = "DoggieUtility";
-    static final String NAIL_TRIM = "Nail Trim: ";
-    static final String NAIL_GRIND = "Nail Grind: ";
-    static final String TEETH_BRUSHING = "Teeth Brushing: ";
-    static final String EAR_CLEANING = "Ear Cleaning: ";
-    static final String PAW_TRIM = "Paw Trim: ";
-    static final String SANITARY_TRIM = "Sanitary Trim: ";
-    static final String FLEA_SHAMPOO = "Flea Shampoo: ";
-    static final String DEODORANT_SHAMPOO = "Deodorant Shampoo: ";
-    static final String DE_SHEDDING_SHAMPOO = "De-Shedding Shampoo: ";
-    static final String BRUSH_OUT = "Brush Out: ";
-    static final String SPECIAL_SHAMPOO = "Special Shampoo: ";
-    static final String DE_SHEDDING_CONDITIONER = "De-Shedding Conditioner: ";
-    static final String CONDITIONER = "Conditioner: ";
-    static final String DE_MATT = "De Matt: ";
-    static final String SPECIAL_HANDLING = "Special Handling: ";
+    //Services Name Formatted
+    static final String NAIL_TRIM = "Nail Trim ";
+    static final String NAIL_GRIND = "Nail Grind ";
+    static final String TEETH_BRUSHING = "Teeth Brushing ";
+    static final String EAR_CLEANING = "Ear Cleaning ";
+    static final String PAW_TRIM = "Paw Trim ";
+    static final String SANITARY_TRIM = "Sanitary Trim ";
+    static final String FLEA_SHAMPOO = "Flea Shampoo ";
+    static final String DEODORANT_SHAMPOO = "Deodorant Shampoo ";
+    static final String DE_SHEDDING_SHAMPOO = "De-Shedding Shampoo ";
+    static final String BRUSH_OUT = "Brush Out ";
+    static final String SPECIAL_SHAMPOO = "Special Shampoo ";
+    static final String DE_SHEDDING_CONDITIONER = "De-Shedding Conditioner ";
+    static final String CONDITIONER = "Conditioner ";
+    static final String DE_MATT = "De Matt ";
+    static final String SPECIAL_HANDLING = "Special Handling ";
 
 
     public static List<String> convertVectorContentValuesToUXFormat(Vector<ContentValues> cvv) {
@@ -97,7 +98,10 @@ public class Utility {
         return results;
     }
 
+
+
     public static void insertIntoDatabase(ContentValues values, Context context){
+        Log.v(LOG_TAG, "Content Values: "+ values.toString());
         //insert into Database
         Uri returnUri = context.getContentResolver().insert(
                 DoggieContract.TableItems.CONTENT_URI,
