@@ -4,20 +4,20 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import app.go_doggies.com.go_doggies.EditTextAdapter.MyViewHolder;
 import app.go_doggies.com.go_doggies.database.DoggieContract;
 import app.go_doggies.com.go_doggies.model.ServiceItem;
 
@@ -25,104 +25,55 @@ import app.go_doggies.com.go_doggies.model.ServiceItem;
  * Created by anto004 on 10/26/17.
  */
 
-public class EditTextAdapter extends ArrayAdapter<ServiceItem> {
-    public static final String LOG_TAG = "DoggieEditTextAdapter";
-    private LayoutInflater mInflater;
+public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
+    private static final String LOG_TAG = "DoggieEditTextAdapter";
     private Context mContext;
-
-    EditTextAdapter(@NonNull Context context, int resource) {
-        super(context, resource);
-        mInflater = LayoutInflater.from(context);
-        mContext = context;
+    private List<ServiceItem> services;
+    public EditTextAdapter(Context context, List<ServiceItem> services) {
+        this.mContext = context;
+        this.services = services;
     }
 
-    @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
-        if(view == null){
-            view = mInflater.inflate(R.layout.groomer_services_list_item,
-                    parent, false);
-            ViewHolder viewHolder = new ViewHolder(view);
-            //Saving data in the view itself
-            view.setTag(viewHolder);
-        }
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.services_list_item, parent, false);
 
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-//        if(viewHolder.textWatcher != null){
-//            viewHolder.editText.removeTextChangedListener(viewHolder.textWatcher);
-//        }
+        return new MyViewHolder(view);
+    }
 
-        final ServiceItem item = getItem(position);
-        final String previousPrice = item.getPrice();
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        Log.v(LOG_TAG, "onBindViewHolder position: "+position);
+        ServiceItem item = services.get(position);
+        holder.textView.setText(item.getName());
+        holder.editText.setText(item.getPrice());
 
-//        viewHolder.textWatcher = new TextWatcher() {
-//            boolean ignore = false;
+//        holder.editText.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-////                Log.v(LOG_TAG, "BeforeText Changed");
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-////                Log.v(LOG_TAG, "OnText Changed");
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//                if(ignore)
-//                    return;
-//                ignore = true;
-//                item.setPrice(editable.toString());
-////                Log.v(LOG_TAG, "AfterText Changed: previous price: "+ previousPrice + " new price: "+item.getPrice());
-//                ignore = false;
-////                Log.v(LOG_TAG, "AfterText Changed: previous price: "+ previousPrice + " new price: "+price[0]);
-//            }
-//        };
-//        viewHolder.editText.addTextChangedListener(viewHolder.textWatcher);
-        viewHolder.textView.setText(item.getName());
-        viewHolder.editText.setText(item.getPrice());
-        Log.v(LOG_TAG, " price: "+item.getPrice());
-
-        //The loader from GroomerServicesFragment Activity will monitor changes to the Table
-        viewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(!hasFocus) {
-                    if(!item.getPrice().equals(previousPrice)) {
-                        Log.v(LOG_TAG, "new price:"+item.getPrice()+" previous price:"+previousPrice);
-//                        UpdatePrice updatePrice = new UpdatePrice();
-//                        updatePrice.execute(item);
-                    }
-                }
-            }
-        });
-//        String newPrice = viewHolder.editText.getText().toString();
-//        Log.v(LOG_TAG, "New Price: "+newPrice);
-
-//        viewHolder.editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-//                if(actionId == keyEvent.ACTION_UP){
-//                    Log.v(LOG_TAG, "action up");
-//                }
-//
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                EditText editText = (EditText) view.findViewById(R.id.services_item_editText);
+//                Toast.makeText(mContext, editText.getText(), Toast.LENGTH_SHORT).show();
 //                return false;
 //            }
 //        });
+    }
 
-        return view;
+    @Override
+    public int getItemCount() {
+        return services.size();
     }
 
 
-    private static class ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
         private EditText editText;
         private TextWatcher textWatcher;
 
-        ViewHolder(View view){
-            textView = (TextView) view.findViewById(R.id.groomer_services_item_textView);
-            editText = (EditText) view.findViewById(R.id.groomer_services_item_editTextView);
+
+        public MyViewHolder(View view) {
+            super(view);
+            textView = (TextView) view.findViewById(R.id.services_item_textView);
+            editText = (EditText) view.findViewById(R.id.services_item_editText);
         }
     }
 

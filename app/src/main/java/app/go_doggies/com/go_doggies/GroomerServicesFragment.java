@@ -8,12 +8,14 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
@@ -39,7 +41,7 @@ public class GroomerServicesFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.groomer_services, container, false);
+        View rootView =  inflater.inflate(R.layout.services, container, false);
 
 //        List<String> servicesList = new ArrayList<>();
 //
@@ -50,11 +52,14 @@ public class GroomerServicesFragment extends Fragment
 //                servicesList
 //        );
 
-        mGroomerServicesAdapter = new EditTextAdapter(getContext(), R.layout.groomer_services_list_item);
+        mGroomerServicesAdapter = new EditTextAdapter(getActivity(), new ArrayList<ServiceItem>());
 
-        ListView listView = (ListView)rootView.findViewById(R.id.groomer_services_listView);
+        RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.services_recycler);
         //ListView set to Adapter, next inflate the layout of the TextView, next bind the TextView
-        listView.setAdapter(mGroomerServicesAdapter);
+        recyclerView.setAdapter(mGroomerServicesAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
 
         return rootView;
     }
@@ -96,14 +101,16 @@ public class GroomerServicesFragment extends Fragment
         List<ServiceItem> services = Utility.convertCursorToUXFormat(cursor);
 
         if(services != null) {
-            mGroomerServicesAdapter.addAll(services);
+            mGroomerServicesAdapter = new EditTextAdapter(getActivity(), services);
+            RecyclerView recyclerView = getActivity().findViewById(R.id.services_recycler);
+            recyclerView.setAdapter(mGroomerServicesAdapter);
         }
 
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mGroomerServicesAdapter.clear();
+        mGroomerServicesAdapter = new EditTextAdapter(getActivity(), new ArrayList<ServiceItem>());
     }
 
 }
