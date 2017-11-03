@@ -38,7 +38,6 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.services_list_item, parent, false);
-
         return new MyViewHolder(view);
     }
 
@@ -58,12 +57,13 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
             public void onFocusChange(View view, boolean hasFocus) {
                 String newPrice;
 
-                if(!hasFocus){
-                    EditText editText = (EditText) view.findViewById(R.id.services_item_editText);
-                    newPrice = editText.getText().toString();
-                    Toast.makeText(mContext, "New Price: " + newPrice, Toast.LENGTH_SHORT).show();
+                EditText editText = (EditText) view.findViewById(R.id.services_item_editText);
+                newPrice = editText.getText().toString();
 
-                    if(!currentPrice.equals(newPrice)) {
+                if(!hasFocus){
+
+                    if((newPrice != null && !newPrice.isEmpty() && currentPrice != null && !currentPrice.isEmpty()) &&
+                            !currentPrice.equals(newPrice)) {
                         ServiceItem editItem = services.get(pos);// Change this to be more efficient
                         editItem.setPrice(newPrice);
                         Log.v(LOG_TAG, "onFocusChange, New Service Item: " + editItem.toString());
@@ -71,7 +71,9 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                         UpdatePrice updatePrice = new UpdatePrice();
                         updatePrice.execute(editItem);
                     }
-
+                }
+                else{
+                    Toast.makeText(mContext, "Price: " + newPrice, Toast.LENGTH_SHORT).show();
                 }
             }
         });
