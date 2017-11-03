@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,19 +44,20 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Log.v(LOG_TAG, "onBindViewHolder position: "+position);
         ServiceItem item = services.get(position);
         holder.textView.setText(item.getName());
         holder.editText.setText(item.getPrice());
 
-//        holder.editText.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                EditText editText = (EditText) view.findViewById(R.id.services_item_editText);
-//                Toast.makeText(mContext, editText.getText(), Toast.LENGTH_SHORT).show();
-//                return false;
-//            }
-//        });
+
+        holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(!hasFocus){
+                    EditText editText = (EditText) view.findViewById(R.id.services_item_editText);
+                    Toast.makeText(mContext, editText.getText(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
