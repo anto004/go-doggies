@@ -44,17 +44,34 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        ServiceItem item = services.get(position);
-        holder.textView.setText(item.getName());
-        holder.editText.setText(item.getPrice());
+        final int pos = position;
+        final ServiceItem item = services.get(position);
+        final String name = item.getName();
+        final String currentPrice = item.getPrice();
+
+        holder.textView.setText(name);
+        holder.editText.setText(currentPrice);
 
 
         holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
+                String newPrice;
+
                 if(!hasFocus){
                     EditText editText = (EditText) view.findViewById(R.id.services_item_editText);
-                    Toast.makeText(mContext, editText.getText(), Toast.LENGTH_SHORT).show();
+                    newPrice = editText.getText().toString();
+                    Toast.makeText(mContext, "New Price: " + newPrice, Toast.LENGTH_SHORT).show();
+
+                    if(!currentPrice.equals(newPrice)) {
+                        ServiceItem editItem = services.get(pos);// Change this to be more efficient
+                        editItem.setPrice(newPrice);
+                        Log.v(LOG_TAG, "onFocusChange, New Service Item: " + editItem.toString());
+
+                        UpdatePrice updatePrice = new UpdatePrice();
+                        updatePrice.execute(editItem);
+                    }
+
                 }
             }
         });
@@ -93,8 +110,10 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                     null,
                     null
             );
-            if(!cursor.moveToFirst())
+            if(!cursor.moveToFirst()) {
+                Log.v(LOG_TAG, "No Service Items in Table");
                 return null;
+            }
 
             HashMap<String, String> columnNamesWithPrice = cursorToColumnNamesWithPrice(cursor);
             // I want to insert the new price by replacing the old price with the new price
@@ -121,7 +140,6 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                     cv.put(entry.getKey(), item.getPrice());
                 }
             }
-            Log.v(LOG_TAG, "Content Values: "+cv.toString());
 
             //Before insert, delete the row to be inserted with new values, goal is to replace the row
             mContext.getContentResolver().delete(
@@ -130,7 +148,7 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                     new String[]{columnId}
             );
 
-//            Utility.insertIntoDatabase(cv, mContext);
+            Utility.insertIntoDatabase(cv, mContext);
             cursor.close();
             return null;
         }
@@ -147,8 +165,6 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 String columnName = columnNames[i];
                 String price = cursor.getString(cursor.getColumnIndex(columnName));
                 map.put(columnName, price);
-                Log.v("getColumnNames", "columnName: " + columnName +
-                        "   Price: " + price);
             }
             return map;
         }

@@ -43,23 +43,12 @@ public class GroomerServicesFragment extends Fragment
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.services, container, false);
 
-//        List<String> servicesList = new ArrayList<>();
-//
-//        mGroomerServicesAdapter = new ArrayAdapter<String>(
-//                getActivity(),
-//                R.layout.groomer_services_list_item,
-//                R.id.groomer_services_item_textView,
-//                servicesList
-//        );
-
         mGroomerServicesAdapter = new EditTextAdapter(getActivity(), new ArrayList<ServiceItem>());
 
         RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.services_recycler);
         //ListView set to Adapter, next inflate the layout of the TextView, next bind the TextView
         recyclerView.setAdapter(mGroomerServicesAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-
 
         return rootView;
     }
@@ -110,7 +99,9 @@ public class GroomerServicesFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mGroomerServicesAdapter = new EditTextAdapter(getActivity(), new ArrayList<ServiceItem>());
+        Log.v(LOG_TAG, "onLoader Reset Called");
+        RecyclerView recyclerView = getActivity().findViewById(R.id.services_recycler);
+        recyclerView.setAdapter(new EditTextAdapter(getActivity(), new ArrayList<ServiceItem>()));
     }
 
 }

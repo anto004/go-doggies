@@ -1,6 +1,5 @@
 package app.go_doggies.com.go_doggies;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -101,14 +100,12 @@ public class Utility {
 
 
     public static void insertIntoDatabase(ContentValues values, Context context){
-        Log.v(LOG_TAG, "Content Values: "+ values.toString());
+        Log.v(LOG_TAG, "New Values to Insert: "+ values.toString());
         //insert into Database
         Uri returnUri = context.getContentResolver().insert(
                 DoggieContract.TableItems.CONTENT_URI,
                 values
         );
-        long rowId = ContentUris.parseId(returnUri);
-        Log.v(LOG_TAG, "Inserted New Data at Row: "+ rowId);
     }
 
 }
