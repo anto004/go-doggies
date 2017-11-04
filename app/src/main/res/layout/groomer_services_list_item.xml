@@ -23,7 +23,8 @@
             android:background="@android:color/holo_green_light"
             android:ems="10"
             android:textSize="24sp"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:focusableInTouchMode="true"/>
     </LinearLayout>
 
 </RelativeLayout>

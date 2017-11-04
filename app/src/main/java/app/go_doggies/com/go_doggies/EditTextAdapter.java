@@ -30,6 +30,7 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private static final String LOG_TAG = "DoggieEditTextAdapter";
     private Context mContext;
     private List<ServiceItem> services;
+    private int focusPos = 0;
     public EditTextAdapter(Context context, List<ServiceItem> services) {
         this.mContext = context;
         this.services = services;
@@ -42,11 +43,15 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
         final int pos = position;
         final ServiceItem item = services.get(position);
         final String name = item.getName();
         final String currentPrice = item.getPrice();
+
+        if(focusPos == position){
+            holder.editText.requestFocus();
+        }
 
         holder.textView.setText(name);
         holder.editText.setText(currentPrice);
@@ -70,13 +75,30 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
                         UpdatePrice updatePrice = new UpdatePrice();
                         updatePrice.execute(editItem);
+
+                        //notifies the adapter the data at that view has changed
+                        notifyItemChanged(position);
                     }
                 }
                 else{
+
                     Toast.makeText(mContext, "Price: " + newPrice, Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
+//        holder.editText.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+//                    EditText editText = (EditText) view.findViewById(R.id.services_item_editText);
+//                    String price = editText.getText().toString();
+//                    Toast.makeText(mContext, "Price: " + price, Toast.LENGTH_SHORT).show();
+//                    return false;
+//                }
+//                return true;
+//            }
+//        });
     }
 
     @Override

@@ -27,7 +27,8 @@ public class GroomerServicesFragment extends Fragment
     private static final String LOG_TAG = "Go-doggies";
     private EditTextAdapter mGroomerServicesAdapter;
     private static final int LOADER_INT = 0;
-
+    private RecyclerView mRecyclerView;
+    private boolean firstTime;
     public GroomerServicesFragment() {
         // Required empty public constructor
     }
@@ -45,10 +46,13 @@ public class GroomerServicesFragment extends Fragment
 
         mGroomerServicesAdapter = new EditTextAdapter(getActivity(), new ArrayList<ServiceItem>());
 
-        RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.services_recycler);
+        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.services_recycler);
         //ListView set to Adapter, next inflate the layout of the TextView, next bind the TextView
-        recyclerView.setAdapter(mGroomerServicesAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mGroomerServicesAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(null);
+
+        firstTime = true;
 
         return rootView;
     }
@@ -86,22 +90,30 @@ public class GroomerServicesFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.v(LOG_TAG, "onLoad Finished Called");
-        mGroomerServicesAdapter.notifyDataSetChanged();
-        List<ServiceItem> services = Utility.convertCursorToUXFormat(cursor);
 
-        if(services != null) {
-            mGroomerServicesAdapter = new EditTextAdapter(getActivity(), services);
-            RecyclerView recyclerView = getActivity().findViewById(R.id.services_recycler);
-            recyclerView.setAdapter(mGroomerServicesAdapter);
+        if(firstTime) {
+            //mGroomerServicesAdapter.setHasStableIds(true);
+            mGroomerServicesAdapter.notifyDataSetChanged();
+
+            List<ServiceItem> services = Utility.convertCursorToUXFormat(cursor);
+
+
+            if (services != null) {
+                mGroomerServicesAdapter = new EditTextAdapter(getActivity(), services);
+                //set removeAndRecycleExistingViews to false if it hasStableId's
+                mRecyclerView.swapAdapter(mGroomerServicesAdapter, false);
+            }
+            firstTime = false;
         }
+
 
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.v(LOG_TAG, "onLoader Reset Called");
-        RecyclerView recyclerView = getActivity().findViewById(R.id.services_recycler);
-        recyclerView.setAdapter(new EditTextAdapter(getActivity(), new ArrayList<ServiceItem>()));
+        mRecyclerView.setAdapter(null);
+        // try swapAdapter
     }
 
 }
