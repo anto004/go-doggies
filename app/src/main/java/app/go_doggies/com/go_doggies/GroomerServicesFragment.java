@@ -6,6 +6,7 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +28,7 @@ import app.go_doggies.com.go_doggies.model.ServiceItem;
 public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String LOG_TAG = "Go-doggies";
+    private static final String LOG_TAG = "GroomerServices";
     private EditTextAdapter mGroomerServicesAdapter;
     private static final int LOADER_INT = 0;
     private RecyclerView mRecyclerView;
@@ -53,6 +57,9 @@ public class GroomerServicesFragment extends Fragment
         mRecyclerView.setItemAnimator(null);
 
         firstTime = true;
+
+        UpdatePriceToServer updatePriceToServer = new UpdatePriceToServer();
+        updatePriceToServer.execute();
 
         return rootView;
     }
@@ -114,6 +121,48 @@ public class GroomerServicesFragment extends Fragment
         Log.v(LOG_TAG, "onLoader Reset Called");
         mRecyclerView.setAdapter(null);
         // try swapAdapter
+    }
+
+    static class UpdatePriceToServer extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            HttpURLConnection urlConnection = null;
+
+            try {
+
+                StringBuilder params = new StringBuilder();
+                params.append(URLEncoder.encode("nail_trim", "UTF-8"));
+                params.append(URLEncoder.encode("=", "UTF-8"));
+                params.append(URLEncoder.encode(String.valueOf(11), "UTF-8"));
+
+                byte[] postBytes = params.toString().getBytes();
+
+                String urlStr = "https://go-doggies.com/Groomer_dashboard/set_groomer_service_rates";
+                URL url = new URL(urlStr);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.getOutputStream().write(postBytes);
+
+                Log.v(LOG_TAG, "Set Price, URL: " + url + " Parameters: " + params.toString());
+
+                int responseCode = urlConnection.getResponseCode();
+
+                Log.v(LOG_TAG, "Response Code: " + responseCode);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null){
+                    urlConnection.disconnect();
+                }
+            }
+
+
+            return null;
+        }
     }
 
 }

@@ -51,7 +51,7 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
         }
         Log.v(LOG_TAG, "Extras: "+sb.toString());
 
-        //fetchDataFromServer();
+        fetchDataFromServer();
 
 
     }

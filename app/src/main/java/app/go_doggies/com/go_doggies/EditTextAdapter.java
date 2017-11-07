@@ -30,7 +30,6 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private static final String LOG_TAG = "DoggieEditTextAdapter";
     private Context mContext;
     private List<ServiceItem> services;
-    private int focusPos = 0;
     public EditTextAdapter(Context context, List<ServiceItem> services) {
         this.mContext = context;
         this.services = services;
@@ -49,10 +48,6 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
         final String name = item.getName();
         final String currentPrice = item.getPrice();
 
-        if(focusPos == position){
-            holder.editText.requestFocus();
-        }
-
         holder.textView.setText(name);
         holder.editText.setText(currentPrice);
 
@@ -67,7 +62,8 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
                 if(!hasFocus){
 
-                    if((newPrice != null && !newPrice.isEmpty() && currentPrice != null && !currentPrice.isEmpty()) &&
+                    if((newPrice != null && !newPrice.isEmpty() &&
+                            currentPrice != null && !currentPrice.isEmpty()) &&
                             !currentPrice.equals(newPrice)) {
                         ServiceItem editItem = services.get(pos);// Change this to be more efficient
                         editItem.setPrice(newPrice);
