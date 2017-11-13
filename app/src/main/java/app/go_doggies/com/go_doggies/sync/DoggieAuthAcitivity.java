@@ -60,7 +60,7 @@ public class DoggieAuthAcitivity extends AccountAuthenticatorActivity {
                     .setText(accountName);
         }
 
-        findViewById(R.id.login_button)
+        findViewById(R.id.sign_in_button)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

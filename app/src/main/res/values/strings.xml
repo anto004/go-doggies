@@ -6,7 +6,8 @@
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
     <string name="login_button_label">Login</string>
-    <string name="test_button">Test</string>
+    <string name="sign_in_button_label">Sign In</string>
+    <string name="services_button">Services</string>
 
     <!-- Sync -->
     <string name="accountType">app.go_doggies.com</string>

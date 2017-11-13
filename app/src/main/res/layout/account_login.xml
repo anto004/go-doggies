@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_app_green"
+        android:gravity="top|center"
         android:orientation="vertical"
         android:paddingLeft="40dp"
         android:paddingRight="40dp"
@@ -28,13 +29,12 @@
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/login_button"
-            android:layout_width="wrap_content"
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@android:color/holo_green_light"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/login_button_label" />
+            android:layout_marginTop="50dp"
+            android:background="@color/color_app_green"
+            android:text="@string/login_button_label"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 </FrameLayout>

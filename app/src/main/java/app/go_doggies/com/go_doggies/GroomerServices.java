@@ -8,8 +8,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import app.go_doggies.com.go_doggies.sync.DoggieSyncAdapter;
-
 /**
  * Created by anto004 on 8/31/17.
  */
@@ -28,7 +26,7 @@ public class GroomerServices extends AppCompatActivity {
                     .commit();
         }
         Log.v(LOG_TAG, "GroomerServices onCreate called");
-        DoggieSyncAdapter.syncImmediately(this);
+//        DoggieSyncAdapter.syncImmediately(this);
 
     }
 
