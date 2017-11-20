@@ -3,22 +3,28 @@ package app.go_doggies.com.go_doggies;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import app.go_doggies.com.go_doggies.sync.DoggieAuthAcitivity;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+
+import app.go_doggies.com.go_doggies.sync.DoggieAuthActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private final String LOG_TAG = this.getClass().getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSION_WRITE = 1;
 
     // Used to load the 'native-lib' library on application startup.
@@ -39,8 +45,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button loginButton = (Button) findViewById(R.id.sign_in_button);
         loginButton.setOnClickListener(this);
 
-        Button testButton = (Button)findViewById(R.id.services_button);
-        testButton.setOnClickListener(this);
+        Button servicesButton = (Button)findViewById(R.id.services_button);
+        servicesButton.setOnClickListener(this);
+
+        Button updateNailTrimButton = (Button) findViewById(R.id.update_nail_trim_button);
+        updateNailTrimButton.setOnClickListener(this);
 
     }
 
@@ -70,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.sign_in_button:
-                Intent loginIntent = new Intent(this, DoggieAuthAcitivity.class);
+                Intent loginIntent = new Intent(this, DoggieAuthActivity.class);
                 startActivity(loginIntent);
             break;
 
@@ -98,6 +107,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.services_button:
                 Intent serviceIntent = new Intent(MainActivity.this, GroomerServices.class);
                 startActivity(serviceIntent);
+                break;
+
+            case R.id.update_nail_trim_button:
+                UpdatePriceToServer updatePriceToServer = new UpdatePriceToServer();
+                updatePriceToServer.execute();
         }
     }
 
@@ -130,5 +144,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
         return true;
+    }
+
+    static class UpdatePriceToServer extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            HttpURLConnection urlConnection = null;
+
+            try {
+
+                StringBuilder urlParameter = new StringBuilder();
+                urlParameter.append(URLEncoder.encode("nail_trim", "UTF-8"));
+                urlParameter.append('=');
+                urlParameter.append(URLEncoder.encode(String.valueOf(11), "UTF-8"));
+
+                byte[] postData = urlParameter.toString().getBytes("UTF-8");
+
+                String urlString = "https://go-doggies.com/Groomer_dashboard/update_service_rate";
+                URL url = new URL(urlString);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.getOutputStream().write(postData);
+
+                Log.v(LOG_TAG, "URL is: "+ url + " Parameter: "+ urlParameter.toString());
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.v(LOG_TAG, "Response Code: " + responseCode);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null){
+                    urlConnection.disconnect();
+                }
+            }
+
+            return null;
+        }
     }
 }

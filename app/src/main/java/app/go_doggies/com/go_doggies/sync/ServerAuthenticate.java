@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by anto004 on 10/13/17.
@@ -47,6 +49,18 @@ public class ServerAuthenticate {
             urlConnection.getOutputStream().write(postData);
 
             int responseCode = urlConnection.getResponseCode();
+
+            if(responseCode == HttpURLConnection.HTTP_OK){
+                Map<String, List<String>> headers = urlConnection.getHeaderFields ();
+                for(Map.Entry<String, List<String>> entry: headers.entrySet()){
+                    Log.v(LOG_TAG, "Header name: "+ entry.getKey());
+                    for(String header: entry.getValue()){
+                        Log.v(LOG_TAG, "values: "+ header);
+                    }
+                }
+            }
+
+
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 String line;
                 StringBuffer stringBuffer = new StringBuffer();

@@ -18,7 +18,7 @@ import app.go_doggies.com.go_doggies.R;
  * Created by anto004 on 10/13/17.
  */
 
-public class DoggieAuthAcitivity extends AccountAuthenticatorActivity {
+public class DoggieAuthActivity extends AccountAuthenticatorActivity {
     /* Authenticator sends response to AuthenticatorAcitivity and
     *  AuthenticatorActivity sends results back to Authenticator
     *  by setting setAccountAuthenticatorResult on finish
@@ -31,7 +31,7 @@ public class DoggieAuthAcitivity extends AccountAuthenticatorActivity {
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
     public static final String PARAM_USER_PASS = "USER_PASS";
 
-    public static final String LOG_TAG = DoggieAuthAcitivity.class.getSimpleName();
+    public static final String LOG_TAG = DoggieAuthActivity.class.getSimpleName();
 
     private AccountManager mAccountManager;
     private String mAuthTokenType;

@@ -30,10 +30,10 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
                              String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
         Log.d(LOG_TAG, "addAccount");
 
-        Intent intent = new Intent(mContext, DoggieAuthAcitivity.class);
-        intent.putExtra(DoggieAuthAcitivity.ARG_ACCOUNT_TYPE, accountType);
-        intent.putExtra(DoggieAuthAcitivity.ARG_AUTH_TYPE, authTokenType);
-        intent.putExtra(DoggieAuthAcitivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
+        Intent intent = new Intent(mContext, DoggieAuthActivity.class);
+        intent.putExtra(DoggieAuthActivity.ARG_ACCOUNT_TYPE, accountType);
+        intent.putExtra(DoggieAuthActivity.ARG_AUTH_TYPE, authTokenType);
+        intent.putExtra(DoggieAuthActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
         //If AbstractAccountAuthenticator needs to use an Activity to handle the request
         //It passes in the response which the Activity will set the result via setAccountAuthenticatorResult
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
@@ -103,11 +103,11 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
 
         //If we reach here we couldn't authenticate with the user's password
         //Re-prompt for the credentials through Authenticator's Activity
-        Intent intent =new Intent(mContext, DoggieAuthAcitivity.class);
+        Intent intent =new Intent(mContext, DoggieAuthActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
                 accountAuthenticatorResponse);
-        intent.putExtra(DoggieAuthAcitivity.ARG_ACCOUNT_TYPE, account.type);
-        intent.putExtra(DoggieAuthAcitivity.ARG_AUTH_TYPE, authTokenType);
+        intent.putExtra(DoggieAuthActivity.ARG_ACCOUNT_TYPE, account.type);
+        intent.putExtra(DoggieAuthActivity.ARG_AUTH_TYPE, authTokenType);
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);

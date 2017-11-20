@@ -183,28 +183,28 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
             );
         }
         //Replacing data in database with server data
-//        if(cursor.moveToFirst()){
-//            //delete current row
-//            String columnId = cursor.getString(
-//                    cursor.getColumnIndex(DoggieContract.TableItems._ID));
-//            getContext().getContentResolver().delete(
-//                    DoggieContract.TableItems.CONTENT_URI,
-//                    DoggieContract.TableItems._ID +"=?",
-//                    new String[]{columnId}
-//            );
-//
-//            //Insert new data
-//            Utility.insertIntoDatabase(values, getContext());
-//            //Testing purpose
-//            cursor = getContext().getContentResolver().query(
-//                    DoggieContract.TableItems.CONTENT_URI,
-//                    null,
-//                    null,
-//                    null,
-//                    null
-//            );
-//
-//        }
+        else{
+            //delete current row
+            String columnId = cursor.getString(
+                    cursor.getColumnIndex(DoggieContract.TableItems._ID));
+            getContext().getContentResolver().delete(
+                    DoggieContract.TableItems.CONTENT_URI,
+                    DoggieContract.TableItems._ID +"=?",
+                    new String[]{columnId}
+            );
+
+            //Insert new data
+            Utility.insertIntoDatabase(values, getContext());
+            //Testing purpose
+            cursor = getContext().getContentResolver().query(
+                    DoggieContract.TableItems.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
+        }
         Log.d(LOG_TAG, "Fetch BackgroundTask Complete. " + cursor.getCount() + " Rows fetched");
 
         cursor.close();
