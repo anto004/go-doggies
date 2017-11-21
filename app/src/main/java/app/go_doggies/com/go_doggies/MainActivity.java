@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,11 +18,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 
 import app.go_doggies.com.go_doggies.sync.DoggieAuthActivity;
+import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -45,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button loginButton = (Button) findViewById(R.id.sign_in_button);
         loginButton.setOnClickListener(this);
 
-        Button servicesButton = (Button)findViewById(R.id.services_button);
+        Button servicesButton = (Button) findViewById(R.id.services_button);
         servicesButton.setOnClickListener(this);
 
         Button updateNailTrimButton = (Button) findViewById(R.id.update_nail_trim_button);
@@ -112,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.update_nail_trim_button:
                 UpdatePriceToServer updatePriceToServer = new UpdatePriceToServer();
                 updatePriceToServer.execute();
+                break;
         }
     }
 
@@ -147,18 +155,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     static class UpdatePriceToServer extends AsyncTask<Void, Void, Void> {
-
+        CookieManager mCookieManager = ServerAuthenticate.mCookieManager;
         @Override
         protected Void doInBackground(Void... voids) {
 
             HttpURLConnection urlConnection = null;
-
+            BufferedReader bufferedReader = null;
+            String updatedPriceString = "";
             try {
 
                 StringBuilder urlParameter = new StringBuilder();
-                urlParameter.append(URLEncoder.encode("nail_trim", "UTF-8"));
+                urlParameter.append(URLEncoder.encode("nail_grind", "UTF-8"));
                 urlParameter.append('=');
-                urlParameter.append(URLEncoder.encode(String.valueOf(11), "UTF-8"));
+                urlParameter.append(URLEncoder.encode(String.valueOf(100), "UTF-8"));
 
                 byte[] postData = urlParameter.toString().getBytes("UTF-8");
 
@@ -167,12 +176,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
+                if(mCookieManager.getCookieStore().getCookies().size() > 0){
+                    urlConnection.setRequestProperty("Cookie",
+                            TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
+                    Log.v(LOG_TAG, "setRequestProperty: "+
+                            TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
+                }
                 urlConnection.getOutputStream().write(postData);
 
                 Log.v(LOG_TAG, "URL is: "+ url + " Parameter: "+ urlParameter.toString());
 
                 int responseCode = urlConnection.getResponseCode();
                 Log.v(LOG_TAG, "Response Code: " + responseCode);
+                Map<String, List<String>> headers = urlConnection.getHeaderFields();
+                for(Map.Entry<String, List<String>> entry: headers.entrySet()){
+                    Log.v(LOG_TAG, "Header name: "+entry.getKey());
+                    for(String header: entry.getValue()){
+                        Log.v(LOG_TAG, "value: "+ header);
+                    }
+                }
+
+                if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    String line;
+                    StringBuffer buffer = new StringBuffer();
+                    bufferedReader = new BufferedReader(new InputStreamReader(
+                            urlConnection.getInputStream()
+                    ));
+
+                    while((line = bufferedReader.readLine()) != null){
+                        buffer.append(line);
+                        buffer.append("\n");
+                    }
+                    updatedPriceString = buffer.toString();
+                    Log.v(LOG_TAG, "updatedPriceString: " + updatedPriceString);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();

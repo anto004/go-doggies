@@ -87,10 +87,11 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
 
         @Override
         protected Intent doInBackground(String... params) {
-//            final String username = "test@go-doggies.com";
-//            final String password = "2016";
-            String username = params[0];
-            String password = params[1];
+            //Testing
+            final String username = "test@go-doggies.com";
+            final String password = "2016";
+//            String username = params[0];
+//            String password = params[1];
             String accountType = params[2];
             Log.v(LOG_TAG, "username: "+username + "password: "+password+ " accountType: "+accountType);
 

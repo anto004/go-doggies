@@ -5,6 +5,8 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.CookieManager;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -16,6 +18,9 @@ import java.util.Map;
 
 public class ServerAuthenticate {
     public static final String LOG_TAG = "DoggieServerAuth";
+    public static final String COOKIE_HEADER = "Set-Cookie";
+
+    public static CookieManager mCookieManager;
 
     public static String signIn(String username, String password){
 
@@ -51,12 +56,13 @@ public class ServerAuthenticate {
             int responseCode = urlConnection.getResponseCode();
 
             if(responseCode == HttpURLConnection.HTTP_OK){
-                Map<String, List<String>> headers = urlConnection.getHeaderFields ();
-                for(Map.Entry<String, List<String>> entry: headers.entrySet()){
-                    Log.v(LOG_TAG, "Header name: "+ entry.getKey());
-                    for(String header: entry.getValue()){
-                        Log.v(LOG_TAG, "values: "+ header);
-                    }
+                mCookieManager = new CookieManager();
+                Map<String, List<String>> headers = urlConnection.getHeaderFields();
+                List<String> cookies = headers.get(COOKIE_HEADER);
+                for(String cookie: cookies){
+                    HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);
+                    Log.v(LOG_TAG, "cookie: "+ cookie + "HttpCookie: "+ httpCookie);
+                    mCookieManager.getCookieStore().add(null, httpCookie);
                 }
             }
 
