@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -163,37 +162,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             BufferedReader bufferedReader = null;
             String updatedPriceString = "";
             try {
-
-                StringBuilder urlParameter = new StringBuilder();
-                urlParameter.append(URLEncoder.encode("nail_grind", "UTF-8"));
-                urlParameter.append('=');
-                urlParameter.append(URLEncoder.encode(String.valueOf(100), "UTF-8"));
-
-                byte[] postData = urlParameter.toString().getBytes("UTF-8");
+                String charset = "UTF-8";
+                StringBuilder urlParameters = new StringBuilder();
+//                urlParameters.append("groomer_id");
+//                urlParameters.append("=");
+//                urlParameters.append("94");
+//                urlParameters.append("&");
+                urlParameters.append("paw_trim");
+                urlParameters.append("=");
+                urlParameters.append("20");
+                urlParameters.append("&");
+                urlParameters.append("nail_trim");
+                urlParameters.append("=");
+                urlParameters.append("20");
 
                 String urlString = "https://go-doggies.com/Groomer_dashboard/update_service_rate";
                 URL url = new URL(urlString);
 
+                Log.v(LOG_TAG, "URL is: "+ url + " Parameter: "+ urlParameters.toString());
+
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
-                if(mCookieManager.getCookieStore().getCookies().size() > 0){
+
+
+                if(mCookieManager.getCookieStore().getCookies().size() > 0) {
                     urlConnection.setRequestProperty("Cookie",
                             TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
-                    Log.v(LOG_TAG, "setRequestProperty: "+
+                    Log.v(LOG_TAG, "setRequestProperty: " +
                             TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
                 }
+
+                byte [] postData = urlParameters.toString().getBytes("UTF-8");
                 urlConnection.getOutputStream().write(postData);
 
-                Log.v(LOG_TAG, "URL is: "+ url + " Parameter: "+ urlParameter.toString());
-
-                int responseCode = urlConnection.getResponseCode();
-                Log.v(LOG_TAG, "Response Code: " + responseCode);
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
                 for(Map.Entry<String, List<String>> entry: headers.entrySet()){
-                    Log.v(LOG_TAG, "Header name: "+entry.getKey());
-                    for(String header: entry.getValue()){
-                        Log.v(LOG_TAG, "value: "+ header);
-                    }
+                    Log.v(LOG_TAG, " Header name: "+entry.getKey() + "    "+ entry.getValue());
                 }
 
                 if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){

@@ -58,6 +58,13 @@ public class ServerAuthenticate {
             if(responseCode == HttpURLConnection.HTTP_OK){
                 mCookieManager = new CookieManager();
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
+
+                //Display all Headers
+                Log.v(LOG_TAG, "Login Header Response");
+                for(Map.Entry<String, List<String>> entry: headers.entrySet() ){
+                    Log.v(LOG_TAG, "Name: "+entry.getKey() + " Value: "+ entry.getValue());
+                }
+
                 List<String> cookies = headers.get(COOKIE_HEADER);
                 for(String cookie: cookies){
                     HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);

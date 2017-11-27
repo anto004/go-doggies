@@ -70,7 +70,7 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
             StringBuilder urlParameter = new StringBuilder();
             urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
             urlParameter.append('=');
-            urlParameter.append(URLEncoder.encode(String.valueOf(94), "UTF-8"));
+            urlParameter.append(URLEncoder.encode(String.valueOf(617), "UTF-8"));
 
             byte[] postData = urlParameter.toString().getBytes("UTF-8");
             String urlString = "https://go-doggies.com/Groomer_dashboard/get_groomer_service_rates";
