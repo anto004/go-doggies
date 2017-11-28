@@ -57,6 +57,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button updateNailTrimButton = (Button) findViewById(R.id.update_nail_trim_button);
         updateNailTrimButton.setOnClickListener(this);
 
+        if(Utility.hasNetwork(this)){
+            Toast.makeText(this, "Has Network", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "No Network", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
