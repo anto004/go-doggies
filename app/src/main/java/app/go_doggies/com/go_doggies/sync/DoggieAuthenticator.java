@@ -41,6 +41,7 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+
         return bundle;
     }
 
@@ -74,12 +75,18 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
 
         Log.v(LOG_TAG, "peekAuthToken: "+authToken);
 
+        // Test for changed password
+        // Invalidate AuthToken
+        // checking for not empty authToken as well
+        // empty for first time
+        // not empty for Re-authenticating
+
         //If not present in cache
         if(TextUtils.isEmpty(authToken)){
             String password = accountManager.getPassword(account);
             if(password != null){
                 try {
-//                    Log.v(LOG_TAG, "Re-authenticating with the existing password"):
+                    Log.v(LOG_TAG, "Re-authenticating with the existing password, to be implemented");
 //                    User user = sServerAuthenticate.userSignIn(account.name, password, authTokenType);
 //                    if (user != null) {
 //                        authToken = user.getSessionToken();
@@ -103,7 +110,7 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
 
         //If we reach here we couldn't authenticate with the user's password
         //Re-prompt for the credentials through Authenticator's Activity
-        Intent intent =new Intent(mContext, DoggieAuthActivity.class);
+        Intent intent = new Intent(mContext, DoggieAuthActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
                 accountAuthenticatorResponse);
         intent.putExtra(DoggieAuthActivity.ARG_ACCOUNT_TYPE, account.type);

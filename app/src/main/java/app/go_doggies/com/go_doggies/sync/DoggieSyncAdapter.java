@@ -30,6 +30,14 @@ import app.go_doggies.com.go_doggies.database.DoggieContract;
  * Created by anto004 on 10/12/17.
  */
 
+/**
+ * SyncAdapter:
+ *      Fetches data, saves data to local database
+ * Update price:
+ *      Only when online
+ *      If updated offline, when it comes back online, offline data will be replaced with server data
+ */
+
 public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String LOG_TAG = DoggieSyncAdapter.class.getSimpleName();
 
@@ -66,7 +74,7 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
         String groomerServicesJsonStr = null;
 
         try {
-//                "groomer_id=94";
+//                "groomer_id=617";
             StringBuilder urlParameter = new StringBuilder();
             urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
             urlParameter.append('=');
@@ -100,8 +108,7 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
-            // If the code didn't successfully get the weather data, there's no point in attemping
-            // to parse it.
+
             return ;
         } finally{
             if (urlConnection != null) {
@@ -115,9 +122,12 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         }
+
         if(groomerServicesJsonStr != null) {
             try {
+
                 getReadableDataFromJSON(groomerServicesJsonStr);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

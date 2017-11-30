@@ -20,7 +20,7 @@ public class ServerAuthenticate {
     public static final String LOG_TAG = "DoggieServerAuth";
     public static final String COOKIE_HEADER = "Set-Cookie";
 
-    public static CookieManager mCookieManager;
+    public static CookieManager mCookieManager = new CookieManager();
 
     public static String signIn(String username, String password){
 
@@ -30,7 +30,7 @@ public class ServerAuthenticate {
         try {
 
             StringBuilder urlParameter = new StringBuilder();
-
+            //Login fails with URLEncoded
             urlParameter.append("user_name");
             urlParameter.append('=');
             urlParameter.append(username);
@@ -56,19 +56,17 @@ public class ServerAuthenticate {
             int responseCode = urlConnection.getResponseCode();
 
             if(responseCode == HttpURLConnection.HTTP_OK){
-                mCookieManager = new CookieManager();
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
 
                 //Display all Headers
                 Log.v(LOG_TAG, "Login Header Response");
                 for(Map.Entry<String, List<String>> entry: headers.entrySet() ){
-                    Log.v(LOG_TAG, "Name: "+entry.getKey() + " Value: "+ entry.getValue());
+                    Log.v(LOG_TAG, "Name: "+entry.getKey() +  "     "+ entry.getValue());
                 }
 
                 List<String> cookies = headers.get(COOKIE_HEADER);
                 for(String cookie: cookies){
                     HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);
-                    Log.v(LOG_TAG, "cookie: "+ cookie + "HttpCookie: "+ httpCookie);
                     mCookieManager.getCookieStore().add(null, httpCookie);
                 }
             }

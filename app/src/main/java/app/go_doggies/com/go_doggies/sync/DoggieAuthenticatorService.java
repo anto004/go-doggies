@@ -20,6 +20,7 @@ public class DoggieAuthenticatorService extends Service {
     }
 
     // When the system binds to this service to make RPC call
+    // Authtenticator Service talks SyncAdapter Service through binder
     // return the authenticator's binder
     @Nullable
     @Override

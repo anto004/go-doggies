@@ -28,6 +28,7 @@ public class GroomerServicesFragment extends Fragment
     private EditTextAdapter mGroomerServicesAdapter;
     private static final int LOADER_INT = 0;
     private RecyclerView mRecyclerView;
+
     public GroomerServicesFragment() {
         // Required empty public constructor
     }
