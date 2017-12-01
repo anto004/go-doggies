@@ -38,6 +38,7 @@ public class LinkAccountActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(mConnectedAccount != null) {
                     Toast.makeText(getBaseContext(), "Account Name: " + mConnectedAccount.name, Toast.LENGTH_SHORT).show();
+                    DoggieSyncAdapter.syncImmediately(getApplicationContext(), mConnectedAccount);
                 }
                 else{
                     Toast.makeText(getBaseContext(), "Please Create Account!", Toast.LENGTH_SHORT).show();

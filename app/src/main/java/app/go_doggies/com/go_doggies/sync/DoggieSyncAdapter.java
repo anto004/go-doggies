@@ -1,7 +1,6 @@
 package app.go_doggies.com.go_doggies.sync;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -222,10 +221,9 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
 
-    public static void syncImmediately(Context context){
+    public static void syncImmediately(Context context, Account account){
         //Sync adapter with go-doggie account
         //connect and then sync
-        Account account = getSyncAccount(context);
         String authority = context.getString(R.string.content_authority);
 
         Bundle bundle = new Bundle();
@@ -235,22 +233,4 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
         ContentResolver.requestSync(account, authority, bundle);
     }
 
-    public static Account getSyncAccount(Context context){
-        AccountManager accountManager =
-                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
-
-        Account account = new Account(
-                context.getString(R.string.app_name),
-                context.getString(R.string.accountType)
-        );
-
-        if(null == accountManager.getPassword(account)){
-            Log.v(LOG_TAG, "creating new account");
-            if(!accountManager.addAccountExplicitly(account, "", null)){
-                Log.v(LOG_TAG, "error creating account");
-                return null;
-            }
-        }
-        return account;
-    }
 }

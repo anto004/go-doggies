@@ -1,8 +1,6 @@
 package app.go_doggies.com.go_doggies;
 
 import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -68,14 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
             }
         });
-
-        //Test
-        //get account from main activity when it is already created previously
-        AccountManager accountManager = AccountManager.get(this);
-        Account[] accounts = accountManager.getAccountsByType(this.getString(R.string.accountType));
-        for(Account account: accounts){
-            Toast.makeText(this, "Account: "+account.name, Toast.LENGTH_LONG).show();
-        }
 
     }
 
