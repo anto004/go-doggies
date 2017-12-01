@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import app.go_doggies.com.go_doggies.sync.DoggieAuthActivity;
+import app.go_doggies.com.go_doggies.sync.LinkAccountActivity;
 import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -56,6 +57,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button updateNailTrimButton = (Button) findViewById(R.id.update_nail_trim_button);
         updateNailTrimButton.setOnClickListener(this);
+
+        Button connect = (Button) findViewById(R.id.connect);
+        connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), LinkAccountActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
