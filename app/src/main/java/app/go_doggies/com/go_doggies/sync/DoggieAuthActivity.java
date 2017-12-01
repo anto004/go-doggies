@@ -50,10 +50,10 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
         mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
 
-//        if(mAuthTokenType == null){
-//            // Type of AuthToken
-//            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
-//        }
+        if(mAuthTokenType == null){
+            // Type of AuthToken
+            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
+        }
         // if account exists
         if(accountName != null){
             ((TextView) findViewById(R.id.username_text)).setText(accountName);

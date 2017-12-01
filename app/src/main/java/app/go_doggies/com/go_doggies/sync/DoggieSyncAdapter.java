@@ -223,6 +223,8 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
     public static void syncImmediately(Context context){
+        //Sync adapter with go-doggie account
+        //connect and then sync
         Account account = getSyncAccount(context);
         String authority = context.getString(R.string.content_authority);
 

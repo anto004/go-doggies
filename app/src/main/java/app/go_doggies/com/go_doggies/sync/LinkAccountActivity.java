@@ -6,6 +6,8 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import app.go_doggies.com.go_doggies.R;
@@ -23,15 +25,25 @@ public class LinkAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_link_account);
 
         final String accountType = getString(R.string.accountType);
-        final String authTokenType = "full_access";
+        final String authTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
 
         mAccountManager = AccountManager.get(this);
 
         getAuthTokenForAccountCreated(accountType, authTokenType);
 
+        //set on click listener here
+        Button syncNow = (Button) findViewById(R.id.sync_now);
+        syncNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getBaseContext(), "Account Name: "+mConnectedAccount.name, Toast.LENGTH_SHORT).show();
+//                Account[] accounts = mAccountManager.getAccountsByType(getBaseContext().getString(R.string.accountType));
+//                for(Account account: accounts) {
+//                    Toast.makeText(getBaseContext(), "Account Name: "+account.name, Toast.LENGTH_SHORT).show();
+//                }
+            }
+        });
     }
-
-
 
     public void getAuthTokenForAccountCreated(final String accountType, final String authTokenType){
         final AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(accountType, authTokenType, null, this, null, null,

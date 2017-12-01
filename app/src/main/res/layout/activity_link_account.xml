@@ -4,7 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context="app.go_doggies.com.go_doggies.sync.LinkAccountActivity">
 
+
+    <Button
+        android:id="@+id/sync_now"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:background="@color/color_app_green"
+        android:text="Sync-now"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white" />
 </LinearLayout>
