@@ -19,7 +19,6 @@ import java.util.List;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
 import app.go_doggies.com.go_doggies.model.ServiceItem;
-import app.go_doggies.com.go_doggies.sync.DoggieSyncAdapter;
 
 public class GroomerServicesFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -54,7 +53,7 @@ public class GroomerServicesFragment extends Fragment
         //Testing purpose, Consider using ServiceIntent instead of Loaders
 
 
-        DoggieSyncAdapter.syncImmediately(getContext());
+        //DoggieSyncAdapter.syncImmediately(getContext());
 
         return rootView;
     }

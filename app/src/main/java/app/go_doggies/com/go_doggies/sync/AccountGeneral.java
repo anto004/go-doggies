@@ -6,7 +6,7 @@ package app.go_doggies.com.go_doggies.sync;
 
 public class AccountGeneral {
 
-    //public static final String USERDATA_USER_OBJ_ID = "userObjectId";   //Parse.com object id
+    //public static final String USERDATA_USER_OBJ_ID = "userObjectId";
 
     /**
      * Auth token types
@@ -17,5 +17,4 @@ public class AccountGeneral {
     public static final String AUTHTOKEN_TYPE_FULL_ACCESS = "Full access";
     public static final String AUTHTOKEN_TYPE_FULL_ACCESS_LABEL = "Full access to a Go_Doggie account";
 
-   // public static final ServerAuthenticate sServerAuthenticate = new ParseComServer();
 }

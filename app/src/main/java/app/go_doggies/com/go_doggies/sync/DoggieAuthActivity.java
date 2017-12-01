@@ -7,10 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.net.CookieManager;
+import java.net.HttpCookie;
+import java.util.List;
 
 import app.go_doggies.com.go_doggies.R;
 
@@ -40,6 +45,8 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        Log.i(LOG_TAG, "Doggie Authenticator Activity, called");
+
         mContext = getBaseContext();
 
         //No Action Bar
@@ -56,8 +63,7 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
         }
         // if account exists
         if(accountName != null){
-            ((TextView) findViewById(R.id.username_text))
-                    .setText(accountName);
+            ((TextView) findViewById(R.id.username_text)).setText(accountName);
         }
 
         findViewById(R.id.sign_in_button)
@@ -97,11 +103,16 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
 
             String response = ServerAuthenticate.signIn(username, password);
 
+            //Or just return the authToken as a response
+            CookieManager cookieManager = ServerAuthenticate.mCookieManager;
+            List<HttpCookie> cookie = cookieManager.getCookieStore().getCookies();
+            String authToken = TextUtils.join(";", cookie);
+
             Bundle data = new Bundle();
             data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
             data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
-            // For now set authToken as token
-            data.putString(AccountManager.KEY_AUTHTOKEN, "fake authToken");
+            // For now set authToken as fake authToken
+            data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
             data.putString(PARAM_USER_PASS, password);
 
             // We keep the user's object id as an extra data on the account.
@@ -138,30 +149,21 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
     }
 
     private void finishLogin(Intent intent) {
-
-        Log.v(LOG_TAG, "finishLogin called");
-
         String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+        String accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
         String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
-//        Account account = new Account(accountName,
-//                intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
 
-        Account account = new Account(accountName,
-                mContext.getString(R.string.accountType));
-        if(getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)){
+        Account account = new Account(accountName, accountType);
 
-            Log.v(LOG_TAG, "creating new account");
-
+        if(getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false) == true){
             String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
             String authtokenType = mAuthTokenType;
 
-            Log.v(LOG_TAG, "authToken: "+authtoken+
-                                "authTokenType: "+authtokenType);
+            Log.v(LOG_TAG, "creating new account with authToken: "+authtoken);
 
-            //Creating an account and setting the auth token,
+            // Creating an account and setting the auth token,
             // not setting it will cause the framework to make another authentication
-
-            //      add userdata Bundle in Bundle param
+            // add userdata Bundle in Bundle param
             mAccountManager.addAccountExplicitly(account, accountPassword, new Bundle());
             mAccountManager.setAuthToken(account, authtokenType, authtoken);
         }

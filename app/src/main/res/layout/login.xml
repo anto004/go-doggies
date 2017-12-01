@@ -10,11 +10,19 @@
 
 
     <Button
+        android:id="@+id/connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_app_green"
+        android:text="Connect"
+        android:textColor="@android:color/white" />
+
+    <Button
         android:id="@+id/sign_in_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="130dp"
         android:background="@color/color_app_green"
         android:text="@string/sign_in_button_label"
         android:textColor="@android:color/white" />
@@ -31,10 +39,11 @@
         android:id="@+id/update_nail_trim_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:background="@color/color_app_green"
         android:text="Update Nail Trim"
         android:textColor="@android:color/white" />
+
+
 
 
 </LinearLayout>
