@@ -34,7 +34,7 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String accountType,
                              String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-        Log.d(LOG_TAG, "addAccount");
+        Log.d(LOG_TAG, "Authenticator, addAccount called");
 
         Intent intent = new Intent(mContext, DoggieAuthActivity.class);
         intent.putExtra(DoggieAuthActivity.ARG_ACCOUNT_TYPE, accountType);

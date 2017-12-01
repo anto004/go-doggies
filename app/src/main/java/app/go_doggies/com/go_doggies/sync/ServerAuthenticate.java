@@ -63,7 +63,7 @@ public class ServerAuthenticate {
                 for(Map.Entry<String, List<String>> entry: headers.entrySet() ){
                     Log.v(LOG_TAG, "Name: "+entry.getKey() +  "     "+ entry.getValue());
                 }
-
+                //Adding Cookie to CookieManager
                 List<String> cookies = headers.get(COOKIE_HEADER);
                 for(String cookie: cookies){
                     HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);

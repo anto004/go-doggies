@@ -36,11 +36,12 @@ public class LinkAccountActivity extends AppCompatActivity {
         syncNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Account Name: "+mConnectedAccount.name, Toast.LENGTH_SHORT).show();
-//                Account[] accounts = mAccountManager.getAccountsByType(getBaseContext().getString(R.string.accountType));
-//                for(Account account: accounts) {
-//                    Toast.makeText(getBaseContext(), "Account Name: "+account.name, Toast.LENGTH_SHORT).show();
-//                }
+                if(mConnectedAccount != null) {
+                    Toast.makeText(getBaseContext(), "Account Name: " + mConnectedAccount.name, Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getBaseContext(), "Please Create Account!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -60,7 +61,7 @@ public class LinkAccountActivity extends AppCompatActivity {
                                 mConnectedAccount = new Account(accountName, accountType);
                             }
 
-                            showMessage(authToken != null ? "Success! \n Token: " + authToken : "Fail Token Retrieval" );
+                            showMessage(authToken != null ? "\n Token: " + authToken : "Fail Token Retrieval" );
 
                         }catch(Exception e){
                             e.printStackTrace();
