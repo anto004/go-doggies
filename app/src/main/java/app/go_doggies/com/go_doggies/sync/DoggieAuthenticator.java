@@ -25,6 +25,12 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
         this.mContext = context;
     }
 
+    /**
+     * If the authenticator needs information from the user
+     * to satisfy the request then it will create an Intent to an activity (DoggieAuthAcitivity)
+     * that will prompt the user for the information and then carry out the request.
+     * This intent must be returned in a Bundle as key KEY_INTENT.
+     */
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String accountType,
                              String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
@@ -35,7 +41,8 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
         intent.putExtra(DoggieAuthActivity.ARG_AUTH_TYPE, authTokenType);
         intent.putExtra(DoggieAuthActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
         //If AbstractAccountAuthenticator needs to use an Activity to handle the request
-        //It passes in the response which the Activity will set the result via setAccountAuthenticatorResult
+        //It passes in the response to the AccountAuthenticatorActivity
+        //AccountAuthenticatorAcitivity will set the result via setAccountAuthenticatorResult
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
                                 accountAuthenticatorResponse);
 

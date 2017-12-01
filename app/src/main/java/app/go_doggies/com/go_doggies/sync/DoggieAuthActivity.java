@@ -50,14 +50,13 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
         mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
 
-        if(mAuthTokenType == null){
-            // Type of AuthToken
-            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
-        }
+//        if(mAuthTokenType == null){
+//            // Type of AuthToken
+//            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
+//        }
         // if account exists
         if(accountName != null){
-            ((TextView) findViewById(R.id.username_text))
-                    .setText(accountName);
+            ((TextView) findViewById(R.id.username_text)).setText(accountName);
         }
 
         findViewById(R.id.sign_in_button)
@@ -100,7 +99,7 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
             Bundle data = new Bundle();
             data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
             data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
-            // For now set authToken as token
+            // For now set authToken as fake authToken
             data.putString(AccountManager.KEY_AUTHTOKEN, "fake authToken");
             data.putString(PARAM_USER_PASS, password);
 
@@ -138,30 +137,22 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
     }
 
     private void finishLogin(Intent intent) {
-
-        Log.v(LOG_TAG, "finishLogin called");
-
         String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+        String accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
         String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
 //        Account account = new Account(accountName,
 //                intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+        Account account = new Account(accountName, accountType);
 
-        Account account = new Account(accountName,
-                mContext.getString(R.string.accountType));
-        if(getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)){
-
-            Log.v(LOG_TAG, "creating new account");
-
+        if(getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false) == true){
             String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
             String authtokenType = mAuthTokenType;
 
-            Log.v(LOG_TAG, "authToken: "+authtoken+
-                                "authTokenType: "+authtokenType);
+            Log.v(LOG_TAG, "creating new account with authToken: "+authtoken);
 
-            //Creating an account and setting the auth token,
+            // Creating an account and setting the auth token,
             // not setting it will cause the framework to make another authentication
-
-            //      add userdata Bundle in Bundle param
+            // add userdata Bundle in Bundle param
             mAccountManager.addAccountExplicitly(account, accountPassword, new Bundle());
             mAccountManager.setAuthToken(account, authtokenType, authtoken);
         }

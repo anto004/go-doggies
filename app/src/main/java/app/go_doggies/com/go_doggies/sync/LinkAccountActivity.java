@@ -28,6 +28,7 @@ public class LinkAccountActivity extends AppCompatActivity {
         mAccountManager = AccountManager.get(this);
 
         getAuthTokenForAccountCreated(accountType, authTokenType);
+
     }
 
 
