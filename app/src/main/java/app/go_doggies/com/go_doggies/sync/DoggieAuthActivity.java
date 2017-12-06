@@ -51,7 +51,7 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
 
         //No Action Bar
 
-        setContentView(R.layout.account_login);
+        setContentView(R.layout.login);
         mAccountManager = AccountManager.get(getBaseContext());
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
