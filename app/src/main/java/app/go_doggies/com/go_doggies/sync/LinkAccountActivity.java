@@ -25,7 +25,7 @@ public class LinkAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_link_account);
 
         final String accountType = getString(R.string.accountType);
-        final String authTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
+        final String authTokenType = AccountGeneral.AUTHTOKEN_TYPE;
 
         mAccountManager = AccountManager.get(this);
 
@@ -54,7 +54,7 @@ public class LinkAccountActivity extends AppCompatActivity {
                     public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
                         Bundle bundle = null;
                         try {
-                            bundle = accountManagerFuture.getResult();
+                            bundle = accountManagerFuture.getResult(); // getResult goes through length to get the token,
                             authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 
                             if(authToken != null){ // if it has a token get the account details

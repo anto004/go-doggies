@@ -22,7 +22,7 @@ public class DataItemAdapterListView extends ArrayAdapter<DataItem> {
     LayoutInflater mInflater;
 
     public DataItemAdapterListView(@NonNull Context context, @NonNull List<DataItem> objects) {
-        super(context, R.layout.groomer_services_list_item, objects);
+        super(context, R.layout.data_item_list_item, objects);
         mDataItems = objects;
         mInflater = LayoutInflater.from(context);
     }
@@ -31,7 +31,7 @@ public class DataItemAdapterListView extends ArrayAdapter<DataItem> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if(convertView == null){
-            convertView = mInflater.inflate(R.layout.groomer_services_list_item, parent, false);
+            convertView = mInflater.inflate(R.layout.data_item_list_item, parent, false);
         }
         TextView textView = (TextView) convertView.findViewById(R.id.groomer_services_item_textView);
 

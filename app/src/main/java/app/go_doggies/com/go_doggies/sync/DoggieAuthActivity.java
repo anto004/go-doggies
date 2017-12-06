@@ -59,7 +59,7 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
 
         if(mAuthTokenType == null){
             // Type of AuthToken
-            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
+            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE;
         }
         // if account exists
         if(accountName != null){
@@ -111,9 +111,8 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
             Bundle data = new Bundle();
             data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
             data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
-            // For now set authToken as fake authToken
-            data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
             data.putString(PARAM_USER_PASS, password);
+            data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
 
             // We keep the user's object id as an extra data on the account.
             // It's used later for determine ACL for the data we send to the Parse.com service

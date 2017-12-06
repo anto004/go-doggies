@@ -1,6 +1,12 @@
 package app.go_doggies.com.go_doggies;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -19,6 +25,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
@@ -26,6 +33,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import app.go_doggies.com.go_doggies.sync.AccountGeneral;
 import app.go_doggies.com.go_doggies.sync.DoggieAuthActivity;
 import app.go_doggies.com.go_doggies.sync.LinkAccountActivity;
 import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
@@ -33,6 +41,8 @@ import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSION_WRITE = 1;
+    private Account mAccount;
+    private AccountManager mAccountManager;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -48,6 +58,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         checkPermissions();
+
+        mAccountManager = AccountManager.get(this);
+        String accountType = getApplicationContext().getString(R.string.accountType);
+        String authType = AccountGeneral.AUTHTOKEN_TYPE;
+
+        if(mAccount == null) {
+            getAuthTokenForAccount(accountType, authType);
+        }
 
         Button loginButton = (Button) findViewById(R.id.sign_in_button);
         loginButton.setOnClickListener(this);
@@ -104,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        AsyncHttpClient client = new AsyncHttpClient();
 //        //client.setBasicAuth("test@go_doggies.com", "2016");
 //        client.setBasicAuth("test@go_doggies.com", "2016",
-//                new AuthScope("go-doggies.com/login/user_login", 80, AuthScope.ANY_REALM));
+//                new AuthScope("go-doggies.com/content_main/user_login", 80, AuthScope.ANY_REALM));
 //        client.get("https://go-doggies.com/login/user_login",
 //                new AsyncHttpResponseHandler() {
 //            @Override
@@ -236,5 +254,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             return null;
         }
+    }
+
+    public void getAuthTokenForAccount(final String accountType, final String authType){
+        final AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(accountType, authType, null, this, null, null,
+                new AccountManagerCallback<Bundle>() {
+                    @Override
+                    public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
+                        try {
+                            Bundle bundle = accountManagerFuture.getResult();
+                            String authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+
+                            if(authToken != null){
+                                String accountName = bundle.getString(AccountManager.KEY_ACCOUNT_NAME);
+                                mAccount = new Account(accountName, accountType);
+                            }
+                            showMessage(authToken != null ? "Welcome!" : "Please Login!");
+                        } catch (OperationCanceledException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (AuthenticatorException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, null);
+    }
+
+    private void showMessage(final String msg){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

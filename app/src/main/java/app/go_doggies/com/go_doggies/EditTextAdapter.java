@@ -37,7 +37,7 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.services_list_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.groomer_services_list_item, parent, false);
         return new MyViewHolder(view);
     }
 

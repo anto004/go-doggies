@@ -50,6 +50,8 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
         // LOG DOESN'T DISPLAY in Service, use No Filters
         Log.d(LOG_TAG, "onPerformSync called");
 
+        //Call Authenticator getAuthToken() to re-authenticate username and password
+
         //Log all the extras
         StringBuilder sb = new StringBuilder();
         if(bundle != null){

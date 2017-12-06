@@ -67,8 +67,7 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
         Log.v(LOG_TAG, "getAuthToken called");
 
         //If the caller requested an authToken type we don't support, return an error
-        if(!authTokenType.equals(AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS)
-                && !authTokenType.equals(AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY)) {
+        if(!authTokenType.equals(AccountGeneral.AUTHTOKEN_TYPE)) {
             Bundle result = new Bundle();
             result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authTokenType");
             return result;
@@ -131,10 +130,8 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public String getAuthTokenLabel(String authTokenType) {
-        if(AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS.equals(authTokenType))
-            return AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS_LABEL;
-        else if(AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY.equals(authTokenType))
-            return AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY_LABEL;
+        if(AccountGeneral.AUTHTOKEN_TYPE.equals(authTokenType))
+            return AccountGeneral.AUTHTOKEN_TYPE_LABEL;
         else
             return authTokenType + " (Label)";
     }

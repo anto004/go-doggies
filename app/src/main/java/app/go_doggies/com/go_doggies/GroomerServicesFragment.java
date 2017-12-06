@@ -41,7 +41,7 @@ public class GroomerServicesFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.services, container, false);
+        View rootView =  inflater.inflate(R.layout.groomer_services, container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.services_recycler);
         //ListView set to Adapter, next inflate the layout of the TextView, next bind the TextView
