@@ -7,6 +7,7 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -41,6 +42,7 @@ import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSION_WRITE = 1;
+    private static final int LOGIN_ACTIVITY_REQUEST_CODE = 2;
     private Account mAccount;
     private AccountManager mAccountManager;
 
@@ -63,9 +65,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String accountType = getApplicationContext().getString(R.string.accountType);
         String authType = AccountGeneral.AUTHTOKEN_TYPE;
 
-        if(mAccount == null) {
-            getAuthTokenForAccount(accountType, authType);
-        }
+//        while(mAccount == null) {
+////            mAccount = getAuthTokenForAccount(accountType, authType);
+//
+//        }
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
+
 
         Button loginButton = (Button) findViewById(R.id.sign_in_button);
         loginButton.setOnClickListener(this);
@@ -85,6 +92,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == LOGIN_ACTIVITY_REQUEST_CODE){
+            if(resultCode == Activity.RESULT_OK){
+                Toast.makeText(this, "Returned from Login", Toast.LENGTH_SHORT).show();
+            }
+            else
+                super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -256,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void getAuthTokenForAccount(final String accountType, final String authType){
+    public Account getAuthTokenForAccount(final String accountType, final String authType){
         final AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(accountType, authType, null, this, null, null,
                 new AccountManagerCallback<Bundle>() {
                     @Override
@@ -279,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }, null);
+        return mAccount;
     }
 
     private void showMessage(final String msg){
