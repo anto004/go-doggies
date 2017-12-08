@@ -27,11 +27,6 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/GoDoggieTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".GroomerServices"
@@ -74,11 +69,12 @@
             android:label="@string/app_name" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="app.go_doggies.com.go_doggies.MainActivity" />
+            android:label="@string/title_activity_login" />
+        <activity android:name=".LaucherActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 
