@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //
 //        }
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
 
 
         Button loginButton = (Button) findViewById(R.id.sign_in_button);
