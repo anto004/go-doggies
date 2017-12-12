@@ -33,18 +33,23 @@ public class LaucherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
 
-        //when getting a token start from the authenticator
-        //call getAuthToken requires an account
-
         final String accountType = getString(R.string.accountType);
         final String authType = AccountGeneral.AUTHTOKEN_TYPE;
 
         mAccountManager = AccountManager.get(getApplicationContext());
         Account [] accounts = mAccountManager.getAccountsByType(accountType);
-
         //In case of multiple accounts show a pop up
         //onCreateDialog(savedInstanceState, names).show();
-        if(accounts == null) {
+        for(Account account: accounts) {
+            //get first account
+            mAccount = account;
+            break;
+        }
+        if(mAccount != null) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivityForResult(intent, LAUNCHER_REQUEST_CODE);
+        }
+        else{
             Button signIn = (Button) findViewById(R.id.sign_in_launcher_button);
             signIn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -53,32 +58,12 @@ public class LaucherActivity extends AppCompatActivity {
                 }
             });
         }
-        else{
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivityForResult(intent, LAUNCHER_REQUEST_CODE);
-        }
-
-
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         Log.i(LOG_TAG, "onStart() called");
-
-
-
-        //getAuthTokenForAccount(accountType, authType);
-
-//        Toast.makeText(this, "call Restart: ", Toast.LENGTH_SHORT).show();
-
-//        if(mAccount == null){
-//            onRestart();
-//        }
-
     }
 
     @Override
@@ -102,7 +87,6 @@ public class LaucherActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        //onStart();
         Log.i(LOG_TAG, "onRestart() called");
     }
 
@@ -117,15 +101,10 @@ public class LaucherActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.v(LOG_TAG, "onActivity Called");
-
         if(requestCode == LAUNCHER_REQUEST_CODE){
-            if(resultCode == LaucherActivity.RESULT_OK){
-                //get account
-                Toast.makeText(this, "Result_OK", Toast.LENGTH_SHORT).show();
-            }
             if(resultCode == LauncherActivity.RESULT_CANCELED){
-                Log.v("Launcher", "finish() called");
+                //Close the activity after returning from Services
+                //Sign in is not required
                 finish();
 
             }

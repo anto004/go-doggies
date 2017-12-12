@@ -8,9 +8,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher_foreground" />
+        android:src="@drawable/logo" />
 
     <Button
         android:id="@+id/sign_in_launcher_button"
