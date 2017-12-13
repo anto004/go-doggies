@@ -10,6 +10,9 @@
     <string name="sign_up_button_label">Sign Up</string>
     <string name="services_button">Services</string>
 
+    <!-- launcher -->
+    <string name="sign_in_sign_up">Sign-in/Sign-up</string>
+
     <!-- Sync -->
     <string name="accountType">app.go_doggies.com</string>
     <string name="content_authority">app.go_doggies.com.go_doggies</string>

@@ -6,6 +6,8 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
+    <include layout="@layout/go_doggie_toolbar" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
@@ -18,7 +20,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
+        android:autoSizeTextType="uniform"
         android:background="@color/color_app_green"
-        android:text="Sign In" />
+        android:elegantTextHeight="true"
+        android:text="@string/sign_in_sign_up"
+        android:textAllCaps="false"/>
+
 
 </LinearLayout>
