@@ -5,4 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="color_app_green">#71cb67</color>
     <color name="color_app_green_hover">#5cb85c</color>
+
+    <color name="yellow">#FFFF00</color>
+    <color name="blue">#0000FF</color>
 </resources>
