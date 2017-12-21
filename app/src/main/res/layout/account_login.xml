@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_app_green"
     android:gravity="top|center"
     android:orientation="vertical"
     android:paddingLeft="40dp"
-    android:paddingRight="40dp"
-    android:paddingTop="80dp">
+    android:paddingRight="40dp">
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="match_parent"
+        android:layout_height="214dp"
+        android:src="@drawable/logo" />
 
     <EditText
         android:id="@+id/username_text"
+        android:theme="@style/GoDoggieEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/password_text"
+        android:theme="@style/GoDoggieEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -28,21 +37,18 @@
         style="@style/GoDoggieButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/button"
+        android:layout_marginTop="70dp"
         android:stateListAnimator="@animator/button_anim"
         android:text="@string/login_button_label"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white" />
 
     <Button
         style="@style/GoDoggieButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@drawable/button"
-        android:stateListAnimator="@animator/button_anim"
         android:text="@string/sign_up_button_label"
         android:textAllCaps="false"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white"
+        android:stateListAnimator="@animator/button_anim"/>
 </LinearLayout>

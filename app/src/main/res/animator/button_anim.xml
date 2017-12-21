@@ -1,17 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
-        <objectAnimator
-            android:duration="@android:integer/config_shortAnimTime"
-            android:propertyName="translationZ"
-            android:valueTo="8dp"
-            android:valueType="floatType" />
+        <set>
+            <objectAnimator
+                android:duration="1"
+                android:valueType="floatType">
+                <propertyValuesHolder
+                    android:propertyName="scaleX"
+                    android:valueTo="0.35dp"/>
+                <propertyValuesHolder
+                    android:propertyName="scaleY"
+                    android:valueTo="0.35dp"/>
+                <propertyValuesHolder
+                    android:propertyName="scaleZ"
+                    android:valueTo="0.35dp"/>
+            </objectAnimator>
+        </set>
     </item>
-    <item>
-        <objectAnimator
-            android:duration="@android:integer/config_shortAnimTime"
-            android:propertyName="translationZ"
-            android:valueTo="0dp"
-            android:valueType="floatType" />
+
+    <item android:state_pressed="false">
+        <set>
+            <objectAnimator
+                android:duration="@android:integer/config_shortAnimTime"
+                android:valueType="floatType">
+                <propertyValuesHolder
+                    android:propertyName="scaleX"
+                    android:valueTo="0.32dp"/>
+                <propertyValuesHolder
+                    android:propertyName="scaleY"
+                    android:valueTo="0.32dp"/>
+                <propertyValuesHolder
+                    android:propertyName="scaleZ"
+                    android:valueTo="0.32dp"/>
+            </objectAnimator>
+        </set>
+
     </item>
 </selector>
