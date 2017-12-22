@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.net.CookieManager;
@@ -52,6 +54,7 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
         //No Action Bar
 
         setContentView(R.layout.login);
+
         mAccountManager = AccountManager.get(getBaseContext());
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
@@ -63,15 +66,28 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
         }
         // if account exists
         if(accountName != null){
-            ((TextView) findViewById(R.id.username_text)).setText(accountName);
+            ((EditText) findViewById(R.id.username_text)).setText(accountName);
         }
+
+        final LinearLayout linearLayout = (LinearLayout)findViewById(R.id.account_login_layout);
+        //Remove cursor highlight from EditText
+        //Issue: Keyboard dosn't hide on single click but double click
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                linearLayout.requestFocus();
+                linearLayout.clearFocus();
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(linearLayout.getWindowToken(), 0);
+            }
+        });
 
         findViewById(R.id.sign_in_button)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String username = ((TextView)findViewById(R.id.username_text)).getText().toString();
-                        String password = ((TextView)findViewById(R.id.password_text)).getText().toString();
+                        String username = ((EditText)findViewById(R.id.username_text)).getText().toString();
+                        String password = ((EditText)findViewById(R.id.password_text)).getText().toString();
                         String accountType = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
 
                         String[] credentials = {username, password, accountType};
