@@ -11,15 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_app_green"
+        android:gravity="top|center"
         android:orientation="vertical">
 
         <include layout="@layout/go_doggie_toolbar" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logo" />
+            android:layout_width="214dp"
+            android:layout_height="214dp"
+            android:src="@drawable/go_doggie_white_round_white" />
 
         <Button
             android:id="@+id/sign_in_launcher_button"
@@ -27,7 +28,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="150dp"
             android:autoSizeTextType="none"
             android:stateListAnimator="@animator/button_anim"
             android:text="@string/sign_in_sign_up"

@@ -14,10 +14,10 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="match_parent"
+        android:layout_width="214dp"
         android:layout_height="214dp"
-        android:src="@drawable/logo"
-        android:inputType="none"/>
+        android:inputType="none"
+        android:src="@drawable/go_doggie_white_round_white" />
 
     <AutoCompleteTextView
         android:id="@+id/dummyTextView"
