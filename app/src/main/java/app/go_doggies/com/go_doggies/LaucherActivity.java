@@ -59,7 +59,9 @@ public class LaucherActivity extends AppCompatActivity {
             signIn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getAuthTokenForAccount(accountType, authType);
+                    Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+                    startActivity(intent);
+                    //getAuthTokenForAccount(accountType, authType);
                 }
             });
         }
