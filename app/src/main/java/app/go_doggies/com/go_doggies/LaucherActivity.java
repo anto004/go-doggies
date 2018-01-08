@@ -51,7 +51,7 @@ public class LaucherActivity extends AppCompatActivity {
             break;
         }
         if(mAccount != null) {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), Dashboard.class);
             startActivityForResult(intent, LAUNCHER_REQUEST_CODE);
         }
         else{
@@ -59,9 +59,7 @@ public class LaucherActivity extends AppCompatActivity {
             signIn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), Dashboard.class);
-                    startActivity(intent);
-                    //getAuthTokenForAccount(accountType, authType);
+                    getAuthTokenForAccount(accountType, authType);
                 }
             });
         }
@@ -114,7 +112,7 @@ public class LaucherActivity extends AppCompatActivity {
 
         if(requestCode == LAUNCHER_REQUEST_CODE){
             if(resultCode == LauncherActivity.RESULT_CANCELED){
-                //Close the activity after returning from Services
+                //Close the activity after returning from Dashboard
                 //Sign in is not required
                 finish();
 
@@ -137,7 +135,7 @@ public class LaucherActivity extends AppCompatActivity {
                                 String accountName = bundle.getString(AccountManager.KEY_ACCOUNT_NAME);
                                 mAccount = new Account(accountName, accountType);
 
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), Dashboard.class);
                                 startActivityForResult(intent, LAUNCHER_REQUEST_CODE);
                             }
                             showMessage(authToken != null ? "Welcome!" : "Please Login!");

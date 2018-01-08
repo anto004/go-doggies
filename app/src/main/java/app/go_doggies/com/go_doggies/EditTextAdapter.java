@@ -134,12 +134,12 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 Log.v(LOG_TAG, "No Service Items in Table");
                 return null;
             }
-
+            //Name, Price
             HashMap<String, String> columnNamesWithPrice = cursorToColumnNamesWithPrice(cursor);
-            // I want to insert the new price by replacing the old price with the new price
-            // how? I get a serviceItem object with formatted Name so I need to compare the formatted Name
+            // Insert the new price by replacing the old price with the new price
+            // Get a serviceItem object with formatted Name and compare the formatted Name
             // with the ColumnName and then change the price, let's try with On^2 time complexity first
-            // sol: convert formatted name to lower case and remove all space. convert columnNames to lower case and compare
+            // Convert formatted name to lower case and remove all space. Convert columnNames to lower case and compare
 
             ContentValues cv = new ContentValues();
             String columnId = cursor.getString(cursor.getColumnIndex(DoggieContract.TableItems._ID));

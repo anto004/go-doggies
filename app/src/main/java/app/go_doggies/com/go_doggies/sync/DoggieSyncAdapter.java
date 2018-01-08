@@ -62,7 +62,6 @@ public class DoggieSyncAdapter extends AbstractThreadedSyncAdapter {
 
         fetchDataFromServer();
 
-
     }
 
     public void fetchDataFromServer(){
