@@ -36,8 +36,15 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <!-- Dashboard-->
     <string name="title_activity_dashboard">Dashboard</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="test">Test Items</string>
+    <string name="appointment">Appointment</string>
+    <string name="transaction">Transaction</string>
+    <string name="my_client">My Client</string>
+    <string name="messages">Messages</string>
+    <string name="my_store">My Store</string>
+    <string name="browse">Browse</string>
 
 </resources>
