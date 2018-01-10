@@ -6,13 +6,11 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -67,18 +65,12 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                             !currentPrice.equals(newPrice)) {
                         ServiceItem editItem = services.get(pos);// Change this to be more efficient
                         editItem.setPrice(newPrice);
-                        Log.v(LOG_TAG, "onFocusChange, New Service Item: " + editItem.toString());
 
                         UpdatePrice updatePrice = new UpdatePrice();
                         updatePrice.execute(editItem);
-
                         //notifies the adapter the data at that view has changed
                         notifyItemChanged(position);
                     }
-                }
-                else{
-
-                    Toast.makeText(mContext, "Price: " + newPrice, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -120,7 +112,6 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
         @Override
         protected Void doInBackground(ServiceItem... serviceItems) {
-            Log.v(LOG_TAG, "UpdatePrice doInBackground called");
             ServiceItem item = serviceItems[0];
             // remember to close cursor
             Cursor cursor = mContext.getContentResolver().query(
@@ -131,7 +122,6 @@ public class EditTextAdapter extends RecyclerView.Adapter<MyViewHolder> {
                     null
             );
             if(!cursor.moveToFirst()) {
-                Log.v(LOG_TAG, "No Service Items in Table");
                 return null;
             }
             //Name, Price

@@ -32,7 +32,7 @@
     <style name="GoDoggieTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="GoDoggieTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-    
+
     <style name="GoDoggieButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:background">@drawable/button</item>
         <item name="android:elevation">5dp</item>

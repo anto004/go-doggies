@@ -35,7 +35,7 @@ public class LaucherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.go_doggie_toolbar);
         setSupportActionBar(toolbar);
 
         final String accountType = getString(R.string.accountType);

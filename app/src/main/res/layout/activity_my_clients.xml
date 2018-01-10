@@ -4,19 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context="app.go_doggies.com.go_doggies.Dashboard">
+    tools:context="app.go_doggies.com.go_doggies.MyClients">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <include layout="@layout/go_doggie_toolbar"/>
 
-        <include layout="@layout/go_doggie_toolbar" />
-
-        <include layout="@layout/content_dashboard" />
-
-    </LinearLayout>
-
+    <include layout="@layout/content_my_clients" />
 
 </android.support.design.widget.CoordinatorLayout>

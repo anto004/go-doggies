@@ -53,7 +53,7 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
 
         //No Action Bar
 
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_login);
 
         mAccountManager = AccountManager.get(getBaseContext());
 
