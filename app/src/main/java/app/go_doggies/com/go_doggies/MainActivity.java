@@ -234,8 +234,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(mCookieManager.getCookieStore().getCookies().size() > 0) {
                     urlConnection.setRequestProperty("Cookie",
                             TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
-                    Log.v(LOG_TAG, "setRequestProperty: " +
-                            TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
+
+                    Log.v(LOG_TAG, "setRequestProperty: " + TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
                 }
 
                 byte [] postData = urlParameters.toString().getBytes("UTF-8");

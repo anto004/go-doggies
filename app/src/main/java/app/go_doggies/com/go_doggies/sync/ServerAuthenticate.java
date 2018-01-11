@@ -40,7 +40,7 @@ public class ServerAuthenticate {
             urlParameter.append(password);
 
             byte[] postData = urlParameter.toString().getBytes("UTF-8");
-            String urlString = "https://go-doggies.com/content_main/user_login";
+            String urlString = "https://go-doggies.com/dogcare/index/login";
             URL url = new URL(urlString);
             Log.v(LOG_TAG, "URL is: " + url);
 
@@ -54,7 +54,7 @@ public class ServerAuthenticate {
             urlConnection.getOutputStream().write(postData);
 
             int responseCode = urlConnection.getResponseCode();
-
+            Log.v(LOG_TAG, "ResponseCode: "+responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
 

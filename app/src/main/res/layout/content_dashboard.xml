@@ -49,7 +49,7 @@
                 android:background="@drawable/dashboard_border_right">
 
                 <ImageButton
-                    android:id="@+id/imageView1"
+                    android:id="@+id/appointment_button"
                     android:layout_width="match_parent"
                     android:layout_height="58dp"
                     android:background="@drawable/appointment_button"
@@ -58,7 +58,7 @@
             </FrameLayout>
 
             <ImageButton
-                android:id="@+id/imageView2"
+                android:id="@+id/transaction_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -130,7 +130,7 @@
                 android:background="@drawable/dashboard_border_right">
 
                 <ImageButton
-                    android:id="@+id/imageView3"
+                    android:id="@+id/my_client_button"
                     android:layout_width="match_parent"
                     android:layout_height="58dp"
                     android:background="@drawable/my_client_button"
@@ -139,7 +139,7 @@
             </FrameLayout>
 
             <ImageButton
-                android:id="@+id/imageView4"
+                android:id="@+id/message_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -209,7 +209,7 @@
                 android:background="@drawable/dashboard_border_right">
 
                 <ImageButton
-                    android:id="@+id/imageView5"
+                    android:id="@+id/store_button"
                     android:layout_width="match_parent"
                     android:layout_height="58dp"
                     android:background="@drawable/store_button"
@@ -218,7 +218,7 @@
             </FrameLayout>
 
             <ImageButton
-                android:id="@+id/imageView6"
+                android:id="@+id/browse_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
