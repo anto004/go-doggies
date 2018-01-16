@@ -62,7 +62,7 @@ public class MyClients extends AppCompatActivity {
 //        recyclerView.setItemAnimator(null);
 
         ClientAsyncTask task = new ClientAsyncTask();
-        task.execute("url1", "url2");
+        task.execute();
 
     }
 
@@ -82,7 +82,7 @@ public class MyClients extends AppCompatActivity {
 
             byte[] postData = urlParameter.toString().getBytes("UTF-8");
 
-            String urlString = "https://go-doggies.com/groomer_dashboard/get_groomer_upcoming_appointments";
+            String urlString = "https://go-doggies.com/groomer_dashboard/get_groomer_clients";
             URL url = new URL(urlString);
 
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -91,6 +91,7 @@ public class MyClients extends AppCompatActivity {
             if(cookieManager.getCookieStore().getCookies().size() > 0){
                 urlConnection.setRequestProperty("Cookie",
                         TextUtils.join(";", cookieManager.getCookieStore().getCookies()));
+                Log.v(LOG_TAG, cookieManager.getCookieStore().getCookies().toString());
             }
 
             urlConnection.getOutputStream().write(postData);
@@ -127,11 +128,10 @@ public class MyClients extends AppCompatActivity {
 
     }
 
-    static class ClientAsyncTask extends AsyncTask<String, Void, Void>{
+    static class ClientAsyncTask extends AsyncTask<Void, Void, Void>{
 
         @Override
-        protected Void doInBackground(String... strings) {
-            String urlString = strings[0];
+        protected Void doInBackground(Void... voids) {
             fetchClients();
             return null;
         }

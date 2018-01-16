@@ -306,7 +306,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 byte[] postData = urlParameter.toString().getBytes("UTF-8");
 //            String urlString = "https://go-doggies.com/dogcare/index/login";
-                String urlString = "https://go-doggies.com/content_main/user_login";
+                //String urlString = "https://go-doggies.com/content_main/user_login";
+                String urlString = "https://go-doggies.com/login/user_login";
                 URL url = new URL(urlString);
                 Log.v(LOG_TAG, "URL is: " + url);
 
