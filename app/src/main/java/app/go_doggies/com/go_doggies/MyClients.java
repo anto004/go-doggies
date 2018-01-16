@@ -77,6 +77,7 @@ public class MyClients extends AppCompatActivity {
         try {
             urlParameter.append(URLEncoder.encode("groomer_id","UTF-8"));
             urlParameter.append('=');
+            //groomer_id = 617
             urlParameter.append(URLEncoder.encode(String.valueOf(617),"UTF-8"));
 
             byte[] postData = urlParameter.toString().getBytes("UTF-8");

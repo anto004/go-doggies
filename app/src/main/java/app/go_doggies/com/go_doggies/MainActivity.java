@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import app.go_doggies.com.go_doggies.sync.AccountGeneral;
-import app.go_doggies.com.go_doggies.sync.DoggieAuthActivity;
 import app.go_doggies.com.go_doggies.sync.LinkAccountActivity;
 import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
 
@@ -131,8 +130,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.sign_in_button:
-                Intent loginIntent = new Intent(this, DoggieAuthActivity.class);
-                startActivity(loginIntent);
+//                Intent loginIntent = new Intent(this, DoggieAuthActivity.class);
+//                startActivity(loginIntent);
+                ServerAuthenticateTest sat = new ServerAuthenticateTest();
+                sat.execute();
+
             break;
 
 
@@ -271,6 +273,95 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             return null;
+        }
+    }
+
+    static class ServerAuthenticateTest extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            String username = "test@go-doggies.com";
+            String password = "2016";
+            signIn(username, password);
+
+            return null;
+        }
+
+        public static String signIn(String username, String password){
+
+            HttpURLConnection urlConnection = null;
+            String authString = "";
+            BufferedReader reader = null;
+            try {
+
+                StringBuilder urlParameter = new StringBuilder();
+                //Login fails with URLEncoded
+                urlParameter.append("user_name");
+                urlParameter.append('=');
+                urlParameter.append(username);
+                urlParameter.append("&");
+                urlParameter.append("user_psw");
+                urlParameter.append('=');
+                urlParameter.append(password);
+
+                byte[] postData = urlParameter.toString().getBytes("UTF-8");
+//            String urlString = "https://go-doggies.com/dogcare/index/login";
+                String urlString = "https://go-doggies.com/content_main/user_login";
+                URL url = new URL(urlString);
+                Log.v(LOG_TAG, "URL is: " + url);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                //adding lines below will not work
+//                urlConnection.setRequestMethod("POST");
+//                urlConnection.setRequestProperty("Content-Type", "application/json");
+//                urlConnection.setRequestProperty("charset", "utf-8");
+//                urlConnection.setRequestProperty("Content-Length", Integer.toString(postData.length));
+                urlConnection.getOutputStream().write(postData);
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.v(LOG_TAG, "ResponseCode: "+responseCode);
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    Map<String, List<String>> headers = urlConnection.getHeaderFields();
+
+                    //Display all Headers
+                    Log.v(LOG_TAG, "Login Header Response");
+                    for(Map.Entry<String, List<String>> entry: headers.entrySet() ){
+                        Log.v(LOG_TAG, "Name: "+entry.getKey() +  "     "+ entry.getValue());
+                    }
+                }
+
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    String line;
+                    StringBuffer stringBuffer = new StringBuffer();
+                    reader = new BufferedReader(new InputStreamReader(
+                            urlConnection.getInputStream()
+                    ));
+                    while ((line = reader.readLine()) != null) {
+                        stringBuffer.append(line + "\n");
+                    }
+                    authString = stringBuffer.toString();
+                    Log.v(LOG_TAG, "authString: " + authString);
+                }
+
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully authenticate
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            return authString;
         }
     }
 
