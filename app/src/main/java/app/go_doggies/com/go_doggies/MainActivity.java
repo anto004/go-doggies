@@ -8,6 +8,7 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -29,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -36,7 +38,7 @@ import java.util.Map;
 
 import app.go_doggies.com.go_doggies.sync.AccountGeneral;
 import app.go_doggies.com.go_doggies.sync.LinkAccountActivity;
-import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
+import app.go_doggies.com.go_doggies.sync.MyCookieStore;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int LOGIN_ACTIVITY_REQUEST_CODE = 2;
     private Account mAccount;
     private AccountManager mAccountManager;
+    private static Context mContext;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.go_doggie_toolbar);
         setSupportActionBar(toolbar);
 
+        mContext = this;
         checkPermissions();
 
         mAccountManager = AccountManager.get(this);
@@ -201,14 +205,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    static class UpdatePriceToServer extends AsyncTask<Void, Void, Void> {
-        CookieManager mCookieManager = ServerAuthenticate.mCookieManager;
+   static class UpdatePriceToServer extends AsyncTask<Void, Void, Void> {
+
         @Override
         protected Void doInBackground(Void... voids) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader bufferedReader = null;
             String updatedPriceString = "";
+            CookieManager cookieManager = null;
+
             try {
                 String charset = "UTF-8";
                 StringBuilder urlParameters = new StringBuilder();
@@ -232,12 +238,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
 
-
-                if(mCookieManager.getCookieStore().getCookies().size() > 0) {
+                cookieManager = new CookieManager(new MyCookieStore(mContext), CookiePolicy.ACCEPT_ALL);
+                if(cookieManager.getCookieStore().getCookies().size() > 0) {
                     urlConnection.setRequestProperty("Cookie",
-                            TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
+                            TextUtils.join(";", cookieManager.getCookieStore().getCookies()));
 
-                    Log.v(LOG_TAG, "setRequestProperty: " + TextUtils.join(";", mCookieManager.getCookieStore().getCookies()));
+                    Log.v(LOG_TAG, "setRequestProperty: " + TextUtils.join(";", cookieManager.getCookieStore().getCookies()));
                 }
 
                 byte [] postData = urlParameters.toString().getBytes("UTF-8");

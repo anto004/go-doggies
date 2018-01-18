@@ -38,6 +38,10 @@ public class LaucherActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.go_doggie_toolbar);
         setSupportActionBar(toolbar);
 
+        //Gives null pointer on urlConnection writeOutputStream
+//        CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
+//        CookieHandler.setDefault(cookieManager);
+
         final String accountType = getString(R.string.accountType);
         final String authType = AccountGeneral.AUTHTOKEN_TYPE;
 

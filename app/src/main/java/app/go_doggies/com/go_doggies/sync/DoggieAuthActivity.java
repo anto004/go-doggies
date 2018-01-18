@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.util.List;
@@ -117,10 +118,11 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
             String accountType = params[2];
             Log.v(LOG_TAG, "username: "+username + "password: "+password+ " accountType: "+accountType);
 
-            String response = ServerAuthenticate.signIn(username, password);
+            ServerAuthenticate serverAuthenticate = new ServerAuthenticate(mContext);
+            String response = serverAuthenticate.signIn(username, password);
 
             //Or just return the authToken as a response
-            CookieManager cookieManager = ServerAuthenticate.mCookieManager;
+            CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
             List<HttpCookie> cookie = cookieManager.getCookieStore().getCookies();
             String authToken = TextUtils.join(";", cookie);
 

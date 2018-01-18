@@ -1,11 +1,14 @@
 package app.go_doggies.com.go_doggies.sync;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,14 +22,20 @@ import java.util.Map;
 public class ServerAuthenticate {
     public static final String LOG_TAG = "DoggieServerAuth";
     public static final String COOKIE_HEADER = "Set-Cookie";
+    public Context mContext;
 
-    public static CookieManager mCookieManager = new CookieManager();
+//    public static CookieManager mCookieManager = new CookieManager();
 
-    public static String signIn(String username, String password){
+    ServerAuthenticate(Context context){
+        this.mContext = context;
+    }
+
+    public String signIn(String username, String password){
 
         HttpURLConnection urlConnection = null;
         String authString = "";
         BufferedReader reader = null;
+        CookieManager cookieManager = null;
         try {
 
             StringBuilder urlParameter = new StringBuilder();
@@ -44,7 +53,6 @@ public class ServerAuthenticate {
 //            String urlString = "https://go-doggies.com/content_main/user_login";
             String urlString = "https://go-doggies.com/login/user_login";
             URL url = new URL(urlString);
-            Log.v(LOG_TAG, "URL is: " + url);
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
@@ -56,25 +64,24 @@ public class ServerAuthenticate {
             urlConnection.getOutputStream().write(postData);
 
             int responseCode = urlConnection.getResponseCode();
-            Log.v(LOG_TAG, "ResponseCode: "+responseCode);
+            Log.v(LOG_TAG, "URL is: " + url + " ResponseCode: " + responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
+                cookieManager = new CookieManager(new MyCookieStore(mContext), CookiePolicy.ACCEPT_ALL);
+                CookieHandler.setDefault(cookieManager);
                 Map<String, List<String>> headers = urlConnection.getHeaderFields();
 
                 //Display all Headers
-                Log.v(LOG_TAG, "Login Header Response");
-                for(Map.Entry<String, List<String>> entry: headers.entrySet() ){
-                    Log.v(LOG_TAG, "Name: "+entry.getKey() +  "     "+ entry.getValue());
-                }
+//                Log.v(LOG_TAG, "Login Header Response");
+//                for(Map.Entry<String, List<String>> entry: headers.entrySet() ){
+//                    Log.v(LOG_TAG, "Name: "+entry.getKey() +  "     "+ entry.getValue());
+//                }
                 //Adding Cookie to CookieManager
                 List<String> cookies = headers.get(COOKIE_HEADER);
                 for(String cookie: cookies){
                     HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);
-                    mCookieManager.getCookieStore().add(null, httpCookie);
+                    cookieManager.getCookieStore().add(null, httpCookie);
                 }
-            }
 
-
-            if (responseCode == HttpURLConnection.HTTP_OK) {
                 String line;
                 StringBuffer stringBuffer = new StringBuffer();
                 reader = new BufferedReader(new InputStreamReader(

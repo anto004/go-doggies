@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -20,11 +21,12 @@ import java.util.List;
 
 import app.go_doggies.com.go_doggies.model.Client;
 import app.go_doggies.com.go_doggies.sample.SampleClientData;
-import app.go_doggies.com.go_doggies.sync.ServerAuthenticate;
+import app.go_doggies.com.go_doggies.sync.MyCookieStore;
 
 public class MyClients extends AppCompatActivity {
     public static final String LOG_TAG = MyClients.class.getSimpleName();
     public ClientAdapter mClientAdapter;
+
 
     /**
      *
@@ -66,8 +68,7 @@ public class MyClients extends AppCompatActivity {
 
     }
 
-    public static void fetchClients(){
-        CookieManager cookieManager = ServerAuthenticate.mCookieManager;
+    public void fetchClients(){
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
 
@@ -87,6 +88,8 @@ public class MyClients extends AppCompatActivity {
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
+
+            CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
 
             if(cookieManager.getCookieStore().getCookies().size() > 0){
                 urlConnection.setRequestProperty("Cookie",
@@ -128,7 +131,7 @@ public class MyClients extends AppCompatActivity {
 
     }
 
-    static class ClientAsyncTask extends AsyncTask<Void, Void, Void>{
+    class ClientAsyncTask extends AsyncTask<Void, Void, Void>{
 
         @Override
         protected Void doInBackground(Void... voids) {

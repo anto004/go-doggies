@@ -21,6 +21,7 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
 
         ImageButton clientButton = (ImageButton) findViewById(R.id.my_client_button);
         clientButton.setOnClickListener(this);
+
     }
 
     @Override
