@@ -1,41 +1,32 @@
 package app.go_doggies.com.go_doggies.model;
 
-import android.media.Image;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
- * Created by anto004 on 1/9/18.
+ * Created by anto004 on 1/18/18.
  */
 
 public class Client {
-    public int clientId;
-    public String name;
-    public Image image;
+    @SerializedName("client_details")
+    private ClientDetails clientDetails;
+    @SerializedName("dogs")
+    private List<Dog> dogs = null;
 
-    public Client(String name){
-        this.name = name;
+    public ClientDetails getClientDetails() {
+        return clientDetails;
     }
 
-    public int getClientId() {
-        return clientId;
+    public void setClientDetails(ClientDetails clientDetails) {
+        this.clientDetails = clientDetails;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public List<Dog> getDogs() {
+        return dogs;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
+    public void setDogs(List<Dog> dogs) {
+        this.dogs = dogs;
     }
 }

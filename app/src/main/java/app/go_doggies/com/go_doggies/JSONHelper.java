@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.go_doggies.com.go_doggies.model.Client;
 import app.go_doggies.com.go_doggies.model.DataItem;
+import app.go_doggies.com.go_doggies.model.Dog;
 import app.go_doggies.com.go_doggies.sample.SampleDataProvider;
 
 
@@ -28,8 +30,18 @@ public class JSONHelper {
     public static final String LOG_TAG = JSONHelper.class.getName();
     public static final String FILE_NAME = "doggie_services.json";
 
-    public JSONHelper() {
+    public static void parseClientJsonData(String clientJsonStr){
+        Gson gson = new Gson();
+        Client[] clients = gson.fromJson(clientJsonStr, Client[].class);
+
+        for(Client client: clients) {
+            Log.v(LOG_TAG, client.getClientDetails().toString());
+            for(Dog dog: client.getDogs()){
+                Log.v(LOG_TAG,"  Dog: "+ dog.toString());
+            }
+        }
     }
+
 
     public static boolean exportJson(String jsonStr){
         FileOutputStream outputStream = null;
@@ -60,24 +72,11 @@ public class JSONHelper {
     }
 
     public static List<DataItem> importJson(){
-//        BufferedReader reader = null;
         FileReader reader = null;
 
         try {
             File file = new File(Environment.getExternalStorageDirectory(), FILE_NAME);
             Gson gson = new Gson();
-//            reader = new BufferedReader(new FileReader(file));
-//            StringBuffer jsonStr = new StringBuffer();
-//            String line = "";
-//            try {
-//                while((line = reader.readLine()) != null){
-//                    jsonStr.append(line);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            Log.v(LOG_TAG, "JsonStr BUffer:"+jsonStr);
-
             reader = new FileReader(file);
 //            Type listType = new TypeToken<List<DataItem>>(){}.getType();
 //            List<DataItem> dataItem = gson.fromJson(reader, listType);
@@ -100,7 +99,6 @@ public class JSONHelper {
         return null;
     }
     //convert jsonStr to DataItem objects
-
     public static List<DataItem> jsonToDataItem(String jsonString) throws JSONException {
         Gson gson = new GsonBuilder().create();
 //        JsonParser parser = new JsonParser();
@@ -143,5 +141,4 @@ public class JSONHelper {
             return result.toString();
         }
     }
-
 }
