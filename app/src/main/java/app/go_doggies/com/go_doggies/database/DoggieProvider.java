@@ -23,6 +23,10 @@ public class DoggieProvider extends ContentProvider {
     private DoggieDbHelper mOpenHelper;
 
     private static final int ITEMS = 100;
+    private static final int CLIENTS = 200;
+    private static final int CLIENTS_DETAILS = 201;
+    private static final int DOGS = 300;
+    private static final int DOGS_WITH_CLIENT_ID = 301;
 
     static UriMatcher buildUriMatcher(){
         //* -> String , # -> numbers
