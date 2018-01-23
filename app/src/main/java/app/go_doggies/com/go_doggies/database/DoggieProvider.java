@@ -22,11 +22,11 @@ public class DoggieProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = buildUriMatcher();
     private DoggieDbHelper mOpenHelper;
 
-    private static final int ITEMS = 100;
-    private static final int CLIENTS = 200;
-    private static final int CLIENTS_DETAILS = 201;
-    private static final int DOGS = 300;
-    private static final int DOGS_WITH_CLIENT_ID = 301;
+    static final int ITEMS = 100;
+    static final int CLIENTS = 200;
+    static final int CLIENTS_DETAILS = 201;
+    static final int DOGS = 300;
+    static final int DOGS_WITH_CLIENT_ID = 301;
 
     static UriMatcher buildUriMatcher(){
         //* -> String , # -> numbers
@@ -34,7 +34,10 @@ public class DoggieProvider extends ContentProvider {
         String authority = DoggieContract.CONTENT_AUTHORITY;
 
         uriMatcher.addURI(authority, DoggieContract.PATH_ITEMS, ITEMS);
-
+        uriMatcher.addURI(authority, DoggieContract.PATH_CLIENT, CLIENTS);
+        uriMatcher.addURI(authority, DoggieContract.PATH_CLIENT + "/*", CLIENTS_DETAILS); //client id is a number
+        uriMatcher.addURI(authority, DoggieContract.PATH_DOG, DOGS);
+        uriMatcher.addURI(authority, DoggieContract.PATH_DOG + "/*", DOGS_WITH_CLIENT_ID); //client id is a number
         return uriMatcher;
     }
 
@@ -49,8 +52,17 @@ public class DoggieProvider extends ContentProvider {
     @Override
     public String getType(@NonNull Uri uri) {
         switch(sURIMatcher.match(uri)){
+            //for images return mime type
             case ITEMS:
                 return DoggieContract.TableItems.CONTENT_TYPE;
+            case CLIENTS:
+                return DoggieContract.ClientEntry.CONTENT_TYPE;
+            case CLIENTS_DETAILS:
+                return DoggieContract.ClientEntry.CONTENT_ITEM_TYPE;
+            case DOGS:
+                return DoggieContract.DogEntry.CONTENT_TYPE;
+            case DOGS_WITH_CLIENT_ID:
+                return DoggieContract.DogEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: "+uri);
         }

@@ -33,8 +33,8 @@ public class DoggieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildClientWithDog(String client){
-            return CONTENT_URI.buildUpon().appendPath(client).build();
+        public static Uri buildDogWithClientId(String clientId){
+            return CONTENT_URI.buildUpon().appendPath(clientId).build();
         }
 
         //Base columns will provide an ID with column _id
@@ -44,7 +44,7 @@ public class DoggieContract {
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_SIZE = "size";
         public static final String COLUMN_HAIR_TYPE = "hair_type";
-        public static final String COLUMN_CLIENT_KEY = "client_id";
+        public static final String COLUMN_CLIENT_KEY = "client_id"; //foreign key
     }
 
     public static class ClientEntry implements BaseColumns{
@@ -69,7 +69,6 @@ public class DoggieContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_PHONE = "phone";
-
 
     }
 

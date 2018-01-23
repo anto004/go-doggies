@@ -1,4 +1,4 @@
-package app.go_doggies.com.go_doggies.data;
+package app.go_doggies.com.go_doggies.database;
 
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -10,10 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
-
-import app.go_doggies.com.go_doggies.database.DoggieContract;
-import app.go_doggies.com.go_doggies.database.DoggieDbHelper;
-import app.go_doggies.com.go_doggies.database.DoggieProvider;
 
 /**
  * Created by anto004 on 9/25/17.
@@ -111,6 +107,24 @@ public class TestProvider extends AndroidTestCase {
         // vnd.android.cursor.dir/app.go_doggies.com.go_doggies/items
         assertEquals("Error: the DoggieEntry CONTENT_URI should return DoggieEntry.CONTENT_TYPE",
                 DoggieContract.TableItems.CONTENT_TYPE, type);
+
+        //test for ClientEntry
+        type = mContext.getContentResolver().getType(DoggieContract.ClientEntry.CONTENT_URI);
+        assertEquals("Error: the ClientEntry CONTENT_URI should return ClientEntry.CONTENT_TYPE",
+                DoggieContract.ClientEntry.CONTENT_TYPE, type);
+        long testClientId = 804;
+        type = mContext.getContentResolver().getType(DoggieContract.ClientEntry.buildClientUri(testClientId));
+        assertEquals("Error: the ClientEntry CONTENT_URI with ClientId should return ClientEntry.CONTENT_ITEM_TYPE",
+                DoggieContract.ClientEntry.CONTENT_ITEM_TYPE, type);
+
+        //test for DogEntry
+        type = mContext.getContentResolver().getType(DoggieContract.DogEntry.CONTENT_URI);
+        assertEquals("Error: the DogEntry CONTENT_URI should return DogEntry.CONTENT_TYPE",
+                DoggieContract.DogEntry.CONTENT_TYPE, type);
+
+        type = mContext.getContentResolver().getType(DoggieContract.DogEntry.buildDogWithClientId(Long.toString(testClientId)));
+        assertEquals("Error: the DogEntry CONTENT_URI with ClientId should return DogEntry.CONTENT_ITEM_TYPE",
+                DoggieContract.DogEntry.CONTENT_ITEM_TYPE, type);
 
     }
 

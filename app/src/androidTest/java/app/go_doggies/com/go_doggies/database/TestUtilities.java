@@ -1,4 +1,4 @@
-package app.go_doggies.com.go_doggies.data;
+package app.go_doggies.com.go_doggies.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,8 +13,6 @@ import android.test.AndroidTestCase;
 import java.util.Map;
 import java.util.Set;
 
-import app.go_doggies.com.go_doggies.database.DoggieContract;
-import app.go_doggies.com.go_doggies.database.DoggieDbHelper;
 import app.go_doggies.com.go_doggies.utils.PollingCheck;
 
 public class TestUtilities extends AndroidTestCase {

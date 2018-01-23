@@ -1,4 +1,4 @@
-package app.go_doggies.com.go_doggies.data;
+package app.go_doggies.com.go_doggies.database;
 
 import android.test.AndroidTestCase;
 
