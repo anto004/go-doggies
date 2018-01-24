@@ -63,7 +63,7 @@ public class DoggieContract {
 
         //Base Column will provide an ID column _id
         public static final String TABLE_NAME = "client";
-        public static final String COLUMN_ID = "client_id";
+        public static final String COLUMN_CLIENT_ID = "client_id";
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_COMMENT = "comment";
         public static final String COLUMN_NAME = "name";

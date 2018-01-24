@@ -118,4 +118,16 @@ public class TestUtilities extends AndroidTestCase {
     static TestContentObserver getTestContentObserver() {
         return TestContentObserver.getTestContentObserver();
     }
+
+    public void testDb(){
+        deleteTheDatabase();
+        DoggieDbHelper dbHelper = new DoggieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        assertTrue("ERROR: CREATING TABLE", db.isOpen());
+        db.close();
+    }
+
+    void deleteTheDatabase() {
+        mContext.deleteDatabase(DoggieDbHelper.DB_FILENAME);
+    }
 }
