@@ -39,12 +39,12 @@ public class DoggieContract {
 
         //Base columns will provide an ID with column _id
         public static final String TABLE_NAME = "dog";
+        public static final String COLUMN_CLIENT_KEY = "client_id"; //foreign key
         public static final String COLUMN_DOG_ID = "dog_id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_SIZE = "size";
         public static final String COLUMN_HAIR_TYPE = "hair_type";
-        public static final String COLUMN_CLIENT_KEY = "client_id"; //foreign key
     }
 
     public static class ClientEntry implements BaseColumns{
@@ -57,8 +57,12 @@ public class DoggieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CLIENT;
 
-        public static Uri buildClientUri(long id){
+        public static Uri buildClientDetailUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static String getClientIdFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
         }
 
         //Base Column will provide an ID column _id

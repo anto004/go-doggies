@@ -17,6 +17,8 @@ import app.go_doggies.com.go_doggies.utils.PollingCheck;
 
 public class TestUtilities extends AndroidTestCase {
     static final long TEST_DATE = 1419033600L;  // December 20th, 2014
+    static final int TEST_CLIENT_ID_1 = 600;
+    static final int TEST_CLIENT_ID_2 = 601;
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
@@ -48,6 +50,51 @@ public class TestUtilities extends AndroidTestCase {
 
         return cv;
     }
+
+    static ContentValues createClientValues() {
+        ContentValues cv = new ContentValues();
+        cv.put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, TEST_CLIENT_ID_2);
+        cv.put(DoggieContract.ClientEntry.COLUMN_TYPE, "client");
+        cv.put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dog likes treats after grooming");
+        cv.put(DoggieContract.ClientEntry.COLUMN_NAME, "Antonio");
+        cv.put(DoggieContract.ClientEntry.COLUMN_IMAGE, "img.jpeg");
+        cv.put(DoggieContract.ClientEntry.COLUMN_PHONE, "213-352-3144");
+
+        return cv;
+    }
+
+    static ContentValues[] createMultipleClientValues(){
+        ContentValues[] cv = new ContentValues[2];
+        cv[0] = new ContentValues();
+        cv[0].put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, TEST_CLIENT_ID_1);
+        cv[0].put(DoggieContract.ClientEntry.COLUMN_TYPE, "client");
+        cv[0].put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dog is very excited");
+        cv[0].put(DoggieContract.ClientEntry.COLUMN_NAME, "Jane");
+        cv[0].put(DoggieContract.ClientEntry.COLUMN_IMAGE, "img.jpeg");
+        cv[0].put(DoggieContract.ClientEntry.COLUMN_PHONE, "213-345-2345");
+
+        cv[1] = new ContentValues();
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, TEST_CLIENT_ID_2);
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_TYPE, "client");
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dog likes treats after grooming");
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_NAME, "Antonio");
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_IMAGE, "img.jpeg");
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_PHONE, "213-352-3144");
+
+        return cv;
+    }
+
+    static ContentValues createDogValues() {
+        ContentValues cv = new ContentValues();
+        cv.put(DoggieContract.DogEntry.COLUMN_CLIENT_KEY, 601);
+        cv.put(DoggieContract.DogEntry.COLUMN_DOG_ID, 301);
+        cv.put(DoggieContract.DogEntry.COLUMN_NAME, "Pebbles");
+        cv.put(DoggieContract.DogEntry.COLUMN_IMAGE, "image.jpeg");
+        cv.put(DoggieContract.DogEntry.COLUMN_SIZE, "small");
+        cv.put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, "short");
+        return cv;
+    }
+
     static final int BULK_INSERT_NUMBER = 10;
     static ContentValues[] createBulkItemInsert(){
         ContentValues[] cv = new ContentValues[BULK_INSERT_NUMBER];
@@ -72,6 +119,30 @@ public class TestUtilities extends AndroidTestCase {
         // Verify we got a row back.
         assertTrue("Error: Failure to insert Item Values", rowId != -1);
         return rowId;
+    }
+
+    public void testInsertClientValues(){
+        //create a fresh database
+        testDb();
+
+        SQLiteDatabase database = new DoggieDbHelper(mContext).getWritableDatabase();
+        ContentValues values = createClientValues();
+        long rowId = database.insert(DoggieContract.ClientEntry.TABLE_NAME,
+                null,
+                values);
+        // Verify we got a row back.
+        assertTrue("Error: Failure to insert Client Values", rowId != -1);
+    }
+
+    public void testInsertDogValues(){
+        //first Insert client Values
+        SQLiteDatabase database = new DoggieDbHelper(mContext).getWritableDatabase();
+        ContentValues values = createDogValues();
+        long rowId = database.insert(DoggieContract.DogEntry.TABLE_NAME,
+                null,
+                values);
+        // Verify we got a row back.
+        assertTrue("Error: Failure to insert Dog Values", rowId != -1);
     }
 
     static class TestContentObserver extends ContentObserver {
@@ -130,4 +201,5 @@ public class TestUtilities extends AndroidTestCase {
     void deleteTheDatabase() {
         mContext.deleteDatabase(DoggieDbHelper.DB_FILENAME);
     }
+
 }

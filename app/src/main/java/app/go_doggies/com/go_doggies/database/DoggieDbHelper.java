@@ -76,7 +76,7 @@ public class DoggieDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_DOG_TABLE = "CREATE TABLE " + DoggieContract.DogEntry.TABLE_NAME + "(" +
                 DoggieContract.DogEntry._ID + " " + "INTEGER PRIMARY KEY AUTOINCREMENT," +
-                DoggieContract.ClientEntry.COLUMN_CLIENT_ID + " " + "INTEGER NOT NULL," +
+                DoggieContract.DogEntry.COLUMN_CLIENT_KEY + " " + "INTEGER NOT NULL," +
                 DoggieContract.DogEntry.COLUMN_DOG_ID + " " + "INTEGER NOT NULL," +
                 DoggieContract.DogEntry.COLUMN_NAME + " " + "TEXT," +
                 DoggieContract.DogEntry.COLUMN_IMAGE + " " + "TEXT," +

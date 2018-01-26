@@ -18,7 +18,6 @@ import static app.go_doggies.com.go_doggies.database.DoggieDbHelper.LOG_TAG;
 
 public class DoggieProvider extends ContentProvider {
     // do not close database in the provider
-
     private static final UriMatcher sURIMatcher = buildUriMatcher();
     private DoggieDbHelper mOpenHelper;
 
@@ -35,10 +34,51 @@ public class DoggieProvider extends ContentProvider {
 
         uriMatcher.addURI(authority, DoggieContract.PATH_ITEMS, ITEMS);
         uriMatcher.addURI(authority, DoggieContract.PATH_CLIENT, CLIENTS);
-        uriMatcher.addURI(authority, DoggieContract.PATH_CLIENT + "/*", CLIENTS_DETAILS); //client id is a number
+        uriMatcher.addURI(authority, DoggieContract.PATH_CLIENT + "/*", CLIENTS_DETAILS);
         uriMatcher.addURI(authority, DoggieContract.PATH_DOG, DOGS);
-        uriMatcher.addURI(authority, DoggieContract.PATH_DOG + "/*", DOGS_WITH_CLIENT_ID); //client id is a number
+        uriMatcher.addURI(authority, DoggieContract.PATH_DOG + "/*", DOGS_WITH_CLIENT_ID);
         return uriMatcher;
+    }
+
+//    private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
+//        String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
+//        long startDate = WeatherContract.WeatherEntry.getStartDateFromUri(uri);
+//
+//        String[] selectionArgs;
+//        String selection;
+//
+//        if (startDate == 0) { // if no date
+//            selection = sLocationSettingSelection; // just the location
+//            selectionArgs = new String[]{locationSetting}; // provide the location as an argument
+//        } else {
+//            selection = sLocationSettingWithStartDateSelection; // location with date
+//            selectionArgs = new String[]{locationSetting, Long.toString(startDate)}; // provide location and date as strings
+//        }
+//
+//        return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+//                projection, // selected columns to display
+//                selection, // where column(s) =
+//                selectionArgs, // args for the where clause
+//                null,
+//                null,
+//                sortOrder
+//        );
+    private Cursor getClientFromClients(Uri uri, String[] projection, String sortOrder){
+        String clientId = DoggieContract.ClientEntry.getClientIdFromUri(uri);
+        String selection = DoggieContract.ClientEntry.TABLE_NAME +
+                "." + DoggieContract.ClientEntry.COLUMN_CLIENT_ID +
+                " = ? ";
+        String[] selectionArgs = {clientId};
+
+        return mOpenHelper.getReadableDatabase().query(
+                DoggieContract.ClientEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
     }
 
     @Override
@@ -72,10 +112,10 @@ public class DoggieProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-
+        Cursor retCursor;
         switch(sURIMatcher.match(uri)){
             case ITEMS:
-                Cursor cursor = mOpenHelper.getReadableDatabase().query(
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         DoggieContract.TableItems.TABLE_NAME,
                         projection,
                         selection,
@@ -84,12 +124,41 @@ public class DoggieProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
-                // loaders wont update changes if this is not set
-                cursor.setNotificationUri(getContext().getContentResolver(), uri);
-                return cursor;
+                break;
+            case CLIENTS:
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        DoggieContract.ClientEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+
+            case CLIENTS_DETAILS:
+                retCursor = getClientFromClients(uri, projection, sortOrder);
+                break;
+
+            case DOGS:
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        DoggieContract.DogEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown Uri: "+uri);
         }
+        // loaders wont update changes if this is not set
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
     @Nullable

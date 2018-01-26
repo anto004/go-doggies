@@ -15,7 +15,7 @@ public class TestUriMatcher extends AndroidTestCase {
 
     // content://app.go_doggies.com.go_doggies
     private static final Uri TEST_CLIENT_DIR = DoggieContract.ClientEntry.CONTENT_URI;
-    private static final Uri TEST_CLIENT_DETAILS_DIR = DoggieContract.ClientEntry.buildClientUri(Long.parseLong(clientId));
+    private static final Uri TEST_CLIENT_DETAILS_DIR = DoggieContract.ClientEntry.buildClientDetailUri(Long.parseLong(clientId));
     private static final Uri TEST_DOG_DIR = DoggieContract.DogEntry.CONTENT_URI;
     private static final Uri TEST_DOG_DIR_WITH_CLIENT_ID_DIR = DoggieContract.DogEntry.buildDogWithClientId(clientId);
 

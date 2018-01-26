@@ -112,8 +112,9 @@ public class TestProvider extends AndroidTestCase {
         type = mContext.getContentResolver().getType(DoggieContract.ClientEntry.CONTENT_URI);
         assertEquals("Error: the ClientEntry CONTENT_URI should return ClientEntry.CONTENT_TYPE",
                 DoggieContract.ClientEntry.CONTENT_TYPE, type);
-        long testClientId = 804;
-        type = mContext.getContentResolver().getType(DoggieContract.ClientEntry.buildClientUri(testClientId));
+
+        type = mContext.getContentResolver()
+                .getType(DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_1));
         assertEquals("Error: the ClientEntry CONTENT_URI with ClientId should return ClientEntry.CONTENT_ITEM_TYPE",
                 DoggieContract.ClientEntry.CONTENT_ITEM_TYPE, type);
 
@@ -122,7 +123,8 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Error: the DogEntry CONTENT_URI should return DogEntry.CONTENT_TYPE",
                 DoggieContract.DogEntry.CONTENT_TYPE, type);
 
-        type = mContext.getContentResolver().getType(DoggieContract.DogEntry.buildDogWithClientId(Long.toString(testClientId)));
+        type = mContext.getContentResolver()
+                .getType(DoggieContract.DogEntry.buildDogWithClientId(Long.toString(TestUtilities.TEST_CLIENT_ID_1)));
         assertEquals("Error: the DogEntry CONTENT_URI with ClientId should return DogEntry.CONTENT_ITEM_TYPE",
                 DoggieContract.DogEntry.CONTENT_ITEM_TYPE, type);
 
@@ -151,6 +153,89 @@ public class TestProvider extends AndroidTestCase {
 
         // Make sure we get the correct cursor out of the database
         TestUtilities.validateCursor("testBasicItemQuery", cursor, testValues);
+    }
+
+    public void testBasicClientQuery() {
+        // insert our test records into the database
+        DoggieDbHelper dbHelper = new DoggieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createClientValues();
+        long itemRowId = db.insert(DoggieContract.ClientEntry.TABLE_NAME, null, testValues);
+
+        assertTrue("Unable to Insert ClientEntry into the Database", itemRowId != -1);
+
+        db.close();
+
+        // Test the basic content provider query
+        Cursor cursor = mContext.getContentResolver().query(
+                DoggieContract.ClientEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Make sure we get the correct cursor out of the database
+        TestUtilities.validateCursor("testBasicClientQuery", cursor, testValues);
+    }
+
+    public void testBasicDogQuery() {
+        // insert our test records into the database
+        DoggieDbHelper dbHelper = new DoggieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createDogValues();
+        long itemRowId = db.insert(DoggieContract.DogEntry.TABLE_NAME, null, testValues);
+
+        assertTrue("Unable to Insert DogEntry into the Database", itemRowId != -1);
+
+        db.close();
+
+        // Test the basic content provider query
+        Cursor cursor = mContext.getContentResolver().query(
+                DoggieContract.DogEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Make sure we get the correct cursor out of the database
+        TestUtilities.validateCursor("testBasicDogQuery", cursor, testValues);
+    }
+
+    public void testClientDetailQuery() {
+        //fresh database
+        mContext.deleteDatabase(DoggieDbHelper.DB_FILENAME);
+
+        DoggieDbHelper dbHelper = new DoggieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues[] testValues = TestUtilities.createMultipleClientValues();
+        for(int i = 0; i < testValues.length; i++) {
+            long itemRowId = db.insert(DoggieContract.ClientEntry.TABLE_NAME, null, testValues[i]);
+
+            assertTrue("Unable to Insert ClientEntry into the Database", itemRowId != -1);
+        }
+        db.close();
+
+        Uri clientDetailUri = DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_2);
+        Cursor cursor = mContext.getContentResolver().query(
+                 clientDetailUri,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Make sure we get the correct cursor out of the database
+        //test for CLIENT_ID_2 = "601"
+        //inserted values
+        //row1 -> client_id(600)
+        //row2 -> client_id(601)
+        //query for client_id(601) and compare with client_id(601)
+        TestUtilities.validateCursor("testBasicDogQuery", cursor, testValues[1]);
     }
 
     public void testInsertReadProvider() {
