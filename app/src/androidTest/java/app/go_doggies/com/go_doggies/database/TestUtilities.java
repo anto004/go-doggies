@@ -19,6 +19,9 @@ public class TestUtilities extends AndroidTestCase {
     static final long TEST_DATE = 1419033600L;  // December 20th, 2014
     static final int TEST_CLIENT_ID_1 = 600;
     static final int TEST_CLIENT_ID_2 = 601;
+    static final int TEST_DOG_ID_1 = 300;
+    static final int TEST_DOG_ID_2 = 301;
+    static final int TEST_DOG_ID_3 = 302;
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
@@ -37,6 +40,15 @@ public class TestUtilities extends AndroidTestCase {
                     "' did not match the expected value '" +
                     expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
         }
+    }
+
+    static void validateCursorWithMultipleRows(String error, Cursor valueCursor, ContentValues[] expectedValues){
+        assertTrue("Empty cursor returned: "+ error, valueCursor.moveToFirst());
+        int i = 0;
+        while(valueCursor.moveToNext()){
+            validateCurrentRecord(error, valueCursor, expectedValues[i++]);
+        }
+        valueCursor.close();
     }
 
     static ContentValues createItemValues() {
@@ -68,7 +80,7 @@ public class TestUtilities extends AndroidTestCase {
         cv[0] = new ContentValues();
         cv[0].put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, TEST_CLIENT_ID_1);
         cv[0].put(DoggieContract.ClientEntry.COLUMN_TYPE, "client");
-        cv[0].put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dog is very excited");
+        cv[0].put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dogs is very excited");
         cv[0].put(DoggieContract.ClientEntry.COLUMN_NAME, "Jane");
         cv[0].put(DoggieContract.ClientEntry.COLUMN_IMAGE, "img.jpeg");
         cv[0].put(DoggieContract.ClientEntry.COLUMN_PHONE, "213-345-2345");
@@ -76,7 +88,7 @@ public class TestUtilities extends AndroidTestCase {
         cv[1] = new ContentValues();
         cv[1].put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, TEST_CLIENT_ID_2);
         cv[1].put(DoggieContract.ClientEntry.COLUMN_TYPE, "client");
-        cv[1].put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dog likes treats after grooming");
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dogs like treats after being grooming");
         cv[1].put(DoggieContract.ClientEntry.COLUMN_NAME, "Antonio");
         cv[1].put(DoggieContract.ClientEntry.COLUMN_IMAGE, "img.jpeg");
         cv[1].put(DoggieContract.ClientEntry.COLUMN_PHONE, "213-352-3144");
@@ -93,6 +105,52 @@ public class TestUtilities extends AndroidTestCase {
         cv.put(DoggieContract.DogEntry.COLUMN_SIZE, "small");
         cv.put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, "short");
         return cv;
+    }
+
+    static ContentValues[] createMultipleDogValues(){
+        //client2 has two dogs pebbles and spike
+        //client1 has one dog tike
+        ContentValues[] cv = new ContentValues[3];
+        cv[0] = new ContentValues();
+        cv[0].put(DoggieContract.DogEntry.COLUMN_CLIENT_KEY, TEST_CLIENT_ID_2);
+        cv[0].put(DoggieContract.DogEntry.COLUMN_DOG_ID, TEST_DOG_ID_1);
+        cv[0].put(DoggieContract.DogEntry.COLUMN_NAME, "Pebbles");
+        cv[0].put(DoggieContract.DogEntry.COLUMN_IMAGE, "image.jpeg");
+        cv[0].put(DoggieContract.DogEntry.COLUMN_SIZE, "small");
+        cv[0].put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, "short");
+
+        cv[1] = new ContentValues();
+        cv[1].put(DoggieContract.DogEntry.COLUMN_CLIENT_KEY, TEST_CLIENT_ID_2);
+        cv[1].put(DoggieContract.DogEntry.COLUMN_DOG_ID, TEST_DOG_ID_2);
+        cv[1].put(DoggieContract.DogEntry.COLUMN_NAME, "Spike");
+        cv[1].put(DoggieContract.DogEntry.COLUMN_IMAGE, "image.jpeg");
+        cv[1].put(DoggieContract.DogEntry.COLUMN_SIZE, "big");
+        cv[1].put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, "short");
+
+        cv[2] = new ContentValues();
+        cv[2].put(DoggieContract.DogEntry.COLUMN_CLIENT_KEY, TEST_CLIENT_ID_1);
+        cv[2].put(DoggieContract.DogEntry.COLUMN_DOG_ID, TEST_DOG_ID_3);
+        cv[2].put(DoggieContract.DogEntry.COLUMN_NAME, "Tike");
+        cv[2].put(DoggieContract.DogEntry.COLUMN_IMAGE, "image.jpeg");
+        cv[2].put(DoggieContract.DogEntry.COLUMN_SIZE, "big");
+        cv[2].put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, "short");
+
+        return cv;
+    }
+
+    static ContentValues[] createClientDogValues(){
+        ContentValues[] clientValues = createMultipleClientValues();
+        ContentValues[] dogValues = createMultipleDogValues();
+        ContentValues[] clientDogValues = new ContentValues[2];
+        clientDogValues[0] = new ContentValues();
+        clientDogValues[0].putAll(clientValues[1]);
+        clientDogValues[0].putAll(dogValues[1]);
+
+        clientDogValues[1] = new ContentValues();
+        clientDogValues[1].putAll(clientValues[1]);
+        clientDogValues[1].putAll(dogValues[0]);
+
+        return clientDogValues;
     }
 
     static final int BULK_INSERT_NUMBER = 10;

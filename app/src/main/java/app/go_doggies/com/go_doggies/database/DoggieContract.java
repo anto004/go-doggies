@@ -29,11 +29,7 @@ public class DoggieContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_DOG;
 
         //appends it to the path: authority/path/id
-        public static Uri buildDogUri(long id){
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
-
-        public static Uri buildDogWithClientId(String clientId){
+        public static Uri buildDogUriWithClientId(String clientId){
             return CONTENT_URI.buildUpon().appendPath(clientId).build();
         }
 

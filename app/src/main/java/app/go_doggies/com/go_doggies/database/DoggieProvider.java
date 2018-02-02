@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import static app.go_doggies.com.go_doggies.database.DoggieDbHelper.LOG_TAG;
 public class DoggieProvider extends ContentProvider {
     // do not close database in the provider
     private static final UriMatcher sURIMatcher = buildUriMatcher();
+    private static final SQLiteQueryBuilder sClientWithDogQueryBuilder;
     private DoggieDbHelper mOpenHelper;
 
     static final int ITEMS = 100;
@@ -40,29 +42,21 @@ public class DoggieProvider extends ContentProvider {
         return uriMatcher;
     }
 
-//    private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
-//        String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
-//        long startDate = WeatherContract.WeatherEntry.getStartDateFromUri(uri);
-//
-//        String[] selectionArgs;
-//        String selection;
-//
-//        if (startDate == 0) { // if no date
-//            selection = sLocationSettingSelection; // just the location
-//            selectionArgs = new String[]{locationSetting}; // provide the location as an argument
-//        } else {
-//            selection = sLocationSettingWithStartDateSelection; // location with date
-//            selectionArgs = new String[]{locationSetting, Long.toString(startDate)}; // provide location and date as strings
-//        }
-//
-//        return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
-//                projection, // selected columns to display
-//                selection, // where column(s) =
-//                selectionArgs, // args for the where clause
-//                null,
-//                null,
-//                sortOrder
-//        );
+    static{
+        sClientWithDogQueryBuilder = new SQLiteQueryBuilder();
+        //client LEFT JOIN dog ON client.client_id = dog.client_id
+        sClientWithDogQueryBuilder.setTables(
+                DoggieContract.ClientEntry.TABLE_NAME + " " + "LEFT JOIN" + " " +
+                        DoggieContract.DogEntry.TABLE_NAME + " " + "ON" + " " +
+                        DoggieContract.ClientEntry.TABLE_NAME +
+                        "." + DoggieContract.ClientEntry.COLUMN_CLIENT_ID +
+                        " " +
+                        "=" +
+                        " " + DoggieContract.DogEntry.TABLE_NAME +
+                        "." + DoggieContract.DogEntry.COLUMN_CLIENT_KEY
+        );
+    }
+
     private Cursor getClientFromClients(Uri uri, String[] projection, String sortOrder){
         String clientId = DoggieContract.ClientEntry.getClientIdFromUri(uri);
         String selection = DoggieContract.ClientEntry.TABLE_NAME +
@@ -79,6 +73,22 @@ public class DoggieProvider extends ContentProvider {
                 null,
                 sortOrder
         );
+    }
+
+    private Cursor getClientWithDogs(Uri uri, String[] projection, String sortOrder){
+        String clientId = DoggieContract.ClientEntry.getClientIdFromUri(uri);
+        String selection = DoggieContract.ClientEntry.TABLE_NAME +
+                "." + DoggieContract.ClientEntry.COLUMN_CLIENT_ID +
+                " = ? ";
+        String[] selectionArgs = {clientId};
+
+        return sClientWithDogQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
     }
 
     @Override
@@ -98,7 +108,7 @@ public class DoggieProvider extends ContentProvider {
             case CLIENTS:
                 return DoggieContract.ClientEntry.CONTENT_TYPE;
             case CLIENTS_DETAILS:
-                return DoggieContract.ClientEntry.CONTENT_ITEM_TYPE;
+                return DoggieContract.ClientEntry.CONTENT_TYPE;
             case DOGS:
                 return DoggieContract.DogEntry.CONTENT_TYPE;
             case DOGS_WITH_CLIENT_ID:
@@ -138,7 +148,10 @@ public class DoggieProvider extends ContentProvider {
                 break;
 
             case CLIENTS_DETAILS:
-                retCursor = getClientFromClients(uri, projection, sortOrder);
+                //gets only the client details without the dogs
+//                retCursor = getClientFromClients(uri, projection, sortOrder);
+                //gets the client details with the dogs
+                retCursor = getClientWithDogs(uri, projection, sortOrder);
                 break;
 
             case DOGS:
@@ -151,6 +164,10 @@ public class DoggieProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                break;
+
+            case DOGS_WITH_CLIENT_ID:
+                retCursor = null;
                 break;
 
             default:

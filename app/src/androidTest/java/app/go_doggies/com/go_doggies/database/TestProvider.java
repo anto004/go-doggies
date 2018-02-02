@@ -115,8 +115,8 @@ public class TestProvider extends AndroidTestCase {
 
         type = mContext.getContentResolver()
                 .getType(DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_1));
-        assertEquals("Error: the ClientEntry CONTENT_URI with ClientId should return ClientEntry.CONTENT_ITEM_TYPE",
-                DoggieContract.ClientEntry.CONTENT_ITEM_TYPE, type);
+        assertEquals("Error: the ClientEntry CONTENT_URI with ClientId should return ClientEntry.CONTENT_TYPE",
+                DoggieContract.ClientEntry.CONTENT_TYPE, type);
 
         //test for DogEntry
         type = mContext.getContentResolver().getType(DoggieContract.DogEntry.CONTENT_URI);
@@ -124,7 +124,7 @@ public class TestProvider extends AndroidTestCase {
                 DoggieContract.DogEntry.CONTENT_TYPE, type);
 
         type = mContext.getContentResolver()
-                .getType(DoggieContract.DogEntry.buildDogWithClientId(Long.toString(TestUtilities.TEST_CLIENT_ID_1)));
+                .getType(DoggieContract.DogEntry.buildDogUriWithClientId(Long.toString(TestUtilities.TEST_CLIENT_ID_1)));
         assertEquals("Error: the DogEntry CONTENT_URI with ClientId should return DogEntry.CONTENT_ITEM_TYPE",
                 DoggieContract.DogEntry.CONTENT_ITEM_TYPE, type);
 
@@ -235,7 +235,50 @@ public class TestProvider extends AndroidTestCase {
         //row1 -> client_id(600)
         //row2 -> client_id(601)
         //query for client_id(601) and compare with client_id(601)
-        TestUtilities.validateCursor("testBasicDogQuery", cursor, testValues[1]);
+        TestUtilities.validateCursor("testClientDetailQuery", cursor, testValues[1]);
+    }
+
+    public void testClientWithDogQuery() {
+        //fresh database
+        mContext.deleteDatabase(DoggieDbHelper.DB_FILENAME);
+
+        DoggieDbHelper dbHelper = new DoggieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues[] clientValues = TestUtilities.createMultipleClientValues();
+        for(int i = 0; i < clientValues.length; i++) {
+            long itemRowId = db.insert(DoggieContract.ClientEntry.TABLE_NAME, null, clientValues[i]);
+
+            assertTrue("Unable to Insert ClientEntry into the Database", itemRowId != -1);
+        }
+
+        ContentValues[] dogValues= TestUtilities.createMultipleDogValues();
+        for(int i = 0; i < dogValues.length; i++) {
+            long itemRowId = db.insert(DoggieContract.DogEntry.TABLE_NAME, null, dogValues[i]);
+
+            assertTrue("Unable to Insert DogEntry into the Database", itemRowId != -1);
+        }
+        db.close();
+
+        Uri clientWithDogUri = DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_2);
+        Cursor cursor = mContext.getContentResolver().query(
+                clientWithDogUri,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Make sure we get the correct cursor out of the database
+        //test for CLIENT_ID_2 = "601"
+        //inserted values client table         dog table
+        //row1 -> client_id(600)            row1 -> dog_id(300) -> client_id(601)
+        //row2 -> client_id(601)            row2 -> dog_id(301) -> client_id(601)
+        //                                  row3 -> dog_id(302) -> client_id(600)
+        //query for client_id(601) should return two joined rows of client_id(601) with dog 300,301
+        ContentValues[] clientDogValues = TestUtilities.createClientDogValues();
+
+        TestUtilities.validateCursorWithMultipleRows("testClientWithDogQuery", cursor, clientDogValues);
     }
 
     public void testInsertReadProvider() {
