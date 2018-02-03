@@ -29,8 +29,12 @@ public class DoggieContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_DOG;
 
         //appends it to the path: authority/path/id
-        public static Uri buildDogUriWithClientId(String clientId){
-            return CONTENT_URI.buildUpon().appendPath(clientId).build();
+        public static Uri buildDogUriWithClientId(long clientId){
+            return ContentUris.withAppendedId(CONTENT_URI, clientId);
+        }
+
+        public static String getClientIdFromDogUri(Uri uri){
+            return uri.getPathSegments().get(1);
         }
 
         //Base columns will provide an ID with column _id
@@ -57,7 +61,7 @@ public class DoggieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static String getClientIdFromUri(Uri uri){
+        public static String getClientIdFromClientUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
 

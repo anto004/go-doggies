@@ -69,7 +69,7 @@ public class TestUtilities extends AndroidTestCase {
         cv.put(DoggieContract.ClientEntry.COLUMN_TYPE, "client");
         cv.put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dog likes treats after grooming");
         cv.put(DoggieContract.ClientEntry.COLUMN_NAME, "Antonio");
-        cv.put(DoggieContract.ClientEntry.COLUMN_IMAGE, "img.jpeg");
+        cv.put(DoggieContract.ClientEntry.COLUMN_IMAGE, "image.jpeg");
         cv.put(DoggieContract.ClientEntry.COLUMN_PHONE, "213-352-3144");
 
         return cv;
@@ -90,7 +90,7 @@ public class TestUtilities extends AndroidTestCase {
         cv[1].put(DoggieContract.ClientEntry.COLUMN_TYPE, "client");
         cv[1].put(DoggieContract.ClientEntry.COLUMN_COMMENT, "My dogs like treats after being grooming");
         cv[1].put(DoggieContract.ClientEntry.COLUMN_NAME, "Antonio");
-        cv[1].put(DoggieContract.ClientEntry.COLUMN_IMAGE, "img.jpeg");
+        cv[1].put(DoggieContract.ClientEntry.COLUMN_IMAGE, "image.jpeg");
         cv[1].put(DoggieContract.ClientEntry.COLUMN_PHONE, "213-352-3144");
 
         return cv;
@@ -99,6 +99,17 @@ public class TestUtilities extends AndroidTestCase {
     static ContentValues createDogValues() {
         ContentValues cv = new ContentValues();
         cv.put(DoggieContract.DogEntry.COLUMN_CLIENT_KEY, 601);
+        cv.put(DoggieContract.DogEntry.COLUMN_DOG_ID, 301);
+        cv.put(DoggieContract.DogEntry.COLUMN_NAME, "Pebbles");
+        cv.put(DoggieContract.DogEntry.COLUMN_IMAGE, "image.jpeg");
+        cv.put(DoggieContract.DogEntry.COLUMN_SIZE, "small");
+        cv.put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, "short");
+        return cv;
+    }
+
+    static ContentValues createDogValues(long clientId) {
+        ContentValues cv = new ContentValues();
+        cv.put(DoggieContract.DogEntry.COLUMN_CLIENT_KEY, clientId);
         cv.put(DoggieContract.DogEntry.COLUMN_DOG_ID, 301);
         cv.put(DoggieContract.DogEntry.COLUMN_NAME, "Pebbles");
         cv.put(DoggieContract.DogEntry.COLUMN_IMAGE, "image.jpeg");

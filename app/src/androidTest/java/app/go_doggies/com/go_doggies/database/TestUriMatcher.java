@@ -10,14 +10,11 @@ import android.test.AndroidTestCase;
  */
 
 public class TestUriMatcher extends AndroidTestCase {
-
-    private static final String clientId = "804";
-
     // content://app.go_doggies.com.go_doggies
     private static final Uri TEST_CLIENT_DIR = DoggieContract.ClientEntry.CONTENT_URI;
-    private static final Uri TEST_CLIENT_DETAILS_DIR = DoggieContract.ClientEntry.buildClientDetailUri(Long.parseLong(clientId));
+    private static final Uri TEST_CLIENT_DETAILS_DIR = DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_2);
     private static final Uri TEST_DOG_DIR = DoggieContract.DogEntry.CONTENT_URI;
-    private static final Uri TEST_DOG_DIR_WITH_CLIENT_ID_DIR = DoggieContract.DogEntry.buildDogUriWithClientId(clientId);
+    private static final Uri TEST_DOG_DIR_WITH_CLIENT_ID_DIR = DoggieContract.DogEntry.buildDogUriWithClientId(TestUtilities.TEST_CLIENT_ID_2);
 
 
     public void testUriMatcher() {

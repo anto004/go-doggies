@@ -1,6 +1,7 @@
 package app.go_doggies.com.go_doggies.database;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -57,26 +58,8 @@ public class DoggieProvider extends ContentProvider {
         );
     }
 
-    private Cursor getClientFromClients(Uri uri, String[] projection, String sortOrder){
-        String clientId = DoggieContract.ClientEntry.getClientIdFromUri(uri);
-        String selection = DoggieContract.ClientEntry.TABLE_NAME +
-                "." + DoggieContract.ClientEntry.COLUMN_CLIENT_ID +
-                " = ? ";
-        String[] selectionArgs = {clientId};
-
-        return mOpenHelper.getReadableDatabase().query(
-                DoggieContract.ClientEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );
-    }
-
     private Cursor getClientWithDogs(Uri uri, String[] projection, String sortOrder){
-        String clientId = DoggieContract.ClientEntry.getClientIdFromUri(uri);
+        String clientId = DoggieContract.ClientEntry.getClientIdFromClientUri(uri);
         String selection = DoggieContract.ClientEntry.TABLE_NAME +
                 "." + DoggieContract.ClientEntry.COLUMN_CLIENT_ID +
                 " = ? ";
@@ -89,6 +72,24 @@ public class DoggieProvider extends ContentProvider {
                 null,
                 null,
                 null);
+    }
+
+    private Cursor getDogsOfClient(Uri uri, String[] projection, String sortOrder){
+        String clientId = DoggieContract.DogEntry.getClientIdFromDogUri(uri);
+        String selection = DoggieContract.DogEntry.TABLE_NAME +
+                "." + DoggieContract.DogEntry.COLUMN_CLIENT_KEY +
+                " = ? ";
+        String[] selectionArgs = {clientId};
+
+        return mOpenHelper.getReadableDatabase().query(
+                DoggieContract.DogEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
     }
 
     @Override
@@ -148,9 +149,6 @@ public class DoggieProvider extends ContentProvider {
                 break;
 
             case CLIENTS_DETAILS:
-                //gets only the client details without the dogs
-//                retCursor = getClientFromClients(uri, projection, sortOrder);
-                //gets the client details with the dogs
                 retCursor = getClientWithDogs(uri, projection, sortOrder);
                 break;
 
@@ -167,7 +165,7 @@ public class DoggieProvider extends ContentProvider {
                 break;
 
             case DOGS_WITH_CLIENT_ID:
-                retCursor = null;
+                retCursor = getDogsOfClient(uri, projection, sortOrder);
                 break;
 
             default:
@@ -182,10 +180,11 @@ public class DoggieProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         Uri returnUri;
+        long rowId;
         switch(sURIMatcher.match(uri)){
             case ITEMS:
                 // returns the row ID inserted
-                long rowId = mOpenHelper.getWritableDatabase().insert(
+                rowId = mOpenHelper.getWritableDatabase().insert(
                         DoggieContract.TableItems.TABLE_NAME,
                         null,
                         contentValues
@@ -193,6 +192,37 @@ public class DoggieProvider extends ContentProvider {
                 if(rowId >= 0) {
                     Log.v(LOG_TAG, "INSERTED at _ID: "+rowId+ " into TABLE: "+ DoggieContract.TableItems.TABLE_NAME);
                     returnUri = DoggieContract.TableItems.buildItemsrUri(rowId);
+                }
+                else
+                    throw new android.database.SQLException("Failed to Insert to uri: "+ uri);
+                break;
+
+            case CLIENTS:
+                rowId = mOpenHelper.getWritableDatabase().insert(
+                        DoggieContract.ClientEntry.TABLE_NAME,
+                        null,
+                        contentValues
+                );
+                if(rowId >= 0) {
+                    Log.v(LOG_TAG, "INSERTED at _ID: "+rowId+ " into TABLE: "+ DoggieContract.ClientEntry.TABLE_NAME);
+                    long clientId = contentValues.getAsLong(DoggieContract.ClientEntry.COLUMN_CLIENT_ID);
+                    returnUri = DoggieContract.ClientEntry.buildClientDetailUri(clientId);
+                }
+                else
+                    throw new android.database.SQLException("Failed to Insert to uri: "+ uri);
+                break;
+
+            case DOGS:
+                rowId = mOpenHelper.getWritableDatabase().insert(
+                        DoggieContract.DogEntry.TABLE_NAME,
+                        null,
+                        contentValues
+                );
+                if(rowId >= 0) {
+                    Log.v(LOG_TAG, "INSERTED at _ID: "+rowId+ " into TABLE: "+ DoggieContract.DogEntry.TABLE_NAME
+                                        + "for client: " + contentValues.get(DoggieContract.DogEntry.COLUMN_CLIENT_KEY));
+                    //you can build the uri with dog id instead of the rowId
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
                 }
                 else
                     throw new android.database.SQLException("Failed to Insert to uri: "+ uri);
