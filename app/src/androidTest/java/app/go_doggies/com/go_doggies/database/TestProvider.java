@@ -364,6 +364,63 @@ public class TestProvider extends AndroidTestCase {
 
     }
 
+    public void testDelete(){
+        testInsertClientProvider();
+        //inserted Antonio in client with clientId = CLIENT_ID_2
+        //inserted Pebbles in dog
+
+        //Register a ContentObserver for our dogs delete
+        TestUtilities.TestContentObserver dogObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(DoggieContract.DogEntry.CONTENT_URI, true,
+                dogObserver);
+
+        int dogRowsDeleted = mContext.getContentResolver().delete(
+                DoggieContract.DogEntry.buildDogUriWithClientId(TestUtilities.TEST_CLIENT_ID_2),
+                null,
+                null
+        );
+
+        assertFalse("Error: Record not deleted from dog table", dogRowsDeleted == 0);
+        Cursor dogCursor = mContext.getContentResolver().query(
+                DoggieContract.DogEntry.buildDogUriWithClientId(TestUtilities.TEST_CLIENT_ID_2),
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals("Error: Record not deleted from dog table", 0, dogCursor.getCount());
+        dogCursor.close();
+
+
+        //Register a ContentObserver for our client delete
+        TestUtilities.TestContentObserver clientObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(DoggieContract.ClientEntry.CONTENT_URI, true,
+                clientObserver);
+
+        int clientRowsDeleted = mContext.getContentResolver().delete(
+                DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_2),
+                null,
+                null
+        );
+
+        assertFalse("Error: Record not deleted from client table", clientRowsDeleted == 0);
+        Cursor clientCursor = mContext.getContentResolver().query(
+                DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_2),
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals("Error: Record not deleted from client table", 0, dogCursor.getCount());
+        clientCursor.close();
+
+        dogObserver.waitForNotificationOrFail();
+        clientObserver.waitForNotificationOrFail();
+
+        mContext.getContentResolver().unregisterContentObserver(dogObserver);
+        mContext.getContentResolver().unregisterContentObserver(clientObserver);
+
+    }
     public void testUpdate() {
         // Create a new map of values, where column names are the keys
         ContentValues values = TestUtilities.createItemValues();

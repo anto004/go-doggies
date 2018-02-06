@@ -92,6 +92,37 @@ public class DoggieProvider extends ContentProvider {
         );
     }
 
+    private int deleteDogsOfClient(Uri uri, String selection, String[] selectionArgs){
+        String clientId = DoggieContract.DogEntry.getClientIdFromDogUri(uri);
+        if(selection == null) {
+            selection = DoggieContract.DogEntry.TABLE_NAME +
+                    "." + DoggieContract.DogEntry.COLUMN_CLIENT_KEY +
+                    " = ? ";
+            selectionArgs = new String[]{clientId};
+        }
+        return mOpenHelper.getWritableDatabase().delete(
+                DoggieContract.DogEntry.TABLE_NAME,
+                selection,
+                selectionArgs
+        );
+    }
+
+    private int deleteClient(Uri uri, String selection, String[] selectionArgs){
+        String clientId = DoggieContract.ClientEntry.getClientIdFromClientUri(uri);
+        if(selection == null) {
+            selection = DoggieContract.ClientEntry.TABLE_NAME +
+                    "." + DoggieContract.ClientEntry.COLUMN_CLIENT_ID +
+                    " = ? ";
+            selectionArgs = new String[]{clientId};
+        }
+
+        return mOpenHelper.getWritableDatabase().delete(
+                DoggieContract.ClientEntry.TABLE_NAME,
+                selection,
+                selectionArgs
+        );
+    }
+
     @Override
     public boolean onCreate() {
         mOpenHelper = new DoggieDbHelper(getContext());
@@ -238,15 +269,27 @@ public class DoggieProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int rowsDeleted;
-        if(selection == null)
-            selection = "1";
+        // delete returns, num of rows deleted -> if there is a where clause
+        //                 0 -> if passed null or all rows are deleted except if passed "1" which
+        //                      returns the no of rows deleted
         switch(sURIMatcher.match(uri)){
             case ITEMS:
+                if(selection == null) {
+                    selection = "1";
+                }
                 rowsDeleted = mOpenHelper.getWritableDatabase().delete(
                         DoggieContract.TableItems.TABLE_NAME,
                         selection,
                         selectionArgs
                 );
+                break;
+            case CLIENTS_DETAILS:
+                //delete client with client Id
+                rowsDeleted = deleteClient(uri, selection, selectionArgs);
+                break;
+            case DOGS_WITH_CLIENT_ID:
+                //delete dog with client Id
+                rowsDeleted = deleteDogsOfClient(uri, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: "+uri);
