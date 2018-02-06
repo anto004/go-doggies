@@ -477,6 +477,77 @@ public class TestProvider extends AndroidTestCase {
         updatedCursor.close();
     }
 
+    public void testClientDogUpdate(){
+        testInsertClientProvider();
+        //inserted Antonio in client with clientId = CLIENT_ID_2
+        //inserted Pebbles in dog with clientId = CLIENT_ID_2
+
+        ContentValues dogValues = TestUtilities.createDogValues(TestUtilities.TEST_CLIENT_ID_2);
+        dogValues.put(DoggieContract.DogEntry.COLUMN_NAME, "Spike");
+        //Register a ContentObserver for our dogs delete
+        TestUtilities.TestContentObserver dogObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(DoggieContract.DogEntry.CONTENT_URI, true,
+                dogObserver);
+
+        int dogRowsUpdated = mContext.getContentResolver().update(
+                DoggieContract.DogEntry.CONTENT_URI,
+                dogValues,
+                null,
+                null
+        );
+
+        assertFalse("Error: No dog row was updated", dogRowsUpdated == 0);
+
+        Cursor dogCursor = mContext.getContentResolver().query(
+                DoggieContract.DogEntry.buildDogUriWithClientId(TestUtilities.TEST_CLIENT_ID_2),
+                null,
+                null,
+                null,
+                null
+        );
+
+        TestUtilities.validateCursor("testClientDogUpdate. Error validating DogEntry update",
+                dogCursor, dogValues);
+        dogCursor.close();
+
+        ContentValues clientValues = TestUtilities.createClientValues();
+        clientValues.put(DoggieContract.ClientEntry.COLUMN_COMMENT, "You know it!!");
+        //Register a ContentObserver for our client delete
+        TestUtilities.TestContentObserver clientObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(DoggieContract.ClientEntry.CONTENT_URI, true,
+                clientObserver);
+
+        int clientRowsUpdated = mContext.getContentResolver().update(
+                DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_2),
+                clientValues,
+                null,
+                null
+        );
+
+        assertFalse("Error: No client row was updated", clientRowsUpdated == 0);
+
+        Cursor clientCursor = mContext.getContentResolver().query(
+                DoggieContract.ClientEntry.buildClientDetailUri(TestUtilities.TEST_CLIENT_ID_2),
+                null,
+                null,
+                null,
+                null
+        );
+        //Client_Details is a left join table when queried
+        clientValues.putAll(dogValues);
+        TestUtilities.validateCursor("testClientDogUpdate. Error validating ClientEntry update",
+                clientCursor, clientValues);
+        clientCursor.close();
+
+        dogObserver.waitForNotificationOrFail();
+        clientObserver.waitForNotificationOrFail();
+
+        mContext.getContentResolver().unregisterContentObserver(dogObserver);
+        mContext.getContentResolver().unregisterContentObserver(clientObserver);
+
+    }
+
+
 
     public void testBulkInsert() {
 

@@ -123,6 +123,39 @@ public class DoggieProvider extends ContentProvider {
         );
     }
 
+    private int updateDog(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs){
+        long dogId = contentValues.getAsLong(DoggieContract.DogEntry.COLUMN_DOG_ID);
+        if(selection == null) {
+            selection = DoggieContract.DogEntry.TABLE_NAME +
+                    "." + DoggieContract.DogEntry.COLUMN_DOG_ID +
+                    " = ? ";
+            selectionArgs = new String[]{String.valueOf(dogId)};
+        }
+        return mOpenHelper.getWritableDatabase().update(
+                DoggieContract.DogEntry.TABLE_NAME,
+                contentValues,
+                selection,
+                selectionArgs
+        );
+    }
+
+    private int updateClient(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs){
+        String clientId = DoggieContract.ClientEntry.getClientIdFromClientUri(uri);
+        if(selection == null) {
+            selection = DoggieContract.ClientEntry.TABLE_NAME +
+                    "." + DoggieContract.ClientEntry.COLUMN_CLIENT_ID +
+                    " = ? ";
+            selectionArgs = new String[]{clientId};
+        }
+
+        return mOpenHelper.getWritableDatabase().update(
+                DoggieContract.ClientEntry.TABLE_NAME,
+                contentValues,
+                selection,
+                selectionArgs
+        );
+    }
+
     @Override
     public boolean onCreate() {
         mOpenHelper = new DoggieDbHelper(getContext());
@@ -313,6 +346,13 @@ public class DoggieProvider extends ContentProvider {
                         selection,
                         selectionArgs
                 );
+                break;
+            case CLIENTS_DETAILS:
+                rowsUpdated = updateClient(uri, contentValues, selection, selectionArgs);
+                break;
+            case DOGS:
+                //update dog using dog_id
+                rowsUpdated = updateDog(uri, contentValues, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: "+ uri);
