@@ -71,8 +71,6 @@ public class LaucherActivity extends AppCompatActivity {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         Log.v(LOG_TAG, "Metrics: "+ metrics.toString());
 
-
-
     }
 
     @Override

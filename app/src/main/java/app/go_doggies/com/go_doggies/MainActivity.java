@@ -1,12 +1,6 @@
 package app.go_doggies.com.go_doggies;
 
 import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +30,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import app.go_doggies.com.go_doggies.sync.AccountGeneral;
 import app.go_doggies.com.go_doggies.sync.LinkAccountActivity;
 import app.go_doggies.com.go_doggies.sync.MyCookieStore;
 
@@ -44,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSION_WRITE = 1;
     private static final int LOGIN_ACTIVITY_REQUEST_CODE = 2;
-    private Account mAccount;
-    private AccountManager mAccountManager;
     private static Context mContext;
 
     // Used to load the 'native-lib' library on application startup.
@@ -63,19 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mContext = this;
         checkPermissions();
-
-        mAccountManager = AccountManager.get(this);
-        String accountType = getApplicationContext().getString(R.string.accountType);
-        String authType = AccountGeneral.AUTHTOKEN_TYPE;
-
-//        while(mAccount == null) {
-////            mAccount = getAuthTokenForAccount(accountType, authType);
-//
-//        }
-
-//        Intent intent = new Intent(this, LoginActivity.class);
-//        startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
-
 
         Button loginButton = (Button) findViewById(R.id.sign_in_button);
         loginButton.setOnClickListener(this);
@@ -371,40 +349,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return authString;
         }
-    }
-
-    public Account getAuthTokenForAccount(final String accountType, final String authType){
-        final AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(accountType, authType, null, this, null, null,
-                new AccountManagerCallback<Bundle>() {
-                    @Override
-                    public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
-                        try {
-                            Bundle bundle = accountManagerFuture.getResult();
-                            String authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-
-                            if(authToken != null){
-                                String accountName = bundle.getString(AccountManager.KEY_ACCOUNT_NAME);
-                                mAccount = new Account(accountName, accountType);
-                            }
-                            showMessage(authToken != null ? "Welcome!" : "Please Login!");
-                        } catch (OperationCanceledException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (AuthenticatorException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, null);
-        return mAccount;
-    }
-
-    private void showMessage(final String msg){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
