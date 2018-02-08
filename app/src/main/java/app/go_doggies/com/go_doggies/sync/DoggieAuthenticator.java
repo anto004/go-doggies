@@ -99,6 +99,7 @@ public class DoggieAuthenticator extends AbstractAccountAuthenticator {
 //                        authToken = user.getSessionToken();
 //                        userId = user.getObjectId();
 //                    }
+
                 }catch(Exception e){
                     e.printStackTrace();
                 }

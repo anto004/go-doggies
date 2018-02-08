@@ -21,6 +21,15 @@ public class ClientDetails {
     @SerializedName("client_phone")
     private String clientPhone;
 
+    public ClientDetails(String clientId, String clientType, Object comment, String clientName, String clientImg, String clientPhone) {
+        this.clientId = clientId;
+        this.clientType = clientType;
+        this.comment = comment;
+        this.clientName = clientName;
+        this.clientImg = clientImg;
+        this.clientPhone = clientPhone;
+    }
+
     public ClientDetails(String clientName){
         this.clientName = clientName;
     }

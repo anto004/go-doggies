@@ -26,6 +26,8 @@ public class GroomerServices extends AppCompatActivity {
                     .commit();
         }
         Log.v(LOG_TAG, "GroomerServices onCreate called");
+
+        //Activate sync adapter to fetch data
 //        DoggieSyncAdapter.syncImmediately(this);
 
     }

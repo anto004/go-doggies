@@ -1,5 +1,9 @@
 package app.go_doggies.com.go_doggies;
 
+import android.accounts.AccountManager;
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,15 +23,18 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 
+import app.go_doggies.com.go_doggies.database.DoggieContract;
+import app.go_doggies.com.go_doggies.model.Client;
 import app.go_doggies.com.go_doggies.model.ClientDetails;
+import app.go_doggies.com.go_doggies.model.Dog;
 import app.go_doggies.com.go_doggies.sample.SampleClientData;
 import app.go_doggies.com.go_doggies.sync.MyCookieStore;
 
 public class MyClients extends AppCompatActivity {
     public static final String LOG_TAG = MyClients.class.getSimpleName();
     public ClientAdapter mClientAdapter;
-
-
+    private Context mContext;
+    private RecyclerView mRecyclerView;
     /**
      * ClientDetails list:
      * URL: groomer_dashboard/get_groomer_clients
@@ -52,12 +59,13 @@ public class MyClients extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.go_doggie_toolbar);
         setSupportActionBar(toolbar);
 
-        List<ClientDetails> clientDetails = SampleClientData.clientDetails;
+        mContext = this;
+        List<Client> clients = SampleClientData.clients;
 
-        mClientAdapter = new ClientAdapter(this, clientDetails);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.client_recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(mClientAdapter);
+        mClientAdapter = new ClientAdapter(this, clients);
+        mRecyclerView = (RecyclerView) findViewById(R.id.client_recycler);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mClientAdapter);
 //        recyclerView.setItemAnimator(null);
 
         ClientAsyncTask task = new ClientAsyncTask();
@@ -66,10 +74,12 @@ public class MyClients extends AppCompatActivity {
     }
 
     public String fetchClients() {
+        AccountManager accountManager;
+        CookieManager cookieManager;
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
 
-        String clientsJsonStr = null;
+        String clientsJsonStr;
 
         StringBuilder urlParameter = new StringBuilder();
         try {
@@ -86,13 +96,18 @@ public class MyClients extends AppCompatActivity {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
 
-            CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
+            cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
 
             if (cookieManager.getCookieStore().getCookies().size() > 0) {
                 urlConnection.setRequestProperty("Cookie",
                         TextUtils.join(";", cookieManager.getCookieStore().getCookies()));
                 Log.v(LOG_TAG, cookieManager.getCookieStore().getCookies().toString());
             }
+//            else{
+//                String authToken = AccountGeneral.updateToken(this);
+//                Log.v(LOG_TAG, "calling blockingGetAuthTypeToken: authToken"+authToken);
+//
+//            }
 
             urlConnection.getOutputStream().write(postData);
 
@@ -130,15 +145,64 @@ public class MyClients extends AppCompatActivity {
         return null;
     }
 
-    class ClientAsyncTask extends AsyncTask<Void, Void, Void>{
+    class ClientAsyncTask extends AsyncTask<Void, Void, List<Client>>{
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected List<Client> doInBackground(Void... voids) {
             String clientsJsonStr = fetchClients();
             if(clientsJsonStr != null) {
-                JSONHelper.parseClientJsonData(clientsJsonStr);
+                getReadableDataFromJson(clientsJsonStr);
+                return JSONHelper.parseClientJsonData(clientsJsonStr);
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Client> clients) {
+            super.onPostExecute(clients);
+            if(clients != null) {
+                mClientAdapter.notifyDataSetChanged();
+                mClientAdapter = new ClientAdapter(mContext, clients);
+                mRecyclerView.swapAdapter(mClientAdapter, false);
+            }
+
+        }
+    }
+
+    public void getReadableDataFromJson(String clientJsonStr){
+        //Insert client first, use clientId in returnedUri to insert dogs with clientId
+        List<Client> clients = JSONHelper.parseClientJsonData(clientJsonStr);
+
+        for(int i = 0; i < clients.size(); i++){
+            Client client = clients.get(i);
+            ClientDetails clientDetails = client.getClientDetails();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, Integer.parseInt(clientDetails.getClientId()));
+            contentValues.put(DoggieContract.ClientEntry.COLUMN_TYPE, clientDetails.getClientType());
+            contentValues.put(DoggieContract.ClientEntry.COLUMN_COMMENT, clientDetails.getComment() == null ?
+                                                                        "" : clientDetails.getComment().toString());
+            contentValues.put(DoggieContract.ClientEntry.COLUMN_NAME, clientDetails.getClientName());
+            contentValues.put(DoggieContract.ClientEntry.COLUMN_IMAGE, clientDetails.getClientImg());
+            contentValues.put(DoggieContract.ClientEntry.COLUMN_PHONE, clientDetails.getClientPhone());
+
+            Uri clientUri = mContext.getContentResolver().insert(
+                    DoggieContract.ClientEntry.CONTENT_URI,
+                    contentValues);
+            String clientId = DoggieContract.ClientEntry.getClientIdFromClientUri(clientUri);
+            Log.v(LOG_TAG, "clientId: "+clientId);
+            //multiple dogs for each client
+            for(Dog dog: client.getDogs()){
+                ContentValues dogValues = new ContentValues();
+                dogValues.put(DoggieContract.DogEntry.COLUMN_CLIENT_KEY, Integer.parseInt(clientId));
+                dogValues.put(DoggieContract.DogEntry.COLUMN_DOG_ID, Integer.parseInt(dog.getDogId()));
+                dogValues.put(DoggieContract.DogEntry.COLUMN_NAME, dog.getDogName());
+                dogValues.put(DoggieContract.DogEntry.COLUMN_IMAGE, dog.getDogImg());
+                dogValues.put(DoggieContract.DogEntry.COLUMN_SIZE, dog.getDogSize());
+                dogValues.put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, dog.getDogHairType());
+                mContext.getContentResolver().insert(
+                        DoggieContract.DogEntry.CONTENT_URI,
+                        dogValues);
+            }
         }
     }
 

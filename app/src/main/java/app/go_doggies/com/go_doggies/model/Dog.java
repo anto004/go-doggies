@@ -19,6 +19,14 @@ public class Dog {
     @SerializedName("dog_hair_type")
     private String dogHairType;
 
+    public Dog(String dogId, String dogName, String dogImg, String dogSize, String dogHairType) {
+        this.dogId = dogId;
+        this.dogName = dogName;
+        this.dogImg = dogImg;
+        this.dogSize = dogSize;
+        this.dogHairType = dogHairType;
+    }
+
     public String getDogId() {
         return dogId;
     }

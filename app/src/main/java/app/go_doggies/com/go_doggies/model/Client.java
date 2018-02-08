@@ -14,6 +14,11 @@ public class Client {
     @SerializedName("dogs")
     private List<Dog> dogs = null;
 
+    public Client(ClientDetails clientDetails, List<Dog> dogs) {
+        this.clientDetails = clientDetails;
+        this.dogs = dogs;
+    }
+
     public ClientDetails getClientDetails() {
         return clientDetails;
     }

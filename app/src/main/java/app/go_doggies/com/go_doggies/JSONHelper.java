@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import app.go_doggies.com.go_doggies.model.Client;
@@ -30,7 +31,7 @@ public class JSONHelper {
     public static final String LOG_TAG = JSONHelper.class.getName();
     public static final String FILE_NAME = "doggie_services.json";
 
-    public static void parseClientJsonData(String clientJsonStr){
+    public static List<Client> parseClientJsonData(String clientJsonStr){
         Gson gson = new Gson();
         Client[] clients = gson.fromJson(clientJsonStr, Client[].class);
 
@@ -40,6 +41,8 @@ public class JSONHelper {
                 Log.v(LOG_TAG,"  Dog: "+ dog.toString());
             }
         }
+
+        return Arrays.asList(clients);
     }
 
 

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import app.go_doggies.com.go_doggies.model.ClientDetails;
+import app.go_doggies.com.go_doggies.model.Client;
 
 /**
  * Created by anto004 on 1/9/18.
@@ -19,11 +19,11 @@ import app.go_doggies.com.go_doggies.model.ClientDetails;
 
 public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHolder> {
     private Context mContext;
-    private List<ClientDetails> clientDetails;
+    private List<Client> clients;
 
-    ClientAdapter(Context context, List<ClientDetails> clientDetails){
+    ClientAdapter(Context context, List<Client> clients){
         this.mContext = context;
-        this.clientDetails = clientDetails;
+        this.clients = clients;
     }
 
     @Override
@@ -34,15 +34,15 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        ClientDetails clientDetails = this.clientDetails.get(position);
+        Client client = this.clients.get(position);
         Drawable d = mContext.getDrawable(R.drawable.my_client);
         holder.clientImage.setImageDrawable(d);
-        holder.clientName.setText(clientDetails.getClientName());
+        holder.clientName.setText(client.getClientDetails().getClientName());
     }
 
     @Override
     public int getItemCount() {
-        return clientDetails.size();
+        return clients.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
