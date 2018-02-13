@@ -21,8 +21,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 import app.go_doggies.com.go_doggies.sync.AccountGeneral;
+import app.go_doggies.com.go_doggies.sync.MyCookieStore;
 
 public class LaucherActivity extends AppCompatActivity {
     public static final String LOG_TAG = LauncherActivity.class.getSimpleName();
@@ -38,23 +41,29 @@ public class LaucherActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.go_doggie_toolbar);
         setSupportActionBar(toolbar);
 
-        //Gives null pointer on urlConnection writeOutputStream
-//        CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
-//        CookieHandler.setDefault(cookieManager);
-
         final String accountType = getString(R.string.accountType);
         final String authType = AccountGeneral.AUTHTOKEN_TYPE;
+        String authToken = null;
 
         mAccountManager = AccountManager.get(getApplicationContext());
         Account [] accounts = mAccountManager.getAccountsByType(accountType);
         //In case of multiple accounts show a pop up
         //onCreateDialog(savedInstanceState, names).show();
-        for(Account account: accounts) {
-            //get first account
-            mAccount = account;
-            break;
-        }
+        mAccount = accounts[0];
         if(mAccount != null) {
+            authToken = mAccountManager.peekAuthToken(mAccount, authType);
+        }
+
+        CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
+        //Gives null pointer on urlConnection writeOutputStream
+//        CookieHandler.setDefault(cookieManager);
+        //saved cookie is removed, invalidate current token
+        if(cookieManager.getCookieStore().getCookies().size() == 0 && authToken != null){
+            mAccountManager.invalidateAuthToken(accountType, authToken);
+            authToken = null;
+        }
+
+        if(mAccount != null && authToken != null) {
             Intent intent = new Intent(getApplicationContext(), Dashboard.class);
             startActivityForResult(intent, LAUNCHER_REQUEST_CODE);
         }

@@ -1,6 +1,5 @@
 package app.go_doggies.com.go_doggies;
 
-import android.accounts.AccountManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
@@ -16,6 +15,7 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
@@ -74,14 +74,13 @@ public class MyClients extends AppCompatActivity {
     }
 
     public String fetchClients() {
-        AccountManager accountManager;
-        CookieManager cookieManager;
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
 
         String clientsJsonStr;
 
         StringBuilder urlParameter = new StringBuilder();
+
         try {
             urlParameter.append(URLEncoder.encode("groomer_id", "UTF-8"));
             urlParameter.append('=');
@@ -96,18 +95,13 @@ public class MyClients extends AppCompatActivity {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
 
-            cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
+            CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
+            CookieHandler.setDefault(cookieManager);
 
             if (cookieManager.getCookieStore().getCookies().size() > 0) {
                 urlConnection.setRequestProperty("Cookie",
                         TextUtils.join(";", cookieManager.getCookieStore().getCookies()));
-                Log.v(LOG_TAG, cookieManager.getCookieStore().getCookies().toString());
             }
-//            else{
-//                String authToken = AccountGeneral.updateToken(this);
-//                Log.v(LOG_TAG, "calling blockingGetAuthTypeToken: authToken"+authToken);
-//
-//            }
 
             urlConnection.getOutputStream().write(postData);
 

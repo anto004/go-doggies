@@ -126,6 +126,7 @@ public class DoggieAuthActivity extends AccountAuthenticatorActivity {
             List<HttpCookie> cookie = cookieManager.getCookieStore().getCookies();
             String authToken = TextUtils.join(";", cookie);
 
+
             Bundle data = new Bundle();
             data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
             data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
