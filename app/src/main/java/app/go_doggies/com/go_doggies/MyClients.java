@@ -1,7 +1,11 @@
 package app.go_doggies.com.go_doggies;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,11 +34,13 @@ import app.go_doggies.com.go_doggies.model.Dog;
 import app.go_doggies.com.go_doggies.sample.SampleClientData;
 import app.go_doggies.com.go_doggies.sync.MyCookieStore;
 
-public class MyClients extends AppCompatActivity {
+public class MyClients extends AppCompatActivity
+                        implements LoaderManager.LoaderCallbacks<Cursor>{
     public static final String LOG_TAG = MyClients.class.getSimpleName();
     public ClientAdapter mClientAdapter;
     private Context mContext;
     private RecyclerView mRecyclerView;
+    private static final int LOADER_INT = 1;
     /**
      * ClientDetails list:
      * URL: groomer_dashboard/get_groomer_clients
@@ -59,18 +65,47 @@ public class MyClients extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.go_doggie_toolbar);
         setSupportActionBar(toolbar);
 
+        getLoaderManager().initLoader(LOADER_INT, null, this);
+
         mContext = this;
-        List<Client> clients = SampleClientData.clients;
+        List<ClientDetails> clients = SampleClientData.clients;
 
         mClientAdapter = new ClientAdapter(this, clients);
         mRecyclerView = (RecyclerView) findViewById(R.id.client_recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mClientAdapter);
-//        recyclerView.setItemAnimator(null);
 
         ClientAsyncTask task = new ClientAsyncTask();
         task.execute();
 
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(
+                this,
+                DoggieContract.ClientEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                DoggieContract.ClientEntry.COLUMN_NAME + " ASC"
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        Log.i(LOG_TAG, "onLoadFinished called");
+        //client without dogs
+        List<ClientDetails> clients = Utility.convertCursorToClientUXFormat(cursor);
+        if(clients != null){
+            mClientAdapter = new ClientAdapter(this, clients);
+            mRecyclerView.swapAdapter(mClientAdapter, false);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mRecyclerView.setAdapter(null);
     }
 
     public String fetchClients() {
@@ -139,51 +174,43 @@ public class MyClients extends AppCompatActivity {
         return null;
     }
 
-    class ClientAsyncTask extends AsyncTask<Void, Void, List<Client>>{
+    class ClientAsyncTask extends AsyncTask<Void, Void, Void>{
 
         @Override
-        protected List<Client> doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
             String clientsJsonStr = fetchClients();
             if(clientsJsonStr != null) {
                 getReadableDataFromJson(clientsJsonStr);
-                return JSONHelper.parseClientJsonData(clientsJsonStr);
             }
             return null;
         }
 
-        @Override
-        protected void onPostExecute(List<Client> clients) {
-            super.onPostExecute(clients);
-            if(clients != null) {
-                mClientAdapter.notifyDataSetChanged();
-                mClientAdapter = new ClientAdapter(mContext, clients);
-                mRecyclerView.swapAdapter(mClientAdapter, false);
-            }
-
-        }
     }
 
     public void getReadableDataFromJson(String clientJsonStr){
         //Insert client first, use clientId in returnedUri to insert dogs with clientId
         List<Client> clients = JSONHelper.parseClientJsonData(clientJsonStr);
 
+        //Use provider, this is only for testing
+        Utility.deleteAllRecordsFromDB(this);
+
         for(int i = 0; i < clients.size(); i++){
             Client client = clients.get(i);
             ClientDetails clientDetails = client.getClientDetails();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, Integer.parseInt(clientDetails.getClientId()));
-            contentValues.put(DoggieContract.ClientEntry.COLUMN_TYPE, clientDetails.getClientType());
-            contentValues.put(DoggieContract.ClientEntry.COLUMN_COMMENT, clientDetails.getComment() == null ?
+            ContentValues clientValues = new ContentValues();
+            clientValues.put(DoggieContract.ClientEntry.COLUMN_CLIENT_ID, Integer.parseInt(clientDetails.getClientId()));
+            clientValues.put(DoggieContract.ClientEntry.COLUMN_TYPE, clientDetails.getClientType());
+            clientValues.put(DoggieContract.ClientEntry.COLUMN_COMMENT, clientDetails.getComment() == null ?
                                                                         "" : clientDetails.getComment().toString());
-            contentValues.put(DoggieContract.ClientEntry.COLUMN_NAME, clientDetails.getClientName());
-            contentValues.put(DoggieContract.ClientEntry.COLUMN_IMAGE, clientDetails.getClientImg());
-            contentValues.put(DoggieContract.ClientEntry.COLUMN_PHONE, clientDetails.getClientPhone());
+            clientValues.put(DoggieContract.ClientEntry.COLUMN_NAME, clientDetails.getClientName());
+            clientValues.put(DoggieContract.ClientEntry.COLUMN_IMAGE, clientDetails.getClientImg());
+            clientValues.put(DoggieContract.ClientEntry.COLUMN_PHONE, clientDetails.getClientPhone());
 
             Uri clientUri = mContext.getContentResolver().insert(
                     DoggieContract.ClientEntry.CONTENT_URI,
-                    contentValues);
+                    clientValues);
             String clientId = DoggieContract.ClientEntry.getClientIdFromClientUri(clientUri);
-            Log.v(LOG_TAG, "clientId: "+clientId);
+
             //multiple dogs for each client
             for(Dog dog: client.getDogs()){
                 ContentValues dogValues = new ContentValues();
@@ -193,11 +220,13 @@ public class MyClients extends AppCompatActivity {
                 dogValues.put(DoggieContract.DogEntry.COLUMN_IMAGE, dog.getDogImg());
                 dogValues.put(DoggieContract.DogEntry.COLUMN_SIZE, dog.getDogSize());
                 dogValues.put(DoggieContract.DogEntry.COLUMN_HAIR_TYPE, dog.getDogHairType());
+
                 mContext.getContentResolver().insert(
                         DoggieContract.DogEntry.CONTENT_URI,
                         dogValues);
             }
         }
     }
+
 
 }

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Vector;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
+import app.go_doggies.com.go_doggies.database.DoggieDbHelper;
+import app.go_doggies.com.go_doggies.model.ClientDetails;
 import app.go_doggies.com.go_doggies.model.ServiceItem;
 
 
@@ -99,6 +102,25 @@ public class Utility {
         return results;
     }
 
+    public static List<ClientDetails> convertCursorToClientUXFormat(Cursor cursor){
+        //move cursor to first
+        if(!cursor.moveToFirst()){
+            return null;
+        }
+        List<ClientDetails> clients = new ArrayList<>();
+        do{
+            int clientId = cursor.getInt(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_CLIENT_ID));
+            String clientType = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_TYPE));
+            String comment = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_COMMENT));
+            String clientName = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_NAME));
+            String clientImg = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_IMAGE));
+            String clientPhone = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_PHONE));
+            clients.add(new ClientDetails(String.valueOf(clientId), clientType, comment, clientName, clientImg, clientPhone));
+        } while(cursor.moveToNext());
+
+        return clients;
+    }
+
 
 
     public static void insertIntoDatabase(ContentValues values, Context context){
@@ -115,6 +137,16 @@ public class Utility {
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    public static void deleteAllRecordsFromDB(Context context) {
+        DoggieDbHelper dbHelper = new DoggieDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(DoggieContract.TableItems.TABLE_NAME, null, null);
+        db.delete(DoggieContract.ClientEntry.TABLE_NAME, null, null);
+        db.delete(DoggieContract.DogEntry.TABLE_NAME, null, null);
+        db.close();
     }
 
 }

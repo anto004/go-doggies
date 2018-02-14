@@ -12,24 +12,32 @@ import app.go_doggies.com.go_doggies.model.Dog;
  */
 
 public class SampleClientData {
-    public static List<Client> clients;
+    public static List<Client> clientWithDogs;
+    public static List<ClientDetails> clients;
 
     static{
-        clients = new ArrayList<>();
+        clientWithDogs = new ArrayList<>();
         ClientDetails c1 = new ClientDetails("600", "client", null, "John","john.img", null);
         List<Dog> c1Dogs = new ArrayList<>();
         c1Dogs.add(new Dog("300", "John's Dog1", " ", "big", "short"));
         c1Dogs.add(new Dog("301", "John's Dog2", " ", "big", "short"));
-        addClient(c1, c1Dogs);
+        addClientWithDogs(c1, c1Dogs);
 
         ClientDetails c2 = new ClientDetails("601", "client", null, "Jane","jane.img", null);
         List<Dog> c2Dogs = new ArrayList<>();
         c1Dogs.add(new Dog("301", "Jane's Dog", " ", "small", "fluffy"));
-        addClient(c2, c2Dogs);
+        addClientWithDogs(c2, c2Dogs);
+    }
+
+    static{
+        clients = new ArrayList<>();
+        clients.add(new ClientDetails("600", "client", null, "John","john.img", null));
+        clients.add(new ClientDetails("601", "client", null, "Jane","jane.img", null));
     }
 
 
-    public static void addClient(ClientDetails clientDetails, List<Dog> dogs){
-        clients.add(new Client(clientDetails, dogs));
+    public static void addClientWithDogs(ClientDetails clientDetails, List<Dog> dogs){
+        clientWithDogs.add(new Client(clientDetails, dogs));
     }
+
 }
