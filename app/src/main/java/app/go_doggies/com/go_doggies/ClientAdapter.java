@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -29,7 +30,10 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.client_item, parent, false);
-        return new MyViewHolder(view);
+//        view.setOnClickListener(new MyOnClickListener());
+        MyViewHolder myViewHolder = new MyViewHolder(view);
+        myViewHolder.itemView.setOnClickListener(myViewHolder);
+        return myViewHolder;
     }
 
     @Override
@@ -38,6 +42,8 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
         Drawable d = mContext.getDrawable(R.drawable.my_client);
         holder.clientImage.setImageDrawable(d);
         holder.clientName.setText(client.getClientName());
+
+        holder.itemView.setTag(client);
     }
 
     @Override
@@ -45,7 +51,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
         return clients.size();
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ImageView clientImage;
         public TextView clientName;
 
@@ -53,6 +59,14 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
             super(itemView);
             this.clientImage = itemView.findViewById(R.id.client_image);
             this.clientName = itemView.findViewById(R.id.client_name);
+        }
+
+        @Override
+        public void onClick(View view) {
+            ClientDetails client = (ClientDetails) view.getTag();
+            if(client != null) {
+                Toast.makeText(mContext, client.getClientName(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

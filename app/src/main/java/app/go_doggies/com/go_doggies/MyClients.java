@@ -41,6 +41,7 @@ public class MyClients extends AppCompatActivity
     private Context mContext;
     private RecyclerView mRecyclerView;
     private static final int LOADER_INT = 1;
+    private List<ClientDetails> mClients;
     /**
      * ClientDetails list:
      * URL: groomer_dashboard/get_groomer_clients
@@ -77,7 +78,6 @@ public class MyClients extends AppCompatActivity
 
         ClientAsyncTask task = new ClientAsyncTask();
         task.execute();
-
     }
 
     @Override
@@ -96,11 +96,12 @@ public class MyClients extends AppCompatActivity
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.i(LOG_TAG, "onLoadFinished called");
         //client without dogs
-        List<ClientDetails> clients = Utility.convertCursorToClientUXFormat(cursor);
-        if(clients != null){
-            mClientAdapter = new ClientAdapter(this, clients);
+        mClients = Utility.convertCursorToClientUXFormat(cursor);
+        if(mClients != null){
+            mClientAdapter = new ClientAdapter(this, mClients);
             mRecyclerView.swapAdapter(mClientAdapter, false);
         }
+
     }
 
     @Override
@@ -227,6 +228,7 @@ public class MyClients extends AppCompatActivity
             }
         }
     }
+
 
 
 }

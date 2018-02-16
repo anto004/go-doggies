@@ -11,12 +11,18 @@ import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import app.go_doggies.com.go_doggies.database.DoggieContract;
 import app.go_doggies.com.go_doggies.database.DoggieDbHelper;
+import app.go_doggies.com.go_doggies.model.Client;
 import app.go_doggies.com.go_doggies.model.ClientDetails;
+import app.go_doggies.com.go_doggies.model.Dog;
 import app.go_doggies.com.go_doggies.model.ServiceItem;
 
 
@@ -117,6 +123,45 @@ public class Utility {
             String clientPhone = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_PHONE));
             clients.add(new ClientDetails(String.valueOf(clientId), clientType, comment, clientName, clientImg, clientPhone));
         } while(cursor.moveToNext());
+
+        return clients;
+    }
+
+    public static List<Client> convertCursorToClientWithDogsUXFormat(Cursor cursor){
+        //move cursor to first
+        if(!cursor.moveToFirst()){
+            return null;
+        }
+        Map<ClientDetails, Set<Dog>> map = new HashMap<>();
+        do{
+            int clientId = cursor.getInt(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_CLIENT_ID));
+            String clientType = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_TYPE));
+            String comment = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_COMMENT));
+            String clientName = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_NAME));
+            String clientImg = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_IMAGE));
+            String clientPhone = cursor.getString(cursor.getColumnIndex(DoggieContract.ClientEntry.COLUMN_PHONE));
+            ClientDetails client = new ClientDetails(String.valueOf(clientId), clientType, comment, clientName, clientImg, clientPhone);
+
+            Set<Dog> dogs = map.get(client);
+            if(dogs == null){
+                dogs = new HashSet<>();
+            }
+
+            int dogtId = cursor.getInt(cursor.getColumnIndex(DoggieContract.DogEntry.COLUMN_DOG_ID));
+            String dogtName = cursor.getString(cursor.getColumnIndex(DoggieContract.DogEntry.COLUMN_NAME));
+            String dogtImg = cursor.getString(cursor.getColumnIndex(DoggieContract.DogEntry.COLUMN_IMAGE));
+            String dogtSize = cursor.getString(cursor.getColumnIndex(DoggieContract.DogEntry.COLUMN_SIZE));
+            String dogHairType = cursor.getString(cursor.getColumnIndex(DoggieContract.DogEntry.COLUMN_HAIR_TYPE));
+            Dog dog = new Dog(String.valueOf(dogtId), dogtName, dogtImg, dogtSize, dogHairType);
+
+            dogs.add(dog);
+            map.put(client, dogs);
+        } while(cursor.moveToNext());
+
+        List<Client> clients = new ArrayList<>();
+        for(Map.Entry<ClientDetails, Set<Dog>> entry: map.entrySet()){
+            clients.add(new Client(entry.getKey(), new ArrayList<Dog>(entry.getValue())));
+        }
 
         return clients;
     }

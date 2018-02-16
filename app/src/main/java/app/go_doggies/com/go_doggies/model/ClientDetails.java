@@ -93,4 +93,28 @@ public class ClientDetails {
                 ", clientPhone='" + clientPhone + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o){
+            return true;
+        }
+        if(this.getClass() != o.getClass()){
+            return false;
+        }
+        ClientDetails c = (ClientDetails) o;
+        if(clientId != null ? !clientId.equals(c.clientId) : c.clientId != null){
+            return false;
+        }
+        if(clientName != null ? !clientName.equals(c.clientName) : c.clientName != null){
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(clientId);
+    }
 }

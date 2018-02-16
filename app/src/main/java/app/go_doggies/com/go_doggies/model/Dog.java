@@ -27,6 +27,29 @@ public class Dog {
         this.dogHairType = dogHairType;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(this == o){
+            return true;
+        }
+        if(this.getClass() != o.getClass()){
+            return false;
+        }
+        Dog d = (Dog) o;
+        if(dogId != null ? !dogId.equals(d.dogId) : d.dogId != null){
+            return false;
+        }
+        if(dogName != null ? !dogName.equals(d.dogName) : d.dogName != null){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(dogId);
+    }
+
     public String getDogId() {
         return dogId;
     }

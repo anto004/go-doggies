@@ -19,7 +19,6 @@ import java.util.List;
 
 import app.go_doggies.com.go_doggies.model.Client;
 import app.go_doggies.com.go_doggies.model.DataItem;
-import app.go_doggies.com.go_doggies.model.Dog;
 import app.go_doggies.com.go_doggies.sample.SampleDataProvider;
 
 
@@ -35,12 +34,12 @@ public class JSONHelper {
         Gson gson = new Gson();
         Client[] clients = gson.fromJson(clientJsonStr, Client[].class);
 
-        for(Client client: clients) {
-            Log.v(LOG_TAG, client.getClientDetails().toString());
-            for(Dog dog: client.getDogs()){
-                Log.v(LOG_TAG,"  Dog: "+ dog.toString());
-            }
-        }
+//        for(Client client: clients) {
+//            Log.v(LOG_TAG, client.getClientDetails().toString());
+//            for(Dog dog: client.getDogs()){
+//                Log.v(LOG_TAG,"  Dog: "+ dog.toString());
+//            }
+//        }
 
         return Arrays.asList(clients);
     }
