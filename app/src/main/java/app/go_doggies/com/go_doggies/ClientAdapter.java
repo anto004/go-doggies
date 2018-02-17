@@ -1,6 +1,7 @@
 package app.go_doggies.com.go_doggies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import app.go_doggies.com.go_doggies.model.ClientDetails;
 public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHolder> {
     private Context mContext;
     private List<ClientDetails> clients;
+    public static final String CLIENT_DETAIL = "client_detail";
 
     ClientAdapter(Context context, List<ClientDetails> clients){
         this.mContext = context;
@@ -66,6 +68,9 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
             ClientDetails client = (ClientDetails) view.getTag();
             if(client != null) {
                 Toast.makeText(mContext, client.getClientName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext, ClientDetailsActivity.class);
+                intent.putExtra(CLIENT_DETAIL, client);
+                mContext.startActivity(intent);
             }
         }
     }

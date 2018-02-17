@@ -80,6 +80,14 @@
         <activity
             android:name=".MyClients"
             android:label="@string/title_activity_my_clients"
+            android:theme="@style/GoDoggieTheme.NoActionBar" />
+        <activity
+            android:name=".ClientDetailsActivity"
+            android:label="@string/title_activity_client_details"
+            android:theme="@style/GoDoggieTheme.NoActionBar"/>
+        <activity
+            android:name=".DogActivity"
+            android:label="@string/title_activity_dog_activity"
             android:theme="@style/GoDoggieTheme.NoActionBar"/>
     </application>
 

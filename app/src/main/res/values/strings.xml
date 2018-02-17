@@ -47,6 +47,9 @@
     <string name="title_activity_my_clients">MyClients</string>
 
     <!-- Internal Storage -->
-    <string name="interview"> Mathch the challenge, I BELIEVE IN YOU!!</string>
+    <string name="interview"> Match the challenge, I BELIEVE IN YOU!!</string>
+
+    <string name="title_activity_client_details">ClientDetails</string>
+    <string name="title_activity_dog_activity">DogActivity</string>
 
 </resources>

@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -43,11 +44,11 @@ public class MyClients extends AppCompatActivity
     private static final int LOADER_INT = 1;
     private List<ClientDetails> mClients;
     /**
-     * ClientDetails list:
+     * ClientDetailsActivity list:
      * URL: groomer_dashboard/get_groomer_clients
      * Input: groomer_id
      * <p>
-     * ClientDetails Detail:
+     * ClientDetailsActivity Detail:
      * URL: groomer_dashboard/get_client_details
      * Input: client_id
      * <p>
@@ -135,8 +136,12 @@ public class MyClients extends AppCompatActivity
             CookieHandler.setDefault(cookieManager);
 
             if (cookieManager.getCookieStore().getCookies().size() > 0) {
-                urlConnection.setRequestProperty("Cookie",
-                        TextUtils.join(";", cookieManager.getCookieStore().getCookies()));
+                List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
+                if(!cookies.isEmpty() && cookies != null) {
+                    urlConnection.setRequestProperty("Cookie",
+                            TextUtils.join(";", cookies));
+                }
+                //Log.v(LOG_TAG, "cookie: "+cookieManager.getCookieStore().getCookies().toString());
             }
 
             urlConnection.getOutputStream().write(postData);

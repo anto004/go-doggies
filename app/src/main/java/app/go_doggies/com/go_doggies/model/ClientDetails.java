@@ -1,12 +1,15 @@
 package app.go_doggies.com.go_doggies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by anto004 on 1/9/18.
  */
 
-public class ClientDetails {
+public class ClientDetails implements Parcelable {
 
     @SerializedName("client_id")
     private String clientId;
@@ -82,17 +85,6 @@ public class ClientDetails {
         this.clientPhone = clientPhone;
     }
 
-    @Override
-    public String toString() {
-        return "ClientDetails{" +
-                "clientId='" + clientId + '\'' +
-                ", clientType='" + clientType + '\'' +
-                ", comment=" + comment +
-                ", clientName='" + clientName + '\'' +
-                ", clientImg='" + clientImg + '\'' +
-                ", clientPhone='" + clientPhone + '\'' +
-                '}';
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -117,4 +109,54 @@ public class ClientDetails {
     public int hashCode() {
         return Integer.parseInt(clientId);
     }
+
+
+    @Override
+    public String toString() {
+        return "ClientDetailsActivity{" +
+                "clientId='" + clientId + '\'' +
+                ", clientType='" + clientType + '\'' +
+                ", comment=" + comment +
+                ", clientName='" + clientName + '\'' +
+                ", clientImg='" + clientImg + '\'' +
+                ", clientPhone='" + clientPhone + '\'' +
+                '}';
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.clientId);
+        dest.writeString(this.clientType);
+        dest.writeString(this.comment == null ? "" : String.valueOf(this.comment));
+        dest.writeString(this.clientName);
+        dest.writeString(this.clientImg);
+        dest.writeString(this.clientPhone);
+    }
+
+    protected ClientDetails(Parcel in) {
+        this.clientId = in.readString();
+        this.clientType = in.readString();
+        this.comment = (Object)in.readString();
+        this.clientName = in.readString();
+        this.clientImg = in.readString();
+        this.clientPhone = in.readString();
+    }
+
+    public static final Parcelable.Creator<ClientDetails> CREATOR = new Parcelable.Creator<ClientDetails>() {
+        @Override
+        public ClientDetails createFromParcel(Parcel source) {
+            return new ClientDetails(source);
+        }
+
+        @Override
+        public ClientDetails[] newArray(int size) {
+            return new ClientDetails[size];
+        }
+    };
 }
