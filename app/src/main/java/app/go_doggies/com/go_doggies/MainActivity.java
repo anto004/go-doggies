@@ -70,10 +70,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), LinkAccountActivity.class);
-                startActivity(intent);
+
             }
         });
+
+        Button clickMe = (Button) findViewById(R.id.click_me_button);
+        clickMe.setOnClickListener(this);
 
 
     }
@@ -122,26 +124,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             break;
 
-
-            // Using AsyncHttpClient for authentication
-//        AsyncHttpClient client = new AsyncHttpClient();
-//        //client.setBasicAuth("test@go_doggies.com", "2016");
-//        client.setBasicAuth("test@go_doggies.com", "2016",
-//                new AuthScope("go-doggies.com/content_main/user_login", 80, AuthScope.ANY_REALM));
-//        client.get("https://go-doggies.com/login/user_login",
-//                new AsyncHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                Log.v(LOG_TAG,"Response: "+responseBody);
-//            }
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
-//                    error)
-//            {
-//                Log.v(LOG_TAG,"Failed server connect: "+statusCode + " "+ headers
-//                + " "+ responseBody);
-//            }
-//        });
+            case R.id.connect:
+                Intent intent = new Intent(getApplicationContext(), LinkAccountActivity.class);
+                startActivity(intent);
+                break;
 
             case R.id.services_button:
                 Intent serviceIntent = new Intent(MainActivity.this, GroomerServices.class);
@@ -152,6 +138,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 UpdatePriceToServer updatePriceToServer = new UpdatePriceToServer();
                 updatePriceToServer.execute();
                 break;
+
+            case R.id.click_me_button:
+                Intent dogIntent = new Intent(this, DogActivity.class);
+                startActivity(dogIntent);
+                break;
+
         }
     }
 

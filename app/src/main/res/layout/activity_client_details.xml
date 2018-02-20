@@ -14,14 +14,22 @@
 
         <include layout="@layout/go_doggie_toolbar" />
 
-        <include
-            layout="@layout/content_client_details"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <include
-            layout="@layout/content_dog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <include
+                layout="@layout/content_client_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <include
+                layout="@layout/content_dog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

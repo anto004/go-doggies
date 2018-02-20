@@ -43,6 +43,14 @@
         android:text="Update Nail Trim"
         android:textColor="@android:color/white" />
 
+    <Button
+        android:id="@+id/click_me_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_app_green"
+        android:text="Click Me"
+        android:textColor="@android:color/white" />
+
 
 
 

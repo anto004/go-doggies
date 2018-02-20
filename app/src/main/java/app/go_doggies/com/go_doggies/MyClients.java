@@ -83,13 +83,14 @@ public class MyClients extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        String sortOrder = DoggieContract.ClientEntry.COLUMN_NAME + " ASC";
         return new CursorLoader(
                 this,
                 DoggieContract.ClientEntry.CONTENT_URI,
                 null,
                 null,
                 null,
-                DoggieContract.ClientEntry.COLUMN_NAME + " ASC"
+                sortOrder
         );
     }
 
