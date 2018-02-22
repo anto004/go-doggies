@@ -21,8 +21,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.HttpCookie;
 
 import app.go_doggies.com.go_doggies.sync.AccountGeneral;
 import app.go_doggies.com.go_doggies.sync.MyCookieStore;
@@ -56,8 +58,12 @@ public class LaucherActivity extends AppCompatActivity {
 
         CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
         //Gives null pointer on urlConnection writeOutputStream
-//        CookieHandler.setDefault(cookieManager);
+        CookieHandler.setDefault(cookieManager);
         //saved cookie is removed, invalidate current token
+        for(HttpCookie cookie: cookieManager.getCookieStore().getCookies()){
+            Log.v(LOG_TAG, "Cookie Check: "+ cookie.toString());
+        }
+
         if(cookieManager.getCookieStore().getCookies().size() == 0 && authToken != null){
             mAccountManager.invalidateAuthToken(accountType, authToken);
             authToken = null;

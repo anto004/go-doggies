@@ -23,7 +23,6 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
@@ -212,7 +211,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 urlConnection.setDoOutput(true);
 
                 cookieManager = new CookieManager(new MyCookieStore(mContext), CookiePolicy.ACCEPT_ALL);
-                CookieHandler.setDefault(cookieManager);
+                for(HttpCookie cookie: cookieManager.getCookieStore().getCookies()){
+                    Log.v(LOG_TAG, "Cookie Check: "+ cookie.toString());
+                }
+
+//                CookieHandler.setDefault(cookieManager);
                 if(cookieManager.getCookieStore().getCookies().size() > 0) {
                     List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
                     if(!cookies.isEmpty() && cookies != null) {

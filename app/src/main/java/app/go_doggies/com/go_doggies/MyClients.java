@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -114,7 +113,6 @@ public class MyClients extends AppCompatActivity
     public String fetchClients() {
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
-
         String clientsJsonStr;
 
         StringBuilder urlParameter = new StringBuilder();
@@ -136,14 +134,12 @@ public class MyClients extends AppCompatActivity
             CookieManager cookieManager = new CookieManager(new MyCookieStore(this), CookiePolicy.ACCEPT_ALL);
             CookieHandler.setDefault(cookieManager);
 
-            if (cookieManager.getCookieStore().getCookies().size() > 0) {
-                List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
-                if(!cookies.isEmpty() && cookies != null) {
-                    urlConnection.setRequestProperty("Cookie",
-                            TextUtils.join(";", cookies));
-                }
-                //Log.v(LOG_TAG, "cookie: "+cookieManager.getCookieStore().getCookies().toString());
+            List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
+            for(HttpCookie cookie: cookies){
+                urlConnection.setRequestProperty("Cookie", cookie.toString());
+                Log.v(LOG_TAG, "cookie: " + cookie.toString());
             }
+
 
             urlConnection.getOutputStream().write(postData);
 

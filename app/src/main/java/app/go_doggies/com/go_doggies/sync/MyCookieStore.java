@@ -6,8 +6,11 @@ import android.content.SharedPreferences;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by anto004 on 1/17/18.
@@ -15,53 +18,94 @@ import java.util.List;
 
 public class MyCookieStore implements CookieStore {
     public static final String LOG_TAG = MyCookieStore.class.getSimpleName();
-    public static final String COOKIE_PREF = "cookie_pref";
-    public static final String COOKIE_STR = "cookie";
-    public Context mContext;
+    private static final String COOKIE_PREF = "cookie_pref";
+
+    private SharedPreferences mCookiePrefs;
+    private Map<String, HttpCookie> mCookies;
 
     public MyCookieStore(Context context){
-        this.mContext = context;
+        mCookiePrefs = context.getSharedPreferences(COOKIE_PREF, Context.MODE_PRIVATE);
+        //one cookie for one host
+        mCookies = new HashMap<String, HttpCookie>();
+
+        Map<String, ?> prefsMap = mCookiePrefs.getAll();
+        for(Map.Entry<String, ?> entry: prefsMap.entrySet()){
+            String cookie = (String) entry.getValue();
+            if(cookie.trim().length() > 0) {
+                mCookies.put(entry.getKey(), HttpCookie.parse(cookie).get(0));
+            }
+        }
     }
+
     @Override
     public void add(URI uri, HttpCookie httpCookie) {
-        SharedPreferences.Editor cookiePrefs = mContext.getSharedPreferences(
-                COOKIE_PREF, Context.MODE_PRIVATE).edit();
+        String host = uri.getHost();
+
+        mCookies.put(host, httpCookie);
+
+        SharedPreferences.Editor cookiePrefsEditor = mCookiePrefs.edit();
         //use a set for multiple cookies
-        cookiePrefs.putString(COOKIE_STR, httpCookie.toString());
-        cookiePrefs.apply();
+        cookiePrefsEditor.putString(host, httpCookie.toString());
+        cookiePrefsEditor.apply();
 
     }
 
     @Override
     public List<HttpCookie> get(URI uri) {
-        return null;
+        List<HttpCookie> cookies = new ArrayList<>();
+        if(mCookies.containsKey(uri.getHost())) {
+            cookies.add(mCookies.get(uri.getHost()));
+        }
+        return cookies;
     }
 
     @Override
     public List<HttpCookie> getCookies() {
         List<HttpCookie> cookies = new ArrayList<>();
-        SharedPreferences cookiePrefs = mContext.getSharedPreferences(
-                MyCookieStore.COOKIE_PREF, Context.MODE_PRIVATE);
-        String cookie = cookiePrefs.getString(MyCookieStore.COOKIE_STR, " ");
-        if(cookie.trim().length() > 0) {
-            HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);
-            cookies.add(httpCookie);
+        for(String host: mCookies.keySet()){
+            cookies.add(mCookies.get(host));
         }
         return cookies;
     }
 
     @Override
     public List<URI> getURIs() {
-        return null;
+        List<URI> uris = new ArrayList<>();
+        for(String host: mCookies.keySet()){
+            try {
+
+                uris.add(new URI(host));
+
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        return uris;
     }
 
     @Override
     public boolean remove(URI uri, HttpCookie httpCookie) {
-        return false;
+        if(!mCookies.containsKey(uri.getHost())){
+            return false;
+        }
+        mCookies.remove(uri.getHost());
+
+        SharedPreferences.Editor cookiePrefsEditor = mCookiePrefs.edit();
+        if(mCookiePrefs.contains(uri.getHost())){
+            cookiePrefsEditor.remove(uri.getHost());
+        }
+        cookiePrefsEditor.apply();
+        return true;
     }
 
     @Override
     public boolean removeAll() {
-        return false;
+        mCookies.clear();
+
+        SharedPreferences.Editor cookiePrefsEditor = mCookiePrefs.edit();
+        cookiePrefsEditor.clear();
+        cookiePrefsEditor.apply();
+
+        return true;
     }
 }

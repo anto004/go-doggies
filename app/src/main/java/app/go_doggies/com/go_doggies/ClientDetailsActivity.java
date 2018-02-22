@@ -1,6 +1,5 @@
 package app.go_doggies.com.go_doggies;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -25,9 +24,17 @@ public class ClientDetailsActivity extends AppCompatActivity {
         clientName.setText(client.getClientName());
 
         String clientId = client.getClientId();
-        Intent dogIntent = new Intent(this, DogActivity.class);
-        dogIntent.putExtra(CLIENT_ID, clientId);
-        startActivity(dogIntent);
+
+        DogFragment dogFragment = new DogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(CLIENT_ID, clientId);
+        dogFragment.setArguments(bundle);
+
+        if(savedInstanceState == null){
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.dog_container, dogFragment)
+                    .commit();
+        }
 
     }
 

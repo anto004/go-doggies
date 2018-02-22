@@ -79,7 +79,7 @@ public class ServerAuthenticate {
                 List<String> cookies = headers.get(COOKIE_HEADER);
                 for(String cookie: cookies){
                     HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);
-                    cookieManager.getCookieStore().add(null, httpCookie);
+                    cookieManager.getCookieStore().add(url.toURI(), httpCookie);
                 }
 
                 String line;
